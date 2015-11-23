@@ -1,4 +1,6 @@
 package model;
 
-public class Lager {
+abstract public class Lager {
+	abstract public int getKapazität();
+	abstract public int getBestand();
 }
