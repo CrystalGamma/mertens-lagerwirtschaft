@@ -4,13 +4,17 @@ public class LagerHalle extends Lager {
 	private int bestand;
 	private int kapazität;
 
+	public LagerHalle(int kapazität) {
+		this.kapazität = kapazität;
+	}
+
 	@Override
 	final public int getKapazität() {
-		return 0;
+		return kapazität;
 	}
 
 	@Override
 	final public int getBestand() {
-		return 0;
+		return bestand;
 	}
 }

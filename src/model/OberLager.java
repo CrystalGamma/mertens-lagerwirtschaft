@@ -5,11 +5,19 @@ public class OberLager extends Lager {
 
 	@Override
 	public int getKapazität() {
-		return 0;
+		int kapazität = 0;
+		for (Lager lagerHalle : unterLager) {
+			kapazität += lagerHalle.getKapazität();
+		}
+		return kapazität;
 	}
 
 	@Override
 	public int getBestand() {
-		return 0;
+		int bestand = 0;
+		for (Lager lagerHalle : unterLager) {
+			bestand += lagerHalle.getBestand();
+		}
+		return bestand;
 	}
 }
