@@ -6,7 +6,7 @@ import org.junit.Test;
 public class ModelTests {
 	@Test
 	public void lager() {
-		LagerHalle halle = new LagerHalle(10);
+		LagerHalle halle = new LagerHalle("Halle", 10);
 		assert halle.getKapazität() == 10;
 		assert halle.getBestand() == 0;
 		boolean noexcept = true;
