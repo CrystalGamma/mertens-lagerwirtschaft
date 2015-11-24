@@ -16,5 +16,7 @@ public class Model {
 	}
 
 	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
+		buchungen.forEach(LagerHalle::dryRunBuchung);
+		buchungen.forEach(LagerHalle::buchen);
 	}
 }

@@ -1,4 +1,4 @@
 package model;
 
-public class LagerÜbervoll extends Exception {
+public class LagerÜbervoll extends RuntimeException {
 }
