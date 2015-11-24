@@ -22,7 +22,7 @@ public class Model extends Observable {
 	}
 
 	public Map<String, Map<LagerView, Integer>> getBuchungenFürHalle(LagerHalle halle) {
-		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(halle));
+		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(new LagerView(halle)));
 	}
 
 	public void übernehmeLieferung(Map<LagerView, Integer> buchungen, String datum) {
@@ -65,6 +65,20 @@ public class Model extends Observable {
 				return Utils.arrayMap(LagerView.class, ((OberLager) inner).getUnterLager(), LagerView::new);
 			}
 			return null;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(this.inner);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || obj.getClass() != getClass()) {
+				return false;
+			} else {
+				return this.inner == ((LagerView)obj).inner;
+			}
 		}
 	}
 
