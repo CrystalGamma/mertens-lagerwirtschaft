@@ -1,6 +1,6 @@
 package model;
 
-public class LagerHalle extends Lager {
+public class LagerHalle implements Lager {
 	private String name;
 	private int bestand;
 	private int kapazität;
@@ -40,5 +40,10 @@ public class LagerHalle extends Lager {
 	public void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {
 		dryRunBuchung(änderung);
 		bestand += änderung;
+	}
+
+	@Override
+	public Lager[] getUnterLager() {
+		return null;
 	}
 }

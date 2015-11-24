@@ -41,7 +41,7 @@ public class Model extends Observable {
 	}
 
 	// DECORATOR PATTERN ☺
-	static final public class LagerView extends Lager {
+	static final public class LagerView implements Lager {
 		private final Lager inner;
 		LagerView(Lager lager) {inner = lager;}
 
@@ -60,9 +60,10 @@ public class Model extends Observable {
 			return inner.getName();
 		}
 
+		@Override
 		public LagerView[] getUnterLager() {
 			if (inner instanceof OberLager) {
-				return Utils.arrayMap(LagerView.class, ((OberLager) inner).getUnterLager(), LagerView::new);
+				return Utils.arrayMap(LagerView.class, inner.getUnterLager(), LagerView::new);
 			}
 			return null;
 		}

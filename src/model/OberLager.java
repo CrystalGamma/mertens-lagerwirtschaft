@@ -1,6 +1,6 @@
 package model;
 
-public class OberLager extends Lager {
+public class OberLager implements Lager {
 	private String name;
 	private Lager[] unterLager;
 
