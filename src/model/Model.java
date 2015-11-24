@@ -71,4 +71,8 @@ public class Model extends Observable {
 	public LagerView[] getLager() {
 		return Utils.arrayMap(LagerView.class, lager, x -> new LagerView(x));
 	}
+	public Lager[] getlager()
+	{
+		return lager;
+	}
 }
