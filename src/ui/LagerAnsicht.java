@@ -1,4 +1,7 @@
-package model;
+package ui;
+
+import model.LagerHalle;
+import model.Model;
 
 import java.awt.*;
 import javax.swing.*;
