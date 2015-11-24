@@ -44,7 +44,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		columnNames.addElement("Kapazität");
 		//tableData= new String[][]{{"1","2","3"},{"1","2","3"}};
 		tableData= new Vector<Vector<String>>();
-		fülleTabellenDaten(model.getlager());
+		fülleTabellenDaten(model.getLager());
 		JTable table = new JTable(tableData,columnNames);
 		
 		tablePanel.add(table.getTableHeader());
@@ -106,20 +106,18 @@ public class StartAnsicht extends JFrame implements Observer {
 /*
  * 	
  */
-	public void fülleTabellenDaten(Lager[] inputlager)
+	public void fülleTabellenDaten(Model.LagerView[] inputlager)
 	{
-		for(Lager lager :inputlager)
+		for(Model.LagerView lager : inputlager)
 		{
-			if(lager instanceof OberLager)
+			Model.LagerView[] unterLager = lager.getUnterLager();
+			if(unterLager != null)
 			{
 				Vector<String> tmpVector= new Vector<String>();
 				tmpVector.addElement(lager.getName());
 				tableData.addElement(tmpVector);
-				fülleTabellenDaten(((OberLager) lager).getUnterlager());
-				
-			}
-			else if(lager instanceof LagerHalle)
-			{
+				fülleTabellenDaten(unterLager);
+			} else {
 				Vector<String> tmpVector= new Vector<String>();
 				tmpVector.addElement(lager.getName());
 				tmpVector.addElement(lager.getBestand()+"");
