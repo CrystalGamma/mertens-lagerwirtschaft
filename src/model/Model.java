@@ -17,6 +17,10 @@ public class Model {
                     new LagerHalle("Spanien", 50)}),
             new LagerHalle("Großbritannien", 50)};
 
+    /*
+     * String: Datum
+     * Integer: Zulieferung
+     */
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 
 	public Map<String, Map<LagerHalle, Integer>> getLieferungen() {
@@ -27,8 +31,13 @@ public class Model {
 		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(halle));
 	}
 
+	
 	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen.forEach(LagerHalle::dryRunBuchung);
 		buchungen.forEach(LagerHalle::buchen);
+	}
+	public Lager[] getlager()
+	{
+		return lager;
 	}
 }
