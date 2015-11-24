@@ -31,4 +31,8 @@ public class OberLager extends Lager {
 		}
 		return bestand;
 	}
+
+	public Lager[] getUnterLager() {
+		return unterLager;
+	}
 }

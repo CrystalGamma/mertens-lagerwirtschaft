@@ -1,10 +1,8 @@
 package model;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class Model {
+public class Model extends Observable {
     private Lager[] lager = new Lager[]{
             new OberLager("Deutschland",
                 new Lager[]{new OberLager("Niedersachsen",
@@ -17,18 +15,64 @@ public class Model {
                     new LagerHalle("Spanien", 50)}),
             new LagerHalle("Großbritannien", 50)};
 
-	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
+	private HashMap<String, Map<LagerView, Integer>> lieferungen = new HashMap<>();
 
-	public Map<String, Map<LagerHalle, Integer>> getLieferungen() {
+	public Map<String, Map<LagerView, Integer>> getLieferungen() {
 		return Collections.unmodifiableMap(lieferungen);
 	}
 
-	public Map<String, Map<LagerHalle, Integer>> getBuchungenFürHalle(LagerHalle halle) {
+	public Map<String, Map<LagerView, Integer>> getBuchungenFürHalle(LagerHalle halle) {
 		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(halle));
 	}
 
-	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
-		buchungen.forEach(LagerHalle::dryRunBuchung);
-		buchungen.forEach(LagerHalle::buchen);
+	public void übernehmeLieferung(Map<LagerView, Integer> buchungen, String datum) {
+		buchungen = Collections.unmodifiableMap(buchungen);
+		buchungen.forEach((key, value) -> {	// <- VISITOR PATTERN!  ☺
+			if (!(key.inner instanceof LagerHalle)) {
+				throw new RuntimeException("Lager ist keine Halle");
+			} else {
+				((LagerHalle)key.inner).dryRunBuchung(value);
+			}
+		});
+		buchungen.forEach((x, y) -> ((LagerHalle)x.inner).buchen(y));
+		lieferungen.put(datum, buchungen);
+		setChanged();
+		notifyObservers();
+	}
+
+	// DECORATOR PATTERN ☺
+	static final public class LagerView extends Lager {
+		private final Lager inner;
+		LagerView(Lager lager) {inner = lager;}
+
+		@Override
+		public int getBestand() {
+			return inner.getBestand();
+		}
+
+		@Override
+		public int getKapazität() {
+			return inner.getKapazität();
+		}
+
+		@Override
+		public String getName() {
+			return inner.getName();
+		}
+
+		public LagerView[] getUnterLager() {
+			if (inner instanceof OberLager) {
+				return Utils.arrayMap(LagerView.class, ((OberLager) inner).getUnterLager(), LagerView::new);
+			}
+			return null;
+		}
+	}
+
+	public LagerView[] getLager() {
+		return Utils.arrayMap(LagerView.class, lager, x -> new LagerView(x));
+	}
+	public Lager[] getlager()
+	{
+		return lager;
 	}
 }
