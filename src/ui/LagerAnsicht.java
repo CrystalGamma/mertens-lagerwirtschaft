@@ -59,13 +59,13 @@ public class LagerAnsicht extends JFrame {
         this.setVisible( true );
     }
 
-    public Object[][] parseBuchungen(Map<String, Map<LagerHalle, Integer>> lieferungen, LagerHalle lager) {
+    public Object[][] parseBuchungen(Map<String, Map<Model.LagerView, Integer>> lieferungen, LagerHalle lager) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
-        for (Map.Entry<String, Map<LagerHalle, Integer>> entry : lieferungen.entrySet()) {
-            Map<LagerHalle, Integer> buchungen = entry.getValue();
+        for (Map.Entry<String, Map<Model.LagerView, Integer>> entry : lieferungen.entrySet()) {
+            Map<Model.LagerView, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
-            data[pos][1] = buchungen.get(lager);
+            data[pos][1] = buchungen.get(buchungen.keySet().toArray()[0]);
             pos++;
         }
         return data;
