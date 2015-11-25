@@ -1,4 +1,7 @@
-package model;
+package ui;
+
+import model.LagerHalle;
+import model.Model;
 
 import java.awt.*;
 import javax.swing.*;
@@ -62,7 +65,7 @@ public class LagerAnsicht extends JFrame {
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
-            data[pos][1] = buchungen.get(lager);
+            data[pos][1] = buchungen.get(buchungen.keySet().toArray()[0]);
             pos++;
         }
         return data;

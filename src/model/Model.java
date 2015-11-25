@@ -91,6 +91,20 @@ public class Model extends Observable {
 		public Lager[] getUnterLager() {
 			return null;
 		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(this.inner);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null || obj.getClass() != getClass()) {
+				return false;
+			} else {
+				return this.inner == ((LagerView)obj).inner;
+			}
+		}
 	}
 
 	public static class OberLager implements Lager {
