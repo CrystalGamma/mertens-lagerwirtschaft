@@ -1,5 +1,6 @@
 package ui;
 
+import controller.Controller;
 import model.Model;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class AlleBuchungen extends JFrame {
-    public AlleBuchungen(Model model) {
+    public AlleBuchungen(Controller controller) {
         this.setResizable(false);
         this.setTitle("Alle Buchungen");
         this.setLayout(new BorderLayout());
@@ -25,7 +26,7 @@ public class AlleBuchungen extends JFrame {
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         String[] columnNames = {"Datum", "Menge"};
-        CustomTable table = new CustomTable(parseBuchungen(model.getLieferungen()), columnNames);
+        CustomTable table = new CustomTable(controller, parseBuchungen(controller.getModel().getLieferungen()), columnNames);
         table.setRowSelectionAllowed(false);
         table.setAutoCreateRowSorter(true);
         table.setEnabled(false);

@@ -1,17 +1,17 @@
 package ui;
 
+import controller.Controller;
 import model.Model;
 
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class LagerAnsicht extends JFrame {
-    public LagerAnsicht(Model model, Model.LagerHalle lager) {
+    public LagerAnsicht(Controller controller, Model.LagerHalle lager) {
         this.setResizable(false);
         this.setTitle("Lageransicht: " + lager.getName());
         this.setLayout(new BorderLayout());
@@ -35,7 +35,7 @@ public class LagerAnsicht extends JFrame {
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         String[] columnNames = {"Datum", "Bestandsänderung"};
-        JTable table = new JTable(parseBuchungen(model.getBuchungenFürHalle(lager), lager), columnNames);
+        CustomTable table = new CustomTable(controller, parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager), columnNames);
         table.setRowSelectionAllowed(false);
         table.setAutoCreateRowSorter(true);
         table.setEnabled(false);
@@ -55,18 +55,17 @@ public class LagerAnsicht extends JFrame {
         this.add(buchungsPanel, BorderLayout.SOUTH);
 
         this.pack();
-        this.setLocationRelativeTo( null );
-        this.setVisible( true );
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {
-        DecimalFormat df = new DecimalFormat("+ #; - #");
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
-            data[pos][1] = df.format(buchungen.get(buchungen.keySet().toArray()[0]));
+            data[pos][1] = buchungen.get(buchungen.keySet().toArray()[0]);
             pos++;
         }
         return data;
