@@ -2,11 +2,8 @@ package controller;
 
 import model.Model;
 import model.Model.LagerHalle;
-import ui.AlleBuchungen;
-import ui.Auslieferung;
-import ui.LagerAnsicht;
-import ui.StartAnsicht;
-import ui.Zulieferung;
+import ui.*;
+import ui.Lieferung;
 
 public class Controller {
 static Model model;
@@ -26,7 +23,7 @@ static Model model;
 	}
 
 	public void öffneZulieferung() {
-		Zulieferung zulieferung = new Zulieferung(model);
+		Lieferung zulieferung = new Lieferung(model);
 	}
 
 	public void öffneLagerX(LagerHalle lager) {
