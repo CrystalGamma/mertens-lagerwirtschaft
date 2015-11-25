@@ -5,6 +5,7 @@ import model.Model;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,12 +60,13 @@ public class LagerAnsicht extends JFrame {
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {
+        DecimalFormat df = new DecimalFormat("+ #; - #");
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
-            data[pos][1] = buchungen.get(buchungen.keySet().toArray()[0]);
+            data[pos][1] = df.format(buchungen.get(buchungen.keySet().toArray()[0]));
             pos++;
         }
         return data;
