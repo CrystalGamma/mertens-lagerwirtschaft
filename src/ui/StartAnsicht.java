@@ -102,11 +102,11 @@ public class StartAnsicht extends JFrame implements Observer {
 /*
  * 	
  */
-	public void fülleTabellenDaten(Model.LagerView[] inputlager)
+	public void fülleTabellenDaten(Model.Lager[] inputlager)
 	{
-		for(Model.LagerView lager : inputlager)
+		for(Model.Lager lager : inputlager)
 		{
-			Model.LagerView[] unterLager = lager.getUnterLager();
+			Model.Lager[] unterLager = lager.getUnterLager();
 			if(unterLager != null)
 			{
 				Vector<String> tmpVector= new Vector<String>();

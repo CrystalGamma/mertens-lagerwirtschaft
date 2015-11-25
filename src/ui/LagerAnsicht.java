@@ -1,6 +1,5 @@
 package ui;
 
-import model.LagerHalle;
 import model.Model;
 
 import java.awt.*;

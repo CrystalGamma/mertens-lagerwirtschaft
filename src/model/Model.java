@@ -82,7 +82,7 @@ public class Model extends Observable {
 			}
 		}
 
-		public void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {
+		protected void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {	// protected um besser die Klasse einzeln testen zu können
 			dryRunBuchung(änderung);
 			bestand += änderung;
 		}
@@ -90,20 +90,6 @@ public class Model extends Observable {
 		@Override
 		public Lager[] getUnterLager() {
 			return null;
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hashCode(this.inner);
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (obj == null || obj.getClass() != getClass()) {
-				return false;
-			} else {
-				return this.inner == ((LagerView)obj).inner;
-			}
 		}
 	}
 
