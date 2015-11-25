@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Vector;
@@ -18,6 +19,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import controller.Controller;
 import model.Model;
@@ -26,15 +29,15 @@ public class StartAnsicht extends JFrame implements Observer {
 	Model model;
 	Vector<Vector<Object>> tableData;
 	Model.Lager[] lager;
+	HashMap<String, Model.Lager> LagerNameZuLager;
 
 	public static void main(String[] args) {
 		StartAnsicht frame = new StartAnsicht(new Model(), new Controller());
-		frame.pack();
-		// frame.setExtendedState(MAXIMIZED_BOTH);
-		frame.setVisible(true);
+		
 	}
 
 	public StartAnsicht(Model model, Controller controler) {
+		LagerNameZuLager= new HashMap<>();
 		this.model = model;
 		// this.setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		JLabel titel = new JLabel("Lagerstruktur");
@@ -56,10 +59,6 @@ public class StartAnsicht extends JFrame implements Observer {
 		this.add(titel, BorderLayout.WEST);
 		this.add(tablePanel, BorderLayout.SOUTH);
 		JPopupMenu menuPopup = new JPopupMenu();
-		JMenuItem menuItemRückgängig = new JMenuItem("Rückgängig");
-		menuPopup.add(menuItemRückgängig);
-		JMenuItem menuItemWiederholen = new JMenuItem("Wiederholen");
-		menuPopup.add(menuItemWiederholen);
 		JMenuItem menuItemZulieferung = new JMenuItem("Zulieferung");
 		menuPopup.add(menuItemZulieferung);
 		JMenuItem menuItemAuslieferung = new JMenuItem("Auslieferung");
@@ -107,6 +106,50 @@ public class StartAnsicht extends JFrame implements Observer {
 				
 			}
 		});
+		table.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				Vector<Object> ausgewählteZeile=(tableData.get(table.getSelectedRow()));
+				if(ausgewählteZeile.get(0).equals(""))
+				{
+					
+					Model.LagerHalle tmp=(Model.LagerHalle)LagerNameZuLager.get(ausgewählteZeile.get(1));
+					controler.öffneLagerX(tmp);
+				}
+				//controler.öffneLagerX(lager);
+			}
+		});
+		this.pack();
+		// frame.setExtendedState(MAXIMIZED_BOTH);
+		this.setVisible(true);
+	        
+	   
 	}
 
 	@Override
@@ -127,6 +170,7 @@ public class StartAnsicht extends JFrame implements Observer {
 				tmpVector.addElement(aufZuKlappen);
 				tmpVector.addElement(lager.getName());
 				tableData.addElement(tmpVector);
+				fülleHashmap(LagerNameZuLager,lager.getName(), lager);
 				fülleTabellenDaten(unterLager);
 			} else {
 				Vector<Object> tmpVector = new Vector<Object>();
@@ -135,7 +179,19 @@ public class StartAnsicht extends JFrame implements Observer {
 				tmpVector.addElement(lager.getBestand() + "");
 				tmpVector.addElement(lager.getKapazität() + "");
 				tableData.addElement(tmpVector);
+				fülleHashmap(LagerNameZuLager,lager.getName(), lager);
+				
 			}
 		}
 	}
+	/*
+	 * muss noch verallgemeinert werden
+	 */
+	public void fülleHashmap(HashMap<String, Model.Lager> map,String key, Model.Lager value)
+	{
+	//	if(!map.containsKey(key) &&!map.containsValue(value))
+	//	{
+		map.put(key,value);
+//	}
+		}
 }

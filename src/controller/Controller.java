@@ -14,7 +14,7 @@ static Model model;
 		// TODO Auto-generated method stub
 		Controller controler = new Controller();
 		model = new Model();
-		StartAnsicht startansicht = new StartAnsicht(model,controler );
+		StartAnsicht startansicht = new StartAnsicht(model,controler);
 	}
 
 	public void öffneAlleBuchungen() {
@@ -22,11 +22,11 @@ static Model model;
 	}
 
 	public void öffneAuslieferung() {
-		Auslieferung auslieferung = new Auslieferung(model);
+		//Auslieferung auslieferung = new Auslieferung(model);
 	}
 
 	public void öffneZulieferung() {
-		Zulieferung zulieferung = new Zulieferung(model);
+		//Zulieferung zulieferung = new Zulieferung(model);
 	}
 
 	public void öffneLagerX(LagerHalle lager) {
