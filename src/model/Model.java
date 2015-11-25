@@ -15,61 +15,118 @@ public class Model extends Observable {
                     new LagerHalle("Spanien", 50)}),
             new LagerHalle("Großbritannien", 50)};
 
-	private HashMap<String, Map<LagerView, Integer>> lieferungen = new HashMap<>();
+	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 
-	public Map<String, Map<LagerView, Integer>> getLieferungen() {
+	public Map<String, Map<LagerHalle, Integer>> getLieferungen() {
 		return Collections.unmodifiableMap(lieferungen);
 	}
 
-	public Map<String, Map<LagerView, Integer>> getBuchungenFürHalle(LagerHalle halle) {
+	public Map<String, Map<LagerHalle, Integer>> getBuchungenFürHalle(LagerHalle halle) {
 		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(halle));
 	}
 
-	public void übernehmeLieferung(Map<LagerView, Integer> buchungen, String datum) {
+	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen = Collections.unmodifiableMap(buchungen);
-		buchungen.forEach((key, value) -> {	// <- VISITOR PATTERN!  ☺
-			if (!(key.inner instanceof LagerHalle)) {
-				throw new RuntimeException("Lager ist keine Halle");
-			} else {
-				((LagerHalle)key.inner).dryRunBuchung(value);
-			}
-		});
-		buchungen.forEach((x, y) -> ((LagerHalle)x.inner).buchen(y));
+		buchungen.forEach(LagerHalle::dryRunBuchung);	// <- VISITOR PATTERN!  ☺
+		buchungen.forEach(LagerHalle::buchen);
 		lieferungen.put(datum, buchungen);
 		setChanged();
 		notifyObservers();
 	}
 
-	// DECORATOR PATTERN ☺
-	static final public class LagerView implements Lager {
-		private final Lager inner;
-		LagerView(Lager lager) {inner = lager;}
+	public Lager[] getLager() {
+		return Utils.arrayMap(Lager.class, lager, x -> x);
+	}
 
-		@Override
-		public int getBestand() {
-			return inner.getBestand();
-		}
+	public interface Lager {
+		String getName();
+		int getKapazität();
+		int getBestand();
+		Lager[] getUnterLager();
+	}
 
-		@Override
-		public int getKapazität() {
-			return inner.getKapazität();
+	public static class LagerHalle implements Lager {
+		private String name;
+		private int bestand;
+		private int kapazität;
+
+		public LagerHalle(String name, int kapazität) {
+			this.name = name;
+			this.kapazität = kapazität;
 		}
 
 		@Override
 		public String getName() {
-			return inner.getName();
+			return this.name;
 		}
 
 		@Override
-		public LagerView[] getUnterLager() {
-			if (inner instanceof OberLager) {
-				return Utils.arrayMap(LagerView.class, inner.getUnterLager(), LagerView::new);
+		final public int getKapazität() {
+			return this.kapazität;
+		}
+
+		@Override
+		final public int getBestand() {
+			return this.bestand;
+		}
+
+		public void dryRunBuchung(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll{
+			if (änderung > 0) {
+				if (bestand + änderung < bestand || bestand + änderung > kapazität) {
+					throw new LagerÜbervoll();
+				}
+			} else {
+				if (-bestand > änderung) {
+					throw new LagerNichtVollGenug();
+				}
 			}
+		}
+
+		public void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {
+			dryRunBuchung(änderung);
+			bestand += änderung;
+		}
+
+		@Override
+		public Lager[] getUnterLager() {
 			return null;
 		}
 	}
 
-	public LagerView[] getLager() {
-		return Utils.arrayMap(LagerView.class, lager, x -> new LagerView(x));
+	public static class OberLager implements Lager {
+		private String name;
+		private Lager[] unterLager;
+
+		public OberLager(String name, Lager[] unterLager){
+			this.name = name;
+			this.unterLager = unterLager;
+		}
+
+		@Override
+		public String getName() {
+			return this.name;
+		}
+
+		@Override
+		public int getKapazität() {
+			int kapazität = 0;
+			for (Lager lagerHalle : unterLager) {
+				kapazität += lagerHalle.getKapazität();
+			}
+			return kapazität;
+		}
+
+		@Override
+		public int getBestand() {
+			int bestand = 0;
+			for (Lager lagerHalle : unterLager) {
+				bestand += lagerHalle.getBestand();
+			}
+			return bestand;
+		}
+
+		public Lager[] getUnterLager() {
+			return unterLager;
+		}
 	}
 }

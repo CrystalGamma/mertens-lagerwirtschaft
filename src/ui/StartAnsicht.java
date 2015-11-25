@@ -15,17 +15,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
-import model.Lager;
-import model.LagerHalle;
 import model.Model;
-import model.OberLager;
 
 public class StartAnsicht extends JFrame implements Observer {
 	Model model;
 	Vector<Vector<String>> tableData;
-	Lager[] lager;
+	Model.Lager[] lager;
 	public static void main(String[] args) {
 		StartAnsicht frame= new StartAnsicht(new Model());
 		frame.pack();

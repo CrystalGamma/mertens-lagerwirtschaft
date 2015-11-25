@@ -1,4 +1,3 @@
-import model.LagerHalle;
 import model.LagerNichtVollGenug;
 import model.LagerÜbervoll;
 import model.Model;
@@ -10,7 +9,7 @@ import java.util.Map;
 public class ModelTests {
 	@Test
 	public void lager() {
-		LagerHalle halle = new LagerHalle("Halle", 10);
+		Model.LagerHalle halle = new Model.LagerHalle("Halle", 10);
 		assert halle.getKapazität() == 10;
 		assert halle.getBestand() == 0;
 		boolean noexcept = true;

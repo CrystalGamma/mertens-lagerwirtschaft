@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LagerAnsicht extends JFrame {
-    public LagerAnsicht(Model model, LagerHalle lager) {
+    public LagerAnsicht(Model model, Model.LagerHalle lager) {
         this.setResizable(false);
         this.setTitle("Lageransicht: " + lager.getName());
         this.setLayout(new BorderLayout());
@@ -56,11 +56,11 @@ public class LagerAnsicht extends JFrame {
         this.setVisible( true );
     }
 
-    public Object[][] parseBuchungen(Map<String, Map<LagerHalle, Integer>> lieferungen, LagerHalle lager) {
+    public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
-        for (Map.Entry<String, Map<LagerHalle, Integer>> entry : lieferungen.entrySet()) {
-            Map<LagerHalle, Integer> buchungen = entry.getValue();
+        for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
+            Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
             data[pos][1] = buchungen.get(lager);
             pos++;
