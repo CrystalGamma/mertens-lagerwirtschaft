@@ -24,7 +24,7 @@ import model.OberLager;
 
 public class StartAnsicht extends JFrame implements Observer {
 	Model model;
-	Vector<Vector<String>> tableData;
+	Vector<Vector<Object>> tableData;
 	Lager[] lager;
 	public static void main(String[] args) {
 		StartAnsicht frame= new StartAnsicht(new Model());
@@ -39,11 +39,11 @@ public class StartAnsicht extends JFrame implements Observer {
 		JPanel tablePanel= new JPanel();
 		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
 		Vector<String> columnNames= new Vector<>();
+		columnNames.addElement("");
 		columnNames.addElement("Lager");
 		columnNames.addElement("Bestand");
 		columnNames.addElement("Kapazität");
-		//tableData= new String[][]{{"1","2","3"},{"1","2","3"}};
-		tableData= new Vector<Vector<String>>();
+		tableData= new Vector<Vector<Object>>();
 		fülleTabellenDaten(model.getLager());
 		JTable table = new JTable(tableData,columnNames);
 		
@@ -68,7 +68,7 @@ public class StartAnsicht extends JFrame implements Observer {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				menuPopup.show(menu,0,0);
+				menuPopup.show(menu,0,20);
 			}
 
 			@Override
@@ -113,12 +113,15 @@ public class StartAnsicht extends JFrame implements Observer {
 			Model.LagerView[] unterLager = lager.getUnterLager();
 			if(unterLager != null)
 			{
-				Vector<String> tmpVector= new Vector<String>();
+				Vector<Object> tmpVector= new Vector<Object>();
+				JButton aufZuKlappen= new JButton("^");
+				tmpVector.addElement(aufZuKlappen);
 				tmpVector.addElement(lager.getName());
 				tableData.addElement(tmpVector);
 				fülleTabellenDaten(unterLager);
 			} else {
-				Vector<String> tmpVector= new Vector<String>();
+				Vector<Object> tmpVector= new Vector<Object>();
+				tmpVector.addElement(new String(""));
 				tmpVector.addElement(lager.getName());
 				tmpVector.addElement(lager.getBestand()+"");
 				tmpVector.addElement(lager.getKapazität()+"");
