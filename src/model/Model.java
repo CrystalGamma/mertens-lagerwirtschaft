@@ -43,6 +43,7 @@ public class Model extends Observable {
 		int getKapazität();
 		int getBestand();
 		Lager[] getUnterLager();
+		String toString();
 	}
 
 	public static class LagerHalle implements Lager {
@@ -91,6 +92,11 @@ public class Model extends Observable {
 		public Lager[] getUnterLager() {
 			return null;
 		}
+
+		@Override
+		public String toString() {
+			return this.name;
+		}
 	}
 
 	public static class OberLager implements Lager {
@@ -127,6 +133,11 @@ public class Model extends Observable {
 
 		public Lager[] getUnterLager() {
 			return unterLager;
+		}
+
+		@Override
+		public String toString() {
+			return this.name;
 		}
 	}
 }
