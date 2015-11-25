@@ -126,7 +126,7 @@ public class Model extends Observable {
 		}
 
 		public Lager[] getUnterLager() {
-			return unterLager;
+			return unterLager.clone();
 		}
 	}
 }
