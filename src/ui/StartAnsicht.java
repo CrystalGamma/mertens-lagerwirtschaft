@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 
-import controler.Controler;
+import controller.Controller;
 import model.Model;
 
 public class StartAnsicht extends JFrame implements Observer {
@@ -28,13 +28,13 @@ public class StartAnsicht extends JFrame implements Observer {
 	Model.Lager[] lager;
 
 	public static void main(String[] args) {
-		StartAnsicht frame = new StartAnsicht(new Model(), new Controler());
+		StartAnsicht frame = new StartAnsicht(new Model(), new Controller());
 		frame.pack();
 		// frame.setExtendedState(MAXIMIZED_BOTH);
 		frame.setVisible(true);
 	}
 
-	public StartAnsicht(Model model, Controler controler) {
+	public StartAnsicht(Model model, Controller controler) {
 		this.model = model;
 		// this.setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		JLabel titel = new JLabel("Lagerstruktur");
