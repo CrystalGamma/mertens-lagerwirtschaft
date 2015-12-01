@@ -20,6 +20,11 @@ public class AlleBuchungen extends JFrame {
     private static AlleBuchungen sharedInstance;
     private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
 
+    private AlleBuchungen() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.init();
+    }
+
     public static AlleBuchungen getInstance() {
         if (sharedInstance == null) {
             sharedInstance = new AlleBuchungen();
@@ -27,11 +32,6 @@ public class AlleBuchungen extends JFrame {
 
         sharedInstance.requestFocus();
         return sharedInstance;
-    }
-
-    private AlleBuchungen() {
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.init();
     }
 
     public void init() {

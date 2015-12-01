@@ -22,6 +22,11 @@ public class LieferungDatum extends JFrame {
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
+    private LieferungDatum() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.init();
+    }
+
     public static LieferungDatum getInstance() {
         if (sharedInstance == null) {
             sharedInstance = new LieferungDatum();
@@ -29,11 +34,6 @@ public class LieferungDatum extends JFrame {
 
         sharedInstance.requestFocus();
         return sharedInstance;
-    }
-
-    private LieferungDatum() {
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        this.init();
     }
 
     public void init() {
