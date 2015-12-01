@@ -30,10 +30,12 @@ public class Controller {
 
 	public void öffneAuslieferung() {
 		//Auslieferung auslieferung = new Auslieferung(model);
+		System.out.println("öffneAuslieferung");
 	}
 
 	public void öffneZulieferung() {
 		//Zulieferung zulieferung = new Zulieferung(model);
+		System.out.println("öffneZulieferung");
 	}
 
 	public void öffneLagerX(LagerHalle lager) {
