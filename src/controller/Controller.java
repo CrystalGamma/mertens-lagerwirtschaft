@@ -1,12 +1,14 @@
 package controller;
 
 import model.Model;
+import model.Model.Lager;
 import model.Model.LagerHalle;
 import ui.*;
 import ui.Lieferung;
 
 public class Controller {
     Model model;
+    StartAnsicht startAnsicht;
 
 	public static void main(String[] args) {
 		Controller controller = new Controller();
@@ -14,7 +16,8 @@ public class Controller {
 
     public Controller() {
         this.model = new Model();
-        new StartAnsicht(this.model, this);
+        startAnsicht=new StartAnsicht(this.model, this);
+        model.addObserver(startAnsicht);
     }
 
     public Model getModel() {
@@ -37,9 +40,9 @@ public class Controller {
 		LagerAnsicht lagerAnsicht = new LagerAnsicht(this, lager);
 
 	}
-	public void ändereLagerName(String neuerName)
+	public void ändereLagerName(String neuerName, Lager lager)
 	{
-		System.out.println(neuerName);
+		lager.setName(neuerName);
 	}
 
 }

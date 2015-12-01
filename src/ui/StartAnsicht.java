@@ -160,13 +160,14 @@ public class StartAnsicht extends JFrame implements Observer {
 					int selectedTableRow =table.getSelectedRow();
 					vectorAusgewählteZeile = (tableData.get(selectedTableRow));
 					Model.Lager tmp = (Model.Lager) LagerNameZuLager.get(vectorAusgewählteZeile.get(1));
+					String alterName= vectorAusgewählteZeile.get(1).toString();
 					table.requestFocus();
 					table.editCellAt(selectedTableRow, 1);
 					table.getModel().addTableModelListener(new TableModelListener() {
 						
 						@Override
 						public void tableChanged(TableModelEvent e) {
-							controler.ändereLagerName(table.getValueAt(selectedTableRow, 1).toString());
+							controler.ändereLagerName(table.getValueAt(selectedTableRow, 1).toString(),LagerNameZuLager.get(alterName));
 						}
 					});
 				}
@@ -186,8 +187,9 @@ public class StartAnsicht extends JFrame implements Observer {
 		// behandelt
 
 		// muss npch getestet werden
+		System.out.println("update");
 		tableData.clear();
-		fülleTabellenDaten(model.getLager());
+		//fülleTabellenDaten(model.getLager());
 		table.repaint();
 	}
 
