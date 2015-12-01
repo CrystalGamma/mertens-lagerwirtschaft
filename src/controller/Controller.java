@@ -4,45 +4,103 @@ import model.Model;
 import model.Model.Lager;
 import model.Model.LagerHalle;
 import ui.*;
-import ui.Lieferung;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 public class Controller {
     Model model;
-    StartAnsicht startAnsicht;
 
-	public static void main(String[] args) {
-		Controller controller = new Controller();
-	}
+    public static void main(String[] args) {
+        Controller controller = new Controller();
+    }
 
     public Controller() {
         this.model = new Model();
-        startAnsicht=new StartAnsicht(this.model, this);
-        model.addObserver(startAnsicht);
+        model.addObserver(new StartAnsicht(this.model, this));
+        this.generateDummyData();
+    }
+
+    public void generateDummyData() {
+        Map<Model.LagerHalle, Integer> buchung;
+        Vector<LagerHalle> lagerHallen = new Vector<>();
+
+        int day = 1;
+        int amount = 15;
+        for (Model.Lager tier1 : model.getLager()) {
+            if (tier1 instanceof LagerHalle) {
+                lagerHallen.add((LagerHalle) tier1);
+                continue;
+            }
+
+            for (Model.Lager tier2 : tier1.getUnterLager()) {
+                if (tier2 instanceof LagerHalle) {
+                    lagerHallen.add((LagerHalle) tier2);
+                    continue;
+                }
+
+                for (Model.Lager tier3 : tier2.getUnterLager())
+                    if (tier3 instanceof LagerHalle)
+                        lagerHallen.add((LagerHalle) tier3);
+            }
+        }
+
+
+        for (LagerHalle lagerHalle : lagerHallen) {
+            buchung = new HashMap<>();
+            buchung.put(lagerHalle, +amount);
+            model.übernehmeLieferung(buchung, "2015-10-" + (day < 10 ? "0" + day : day));
+            day++;
+            amount++;
+        }
+
+        amount = -5;
+        day = 1;
+        for (LagerHalle lagerHalle : lagerHallen) {
+            buchung = new HashMap<>();
+            buchung.put(lagerHalle, amount);
+            model.übernehmeLieferung(buchung, "2015-11-" + (day < 10 ? "0" + day : day));
+            day++;
+            amount--;
+        }
     }
 
     public Model getModel() {
         return this.model;
     }
 
-	public void öffneAlleBuchungen() {
-		AlleBuchungen alleBuchungen= new AlleBuchungen(this);
-	}
-	public void öffneAuslieferung() {
-		//Auslieferung auslieferung = new Auslieferung(model);
-		System.out.println("öffneAuslieferung");
-	}
+    public void öffneAlleBuchungen() {
+        AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
+        alleBuchungen.refresh(this);
+    }
 
-	public void öffneZulieferung() {
-		Lieferung zulieferung = new Lieferung(model);
-	}
+    public void öffneAuslieferung() {
+        //Auslieferung auslieferung = new Auslieferung(model);
+        System.out.println("öffneAuslieferung");
+    }
 
-	public void öffneLagerX(LagerHalle lager) {
-		LagerAnsicht lagerAnsicht = new LagerAnsicht(this, lager);
+    public void öffneZulieferung() {
+        //Zulieferung zulieferung = new Zulieferung(model);
+        System.out.println("öffneZulieferung");
+    }
 
-	}
+    public void öffneLagerX(LagerHalle lager) {
+        LagerAnsicht lagerAnsicht = LagerAnsicht.getInstance();
+        lagerAnsicht.build(this, lager);
+    }
+
+
+	
 	public void ändereLagerName(String neuerName, Lager lager)
 	{
 		lager.setName(neuerName);
 	}
+
+    public void öffneLieferung(String datum) {
+        LieferungDatum lieferungDatum = LieferungDatum.getInstance();
+        lieferungDatum.build(this, datum);
+    }
+
 
 }

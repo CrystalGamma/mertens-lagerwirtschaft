@@ -13,22 +13,34 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class LieferungDatum extends JFrame {
+    private static LieferungDatum sharedInstance;
+    JLabel titleLabel = new JLabel();
+    CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
-    public LieferungDatum(Controller controller, String datum) {
+    public static LieferungDatum getInstance() {
+        if (sharedInstance == null) {
+            sharedInstance = new LieferungDatum();
+        }
+
+        sharedInstance.requestFocus();
+        return sharedInstance;
+    }
+
+    private LieferungDatum() {
+        this.init();
+    }
+
+    public void init() {
         this.setResizable(false);
-        this.setTitle("Lieferung vom " + Utils.parseDate(datum));
         this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JLabel titleLabel = new JLabel("Lieferung vom " + Utils.parseDate(datum));
         titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 20));
         titlePanel.add(titleLabel);
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        String[] columnNames = {"Lager", "Menge"};
-        CustomTable table = new CustomTable(controller, parseBuchungen(controller.getModel().getLieferungen(), datum), columnNames);
         table.setRowSelectionAllowed(false);
         table.setAutoCreateRowSorter(true);
         table.setEnabled(false);
@@ -50,6 +62,16 @@ public class LieferungDatum extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    public void build(Controller controller, String datum) {
+        this.setTitle("Lieferung vom " + Utils.parseDate(datum));
+        titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
+
+        table.setController(controller);
+        table.setRows(parseBuchungen(controller.getModel().getLieferungen(), datum));
+
+        this.pack();
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, String datum) {
