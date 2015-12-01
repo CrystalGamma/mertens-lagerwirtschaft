@@ -62,15 +62,14 @@ public class AlleBuchungen extends JFrame {
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
-        this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     public void refresh(Controller controller) {
         table.setRows(parseBuchungen(controller.getModel().getLieferungen()));
 
         this.pack();
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {

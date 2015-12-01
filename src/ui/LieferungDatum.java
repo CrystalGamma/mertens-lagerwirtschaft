@@ -59,9 +59,7 @@ public class LieferungDatum extends JFrame {
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
-        this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     public void build(Controller controller, String datum) {
@@ -72,6 +70,7 @@ public class LieferungDatum extends JFrame {
         table.setRows(parseBuchungen(controller.getModel().getLieferungen(), datum));
 
         this.pack();
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, String datum) {

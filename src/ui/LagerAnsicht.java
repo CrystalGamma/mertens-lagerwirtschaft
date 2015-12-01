@@ -66,9 +66,7 @@ public class LagerAnsicht extends JFrame {
         this.add(kapazitätLabel, BorderLayout.EAST);
         this.add(buchungsPanel, BorderLayout.SOUTH);
 
-        this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     public void build(Controller controller, Model.LagerHalle lager) {
@@ -82,6 +80,7 @@ public class LagerAnsicht extends JFrame {
         table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager));
 
         this.pack();
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {
