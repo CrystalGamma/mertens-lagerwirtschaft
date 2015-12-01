@@ -85,13 +85,19 @@ public class LagerAnsicht extends JFrame {
         kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
 
         table.setController(controller);
-        table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager));
+        table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager)));
 
         this.pack();
         this.setVisible(true);
     }
 
-    public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {
+    /**
+     * Führt die Daten in das benötigte Format für die Tabelle zusammen.
+     *
+     * @param lieferungen Buchungen für eine Lagerhalle
+     * @return Mehrdimensionales Array mit Daten (jeweils Datum und Bestandsänderung)
+     */
+    public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
