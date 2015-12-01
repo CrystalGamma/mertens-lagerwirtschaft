@@ -86,7 +86,7 @@ public class Model extends Observable {
 			}
 		}
 
-		void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {	// protected um besser die Klasse einzeln testen zu können
+		void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {
 			dryRunBuchung(änderung);
 			bestand += änderung;
 		}
@@ -143,7 +143,6 @@ public class Model extends Observable {
 
 		@Override
 		public void setName(String name) {
-			// TODO Auto-generated method stub
 			this.name=name;
 		}
 	}
