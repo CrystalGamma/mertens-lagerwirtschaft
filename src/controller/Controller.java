@@ -18,10 +18,6 @@ static Model model;
 		AlleBuchungen alleBuchungen= new AlleBuchungen(model);
 	}
 
-	public void öffneAuslieferung() {
-		Auslieferung auslieferung = new Auslieferung(model);
-	}
-
 	public void öffneZulieferung() {
 		Lieferung zulieferung = new Lieferung(model);
 	}

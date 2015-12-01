@@ -7,49 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModelTests {
-	static class Halle extends Model.LagerHalle {
-		public Halle(String s, int i) {super(s, i);}
-		public void buchen_(int x) {buchen(x);}
-	}
-	@Test
-	public void lager() {
-		Halle halle = new Halle("Halle", 10);
-		assert halle.getKapazität() == 10;
-		assert halle.getBestand() == 0;
-		boolean noexcept = true;
-		try {
-			halle.dryRunBuchung(-10);
-		} catch (LagerNichtVollGenug e) {
-			noexcept = false;
-		}
-		assert !noexcept;
-		noexcept = true;
-		try {
-			halle.buchen_(-10);
-		} catch (LagerNichtVollGenug e) {
-			noexcept = false;
-		}
-		assert !noexcept;
-		assert halle.getBestand() == 0;
-		halle.dryRunBuchung(5);
-		halle.buchen_(5);
-		assert halle.getBestand() == 5;
-		noexcept = true;
-		try {
-			halle.dryRunBuchung(10);
-		} catch (LagerÜbervoll e) {
-			noexcept = false;
-		}
-		assert !noexcept;
-		noexcept = true;
-		try {
-			halle.buchen_(10);
-		} catch (LagerÜbervoll e) {
-			noexcept = false;
-		}
-		assert !noexcept;
-		assert halle.getBestand() == 5;
-	}
 	@Test
 	public void transaktion() {
 		Model model = new Model();

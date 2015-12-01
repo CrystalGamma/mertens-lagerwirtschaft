@@ -95,7 +95,6 @@ public class StartAnsicht extends JFrame implements Observer {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				controler.öffneAuslieferung();
 				
 			}
 		});
