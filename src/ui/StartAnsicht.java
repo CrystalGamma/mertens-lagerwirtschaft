@@ -18,8 +18,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 import controller.Controller;
 import model.Model;
@@ -142,12 +146,12 @@ public class StartAnsicht extends JFrame implements Observer {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				Vector<Object> ausgewählteZeile;
+				Vector<Object> vectorAusgewählteZeile;
 				if (arg0.getButton() == 1) {
-					ausgewählteZeile = (tableData.get(table.getSelectedRow()));
-					if (ausgewählteZeile.get(0).equals("")) {
+					vectorAusgewählteZeile = (tableData.get(table.getSelectedRow()));
+					if (vectorAusgewählteZeile.get(0).equals("")) {
 
-						Model.LagerHalle tmp = (Model.LagerHalle) LagerNameZuLager.get(ausgewählteZeile.get(1));
+						Model.LagerHalle tmp = (Model.LagerHalle) LagerNameZuLager.get(vectorAusgewählteZeile.get(1));
 						controler.öffneLagerX(tmp);
 					}
 					// controler.öffneLagerX(lager);
@@ -156,8 +160,18 @@ public class StartAnsicht extends JFrame implements Observer {
 				{
 					Point klickedPoint= arg0.getPoint();
 					table.changeSelection(table.rowAtPoint(klickedPoint),table.columnAtPoint(klickedPoint), false, false);
-					ausgewählteZeile = (tableData.get(table.getSelectedRow()));
-					Model.Lager tmp = (Model.Lager) LagerNameZuLager.get(ausgewählteZeile.get(1));
+					int selectedTableRow =table.getSelectedRow();
+					vectorAusgewählteZeile = (tableData.get(selectedTableRow));
+					Model.Lager tmp = (Model.Lager) LagerNameZuLager.get(vectorAusgewählteZeile.get(1));
+					table.requestFocus();
+					table.editCellAt(selectedTableRow, 1);
+					table.getModel().addTableModelListener(new TableModelListener() {
+						
+						@Override
+						public void tableChanged(TableModelEvent e) {
+							controler.ändereLagerName(table.getValueAt(selectedTableRow, 1).toString());
+						}
+					});
 				}
 			}
 

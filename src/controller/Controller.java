@@ -42,5 +42,9 @@ public class Controller {
 		LagerAnsicht lagerAnsicht = new LagerAnsicht(this, lager);
 
 	}
+	public void ändereLagerName(String neuerName)
+	{
+		System.out.println(neuerName);
+	}
 
 }
