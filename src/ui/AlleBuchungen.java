@@ -12,7 +12,23 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class AlleBuchungen extends JFrame {
-    public AlleBuchungen(Controller controller) {
+    private static AlleBuchungen sharedInstance;
+    CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
+
+    public static AlleBuchungen getInstance() {
+        if (sharedInstance == null) {
+            sharedInstance = new AlleBuchungen();
+        }
+
+        sharedInstance.requestFocus();
+        return sharedInstance;
+    }
+
+    private AlleBuchungen() {
+        this.init();
+    }
+
+    public void init() {
         this.setResizable(false);
         this.setTitle("Alle Buchungen");
         this.setLayout(new BorderLayout());
@@ -25,8 +41,6 @@ public class AlleBuchungen extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        String[] columnNames = {"Datum", "Menge"};
-        CustomTable table = new CustomTable(controller, parseBuchungen(controller.getModel().getLieferungen()), columnNames);
         table.setRowSelectionAllowed(false);
         table.setAutoCreateRowSorter(true);
         table.setEnabled(false);
@@ -51,6 +65,12 @@ public class AlleBuchungen extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    public void refresh(Controller controller) {
+        table.setRows(parseBuchungen(controller.getModel().getLieferungen()));
+
+        this.pack();
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
