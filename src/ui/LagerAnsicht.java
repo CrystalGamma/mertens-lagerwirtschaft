@@ -11,19 +11,33 @@ import java.util.List;
 import java.util.Map;
 
 public class LagerAnsicht extends JFrame {
-    public LagerAnsicht(Controller controller, Model.LagerHalle lager) {
+    private static LagerAnsicht sharedInstance;
+    JLabel titleLabel = new JLabel();
+    JLabel bestandLabel = new JLabel();
+    JLabel kapazitätLabel = new JLabel();
+    CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
+
+    public static LagerAnsicht getInstance() {
+        if (sharedInstance == null) {
+            sharedInstance = new LagerAnsicht();
+        }
+
+        sharedInstance.requestFocus();
+        return sharedInstance;
+    }
+
+    private LagerAnsicht() {
+        this.init();
+    }
+
+    private void init() {
         this.setResizable(false);
-        this.setTitle("Lageransicht: " + lager.getName());
         this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JLabel titleLabel = new JLabel(lager.getName());
         titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 20));
         titlePanel.add(titleLabel);
-
-        JLabel bestandLabel = new JLabel("Bestand: " + lager.getBestand());
-        JLabel kapazitätLabel = new JLabel("Kapazität: " + lager.getKapazität());
 
         JPanel buchungsPanel = new JPanel();
         buchungsPanel.setLayout(new BoxLayout(buchungsPanel, BoxLayout.Y_AXIS));
@@ -34,8 +48,6 @@ public class LagerAnsicht extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        String[] columnNames = {"Datum", "Bestandsänderung"};
-        CustomTable table = new CustomTable(controller, parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager), columnNames);
         table.setRowSelectionAllowed(false);
         table.setAutoCreateRowSorter(true);
         table.setEnabled(false);
@@ -57,6 +69,19 @@ public class LagerAnsicht extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+
+    public void build(Controller controller, Model.LagerHalle lager) {
+        this.setTitle("Lageransicht: " + lager.getName());
+        titleLabel.setText(lager.getName());
+
+        bestandLabel.setText("Bestand: " + lager.getBestand());
+        kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
+
+        table.setController(controller);
+        table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager));
+
+        this.pack();
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {

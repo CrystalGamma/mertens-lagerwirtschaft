@@ -144,6 +144,9 @@ public class Model extends Observable {
 		@Override
 		public void setName(String name) {
 			this.name=name;
+			System.out.println(name);
+			setChanged();
+			notifyObservers();
 		}
 	}
 
@@ -192,6 +195,9 @@ public class Model extends Observable {
 		public void setName(String name) {
 			// TODO Auto-generated method stub
 			this.name=name;
+			System.out.println(name);
+			setChanged();
+			notifyObservers();
 		}
 	}
 }
