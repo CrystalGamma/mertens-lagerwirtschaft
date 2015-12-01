@@ -38,7 +38,6 @@ public class LieferungDatum extends JFrame {
 
     public void init() {
         this.setResizable(false);
-        this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -47,15 +46,6 @@ public class LieferungDatum extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        table.setRowSelectionAllowed(false);
-        table.setAutoCreateRowSorter(true);
-        table.setEnabled(false);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
-        java.util.List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();
         DefaultTableCellRenderer valueRenderer = new DefaultTableCellRenderer();
         valueRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
         table.getColumn("Menge").setCellRenderer(valueRenderer);
