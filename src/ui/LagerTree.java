@@ -1,6 +1,7 @@
 package ui;
 
 import model.Model;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
@@ -8,8 +9,10 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Observable;
 
 public class LagerTree extends JTree {
+	final public Observable geklickteLager = new Stream();
 	private class LagerTreeModel implements TreeModel {	// <- ADAPTER PATTERN? DECORATOR?
 		Model model;
 		public LagerTreeModel(Model m) {model = m;}
@@ -64,7 +67,11 @@ public class LagerTree extends JTree {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int row = getRowForLocation(e.getX(), e.getY());
+				TreePath pathForLocation = getPathForLocation(e.getX(), e.getY());
+				if (pathForLocation == null)
+					return;
+				Object[] path = pathForLocation.getPath();
+				((Stream)geklickteLager).push(path[path.length-1]);
 			}
 		});
 	}

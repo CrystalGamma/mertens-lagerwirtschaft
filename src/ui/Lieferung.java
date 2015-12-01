@@ -28,7 +28,9 @@ public class Lieferung extends JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		Model m = (Model)o;
 		getContentPane().removeAll();
-		add(new LagerTree(m), BorderLayout.WEST);
+		LagerTree tree = new LagerTree(m);
+		tree.geklickteLager.addObserver((view, lager) -> System.out.println(lager));
+		add(tree, BorderLayout.WEST);
 		pack();
 		repaint();
 	}
