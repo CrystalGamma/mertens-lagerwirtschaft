@@ -27,6 +27,7 @@ public class LieferungDatum extends JFrame {
     }
 
     private LieferungDatum() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.init();
     }
 

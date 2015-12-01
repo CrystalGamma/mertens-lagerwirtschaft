@@ -27,6 +27,7 @@ public class LagerAnsicht extends JFrame {
     }
 
     private LagerAnsicht() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.init();
     }
 

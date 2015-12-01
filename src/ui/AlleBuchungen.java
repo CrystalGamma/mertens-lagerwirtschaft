@@ -25,6 +25,7 @@ public class AlleBuchungen extends JFrame {
     }
 
     private AlleBuchungen() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.init();
     }
 
