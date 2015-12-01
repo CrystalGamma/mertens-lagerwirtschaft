@@ -1,5 +1,7 @@
 package model;
 
+import org.junit.Test;
+
 import java.util.*;
 
 public class Model extends Observable {
@@ -44,9 +46,10 @@ public class Model extends Observable {
 		int getBestand();
 		Lager[] getUnterLager();
 		String toString();
+		void setName(String name);
 	}
 
-	public static class LagerHalle implements Lager {
+	public class LagerHalle implements Lager {
 		private String name;
 		private int bestand;
 		private int kapazität;
@@ -83,9 +86,49 @@ public class Model extends Observable {
 			}
 		}
 
-		protected void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {	// protected um besser die Klasse einzeln testen zu können
+		void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {	// protected um besser die Klasse einzeln testen zu können
 			dryRunBuchung(änderung);
 			bestand += änderung;
+		}
+
+		@Test
+		public void lager() {
+			LagerHalle halle = new LagerHalle("Halle", 10);
+			assert halle.getKapazität() == 10;
+			assert halle.getBestand() == 0;
+			boolean noexcept = true;
+			try {
+				halle.dryRunBuchung(-10);
+			} catch (LagerNichtVollGenug e) {
+				noexcept = false;
+			}
+			assert !noexcept;
+			noexcept = true;
+			try {
+				halle.buchen(-10);
+			} catch (LagerNichtVollGenug e) {
+				noexcept = false;
+			}
+			assert !noexcept;
+			assert halle.getBestand() == 0;
+			halle.dryRunBuchung(5);
+			halle.buchen(5);
+			assert halle.getBestand() == 5;
+			noexcept = true;
+			try {
+				halle.dryRunBuchung(10);
+			} catch (LagerÜbervoll e) {
+				noexcept = false;
+			}
+			assert !noexcept;
+			noexcept = true;
+			try {
+				halle.buchen(10);
+			} catch (LagerÜbervoll e) {
+				noexcept = false;
+			}
+			assert !noexcept;
+			assert halle.getBestand() == 5;
 		}
 
 		@Override
@@ -97,9 +140,15 @@ public class Model extends Observable {
 		public String toString() {
 			return this.name;
 		}
+
+		@Override
+		public void setName(String name) {
+			// TODO Auto-generated method stub
+			this.name=name;
+		}
 	}
 
-	public static class OberLager implements Lager {
+	public class OberLager implements Lager {
 		private String name;
 		private Lager[] unterLager;
 
@@ -132,12 +181,18 @@ public class Model extends Observable {
 		}
 
 		public Lager[] getUnterLager() {
-			return unterLager;
+			return unterLager.clone();
 		}
 
 		@Override
 		public String toString() {
 			return this.name;
+		}
+
+		@Override
+		public void setName(String name) {
+			// TODO Auto-generated method stub
+			this.name=name;
 		}
 	}
 }

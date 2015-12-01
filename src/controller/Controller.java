@@ -2,11 +2,8 @@ package controller;
 
 import model.Model;
 import model.Model.LagerHalle;
-import ui.AlleBuchungen;
-import ui.Auslieferung;
-import ui.LagerAnsicht;
-import ui.StartAnsicht;
-import ui.Zulieferung;
+import ui.*;
+import ui.Lieferung;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,20 +74,22 @@ public class Controller {
 	public void öffneAlleBuchungen() {
 		AlleBuchungen alleBuchungen= new AlleBuchungen(this);
 	}
-
 	public void öffneAuslieferung() {
 		//Auslieferung auslieferung = new Auslieferung(model);
 		System.out.println("öffneAuslieferung");
 	}
 
 	public void öffneZulieferung() {
-		//Zulieferung zulieferung = new Zulieferung(model);
-		System.out.println("öffneZulieferung");
+		Lieferung zulieferung = new Lieferung(model);
 	}
 
 	public void öffneLagerX(LagerHalle lager) {
 		LagerAnsicht lagerAnsicht = new LagerAnsicht(this, lager);
 
+	}
+	public void ändereLagerName(String neuerName)
+	{
+		System.out.println(neuerName);
 	}
 
 }
