@@ -46,6 +46,7 @@ public class Model extends Observable {
 		int getBestand();
 		Lager[] getUnterLager();
 		String toString();
+		void setName(String name);
 	}
 
 	public class LagerHalle implements Lager {
@@ -139,6 +140,12 @@ public class Model extends Observable {
 		public String toString() {
 			return this.name;
 		}
+
+		@Override
+		public void setName(String name) {
+			// TODO Auto-generated method stub
+			this.name=name;
+		}
 	}
 
 	public class OberLager implements Lager {
@@ -180,6 +187,12 @@ public class Model extends Observable {
 		@Override
 		public String toString() {
 			return this.name;
+		}
+
+		@Override
+		public void setName(String name) {
+			// TODO Auto-generated method stub
+			this.name=name;
 		}
 	}
 }
