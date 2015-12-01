@@ -10,12 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Die Klassse LagerAnsicht bietet eine Einsicht in die bisherigen Buchungen für
+ * ein Lager.
+ *
+ * @author Florian Bussmann
+ */
 public class LagerAnsicht extends JFrame {
     private static LagerAnsicht sharedInstance;
-    JLabel titleLabel = new JLabel();
-    JLabel bestandLabel = new JLabel();
-    JLabel kapazitätLabel = new JLabel();
-    CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
+    private JLabel titleLabel = new JLabel();
+    private JLabel bestandLabel = new JLabel();
+    private JLabel kapazitätLabel = new JLabel();
+    private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
     public static LagerAnsicht getInstance() {
         if (sharedInstance == null) {
@@ -27,6 +33,7 @@ public class LagerAnsicht extends JFrame {
     }
 
     private LagerAnsicht() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.init();
     }
 
@@ -66,9 +73,7 @@ public class LagerAnsicht extends JFrame {
         this.add(kapazitätLabel, BorderLayout.EAST);
         this.add(buchungsPanel, BorderLayout.SOUTH);
 
-        this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     public void build(Controller controller, Model.LagerHalle lager) {
@@ -82,6 +87,7 @@ public class LagerAnsicht extends JFrame {
         table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager));
 
         this.pack();
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {

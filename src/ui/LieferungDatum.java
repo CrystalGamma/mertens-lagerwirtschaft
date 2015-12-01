@@ -12,10 +12,15 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Die Klassse LagerAnsicht bietet eine Einsicht in die Buchungen für ein Datum.
+ *
+ * @author Florian Bussmann
+ */
 public class LieferungDatum extends JFrame {
     private static LieferungDatum sharedInstance;
-    JLabel titleLabel = new JLabel();
-    CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
+    private JLabel titleLabel = new JLabel();
+    private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
     public static LieferungDatum getInstance() {
         if (sharedInstance == null) {
@@ -27,6 +32,7 @@ public class LieferungDatum extends JFrame {
     }
 
     private LieferungDatum() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.init();
     }
 
@@ -59,9 +65,7 @@ public class LieferungDatum extends JFrame {
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
-        this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     public void build(Controller controller, String datum) {
@@ -72,6 +76,7 @@ public class LieferungDatum extends JFrame {
         table.setRows(parseBuchungen(controller.getModel().getLieferungen(), datum));
 
         this.pack();
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, String datum) {

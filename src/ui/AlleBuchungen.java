@@ -11,9 +11,14 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Die Klassse AlleBuchungen bietet eine Übersicht über alle bisherigen Buchungen.
+ *
+ * @author Florian Bussmann
+ */
 public class AlleBuchungen extends JFrame {
     private static AlleBuchungen sharedInstance;
-    CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
+    private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
 
     public static AlleBuchungen getInstance() {
         if (sharedInstance == null) {
@@ -25,6 +30,7 @@ public class AlleBuchungen extends JFrame {
     }
 
     private AlleBuchungen() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.init();
     }
 
@@ -62,15 +68,14 @@ public class AlleBuchungen extends JFrame {
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
-        this.pack();
         this.setLocationRelativeTo(null);
-        this.setVisible(true);
     }
 
     public void refresh(Controller controller) {
         table.setRows(parseBuchungen(controller.getModel().getLieferungen()));
 
         this.pack();
+        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {

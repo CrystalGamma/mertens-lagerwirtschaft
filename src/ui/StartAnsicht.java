@@ -109,9 +109,8 @@ public class StartAnsicht extends JFrame implements Observer {
 		// behandelt
 
 		// muss npch getestet werden
-		System.out.println("update");
 		tableData.clear();
-		//fülleTabellenDaten(model.getLager());
+		fülleTabellenDaten(model.getLager());
 		table.repaint();
 	}
 
@@ -126,6 +125,8 @@ public class StartAnsicht extends JFrame implements Observer {
 				JButton aufZuKlappen = new JButton("^");
 				tmpVector.addElement(aufZuKlappen);
 				tmpVector.addElement(lager.getName());
+				tmpVector.addElement("");
+				tmpVector.addElement("");
 				tableData.addElement(tmpVector);
 				fülleHashmap(LagerNameZuLager, lager.getName(), lager);
 				fülleTabellenDaten(unterLager);
