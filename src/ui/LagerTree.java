@@ -11,7 +11,7 @@ public class LagerTree extends JTree {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				super.mouseClicked(e);
+				int row = getRowForLocation(e.getX(), e.getY());
 			}
 		});
 	}
