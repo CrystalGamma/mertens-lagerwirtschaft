@@ -1,5 +1,6 @@
 package ui;
 
+import controller.Controller;
 import model.Model;
 import model.Utils;
 
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class LieferungDatum extends JFrame {
 
-    public LieferungDatum(Model model, String datum) {
+    public LieferungDatum(Controller controller, String datum) {
         this.setResizable(false);
         this.setTitle("Lieferung vom " + Utils.parseDate(datum));
         this.setLayout(new BorderLayout());
@@ -27,7 +28,7 @@ public class LieferungDatum extends JFrame {
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         String[] columnNames = {"Lager", "Menge"};
-        CustomTable table = new CustomTable(parseBuchungen(model.getLieferungen(), datum), columnNames);
+        CustomTable table = new CustomTable(controller, parseBuchungen(controller.getModel().getLieferungen(), datum), columnNames);
         table.setRowSelectionAllowed(false);
         table.setAutoCreateRowSorter(true);
         table.setEnabled(false);

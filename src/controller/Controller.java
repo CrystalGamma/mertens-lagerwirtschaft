@@ -6,16 +6,27 @@ import ui.*;
 import ui.Lieferung;
 
 public class Controller {
-static Model model;
+    Model model;
+
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Controller controler = new Controller();
-		model = new Model();
-		StartAnsicht startansicht = new StartAnsicht(model,controler );
+		Controller controller = new Controller();
 	}
 
+    public Controller() {
+        this.model = new Model();
+        new StartAnsicht(this.model, this);
+    }
+
+    public Model getModel() {
+        return this.model;
+    }
+
 	public void öffneAlleBuchungen() {
-		AlleBuchungen alleBuchungen= new AlleBuchungen(model);
+		AlleBuchungen alleBuchungen= new AlleBuchungen(this);
+	}
+	public void öffneAuslieferung() {
+		//Auslieferung auslieferung = new Auslieferung(model);
+		System.out.println("öffneAuslieferung");
 	}
 
 	public void öffneZulieferung() {
@@ -23,8 +34,12 @@ static Model model;
 	}
 
 	public void öffneLagerX(LagerHalle lager) {
-		LagerAnsicht lagerAnsicht = new LagerAnsicht(model, lager);
+		LagerAnsicht lagerAnsicht = new LagerAnsicht(this, lager);
 
+	}
+	public void ändereLagerName(String neuerName)
+	{
+		System.out.println(neuerName);
 	}
 
 }
