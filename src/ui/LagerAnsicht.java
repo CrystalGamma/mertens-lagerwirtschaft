@@ -18,10 +18,10 @@ import java.util.Map;
  */
 public class LagerAnsicht extends JFrame {
     private static LagerAnsicht sharedInstance;
-    JLabel titleLabel = new JLabel();
-    JLabel bestandLabel = new JLabel();
-    JLabel kapazitätLabel = new JLabel();
-    CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
+    private JLabel titleLabel = new JLabel();
+    private JLabel bestandLabel = new JLabel();
+    private JLabel kapazitätLabel = new JLabel();
+    private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
     public static LagerAnsicht getInstance() {
         if (sharedInstance == null) {

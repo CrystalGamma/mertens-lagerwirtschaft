@@ -19,8 +19,8 @@ import java.util.Map;
  */
 public class LieferungDatum extends JFrame {
     private static LieferungDatum sharedInstance;
-    JLabel titleLabel = new JLabel();
-    CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
+    private JLabel titleLabel = new JLabel();
+    private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
     public static LieferungDatum getInstance() {
         if (sharedInstance == null) {

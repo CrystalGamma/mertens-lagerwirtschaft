@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class AlleBuchungen extends JFrame {
     private static AlleBuchungen sharedInstance;
-    CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
+    private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
 
     public static AlleBuchungen getInstance() {
         if (sharedInstance == null) {
