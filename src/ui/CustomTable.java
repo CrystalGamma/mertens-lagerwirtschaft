@@ -6,9 +6,16 @@ import model.Model;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 import java.awt.*;
 
+/**
+ * Die Klasse CustomTable erweitert die JTable um einen standardmäßig gesetzten
+ * Highlighter für Zellen mit einer negativen Zahl und ermöglicht darüber hinaus
+ * die Weiterleitung in andere Ansichten über einen Klick in eine dafür
+ * vorgesehene Zelle.
+ *
+ * @author Florian Bussmann
+ */
 public class CustomTable extends JTable {
     private Controller controller;
 

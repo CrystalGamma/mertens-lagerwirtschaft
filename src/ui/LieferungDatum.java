@@ -12,6 +12,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Die Klassse LagerAnsicht bietet eine Einsicht in die Buchungen für ein Datum.
+ *
+ * @author Florian Bussmann
+ */
 public class LieferungDatum extends JFrame {
     private static LieferungDatum sharedInstance;
     JLabel titleLabel = new JLabel();

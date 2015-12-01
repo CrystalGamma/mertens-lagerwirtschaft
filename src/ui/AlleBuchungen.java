@@ -11,6 +11,11 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Die Klassse AlleBuchungen bietet eine Übersicht über alle bisherigen Buchungen.
+ *
+ * @author Florian Bussmann
+ */
 public class AlleBuchungen extends JFrame {
     private static AlleBuchungen sharedInstance;
     CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});

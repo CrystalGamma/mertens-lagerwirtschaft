@@ -10,6 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Die Klassse LagerAnsicht bietet eine Einsicht in die bisherigen Buchungen für
+ * ein Lager.
+ *
+ * @author Florian Bussmann
+ */
 public class LagerAnsicht extends JFrame {
     private static LagerAnsicht sharedInstance;
     JLabel titleLabel = new JLabel();
