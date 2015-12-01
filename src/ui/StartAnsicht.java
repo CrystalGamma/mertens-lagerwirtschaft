@@ -2,8 +2,7 @@ package ui;
 
 import java.awt.BorderLayout;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.HashMap;
@@ -18,12 +17,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 import controller.Controller;
 import model.Model;
@@ -31,19 +24,16 @@ import model.Model;
 public class StartAnsicht extends JFrame implements Observer {
 	Model model;
 	Vector<Vector<Object>> tableData;
-	Model.Lager[] lager;
 	HashMap<String, Model.Lager> LagerNameZuLager;
 	JTable table;
 
 	public static void main(String[] args) {
-		StartAnsicht frame = new StartAnsicht(new Model(), new Controller());
-
+		new StartAnsicht(new Model(), new Controller());
 	}
 
 	public StartAnsicht(Model model, Controller controler) {
 		LagerNameZuLager = new HashMap<>();
 		this.model = model;
-		// this.setLayout(new BoxLayout(getContentPane(),BoxLayout.Y_AXIS));
 		JLabel titel = new JLabel("Lagerstruktur");
 		JPanel tablePanel = new JPanel();
 		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
@@ -69,77 +59,18 @@ public class StartAnsicht extends JFrame implements Observer {
 		menuPopup.add(menuItemAuslieferung);
 		JMenuItem menuItemAlleBuchungen = new JMenuItem("Alle Buchungen");
 		menuPopup.add(menuItemAlleBuchungen);
-		MouseListener popupListener = new MouseListener() {
+		MouseListener popupListener = new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				menuPopup.show(menu, 0, 20);
 			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-			}
 		};
 		// Menü bar action listener
 		menu.addMouseListener(popupListener);
-		menuItemAlleBuchungen.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controler.öffneAlleBuchungen();
-
-			}
-		});
-		menuItemAuslieferung.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		menuItemZulieferung.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				controler.öffneZulieferung();
-			}
-		});
-		table.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
+		menuItemAlleBuchungen.addActionListener(arg0 -> controler.öffneAlleBuchungen());
+		menuItemAuslieferung.addActionListener(x -> controler.öffneAuslieferung());
+		menuItemZulieferung.addActionListener(x -> controler.öffneZulieferung());
+		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				// TODO Auto-generated method stub
@@ -151,30 +82,20 @@ public class StartAnsicht extends JFrame implements Observer {
 						Model.LagerHalle tmp = (Model.LagerHalle) LagerNameZuLager.get(vectorAusgewählteZeile.get(1));
 						controler.öffneLagerX(tmp);
 					}
-					// controler.öffneLagerX(lager);
 				}
 				else if(arg0.getButton()==3)
 				{
 					Point klickedPoint= arg0.getPoint();
 					table.changeSelection(table.rowAtPoint(klickedPoint),table.columnAtPoint(klickedPoint), false, false);
 					int selectedTableRow =table.getSelectedRow();
-					vectorAusgewählteZeile = (tableData.get(selectedTableRow));
-					Model.Lager tmp = (Model.Lager) LagerNameZuLager.get(vectorAusgewählteZeile.get(1));
 					table.requestFocus();
 					table.editCellAt(selectedTableRow, 1);
-					table.getModel().addTableModelListener(new TableModelListener() {
-						
-						@Override
-						public void tableChanged(TableModelEvent e) {
-							controler.ändereLagerName(table.getValueAt(selectedTableRow, 1).toString());
-						}
-					});
+					table.getModel().addTableModelListener(e -> controler.ändereLagerName(table.getValueAt(selectedTableRow, 1).toString()));
 				}
 			}
 
 		});
 		this.pack();
-		// frame.setExtendedState(MAXIMIZED_BOTH);
 		this.setVisible(true);
 
 	}
@@ -222,9 +143,6 @@ public class StartAnsicht extends JFrame implements Observer {
 	 * muss noch verallgemeinert werden
 	 */
 	public void fülleHashmap(HashMap<String, Model.Lager> map, String key, Model.Lager value) {
-		// if(!map.containsKey(key) &&!map.containsValue(value))
-		// {
 		map.put(key, value);
-		// }
 	}
 }
