@@ -15,15 +15,15 @@ import java.util.Vector;
 public class Controller {
     Model model;
 
-    public static void main(String[] args) {
-        Controller controller = new Controller();
-    }
-
     public Controller() {
         this.model = new Model();
         //StartAnsicht startAnsicht =new StartAnsicht(this.model, this);
         this.generateDummyData();
         model.addObserver(new StartAnsicht(this.model, this));
+    }
+
+    public static void main(String[] args) {
+        Controller controller = new Controller();
     }
 
     public void generateDummyData() {

@@ -1,18 +1,13 @@
 package ui;
 
-import controller.Controller;
 import model.Model;
 import model.Utils;
 import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.Observable;
 
 /**
  * Die Klassse LagerAnsicht bietet eine Einsicht in die Buchungen für ein Datum.

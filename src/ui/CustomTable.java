@@ -1,7 +1,5 @@
 package ui;
 
-import controller.Controller;
-import model.Model;
 import utils.Stream;
 
 import javax.swing.*;
