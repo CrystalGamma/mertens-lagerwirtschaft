@@ -8,7 +8,7 @@ public class LieferungController {
 
 	public LieferungController(Model model) {
 		this.model = model;
-		new Lieferung(model).setVisible(true);
+		new Lieferung(model, Lieferung.ZULIEFERUNG).setVisible(true);
 	}
 	public static void main(String[] args) {
 		new LieferungController(new Model());
