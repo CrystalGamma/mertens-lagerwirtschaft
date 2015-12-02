@@ -1,14 +1,11 @@
 package ui;
 
-import controller.Controller;
 import model.Model;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -18,6 +15,7 @@ import java.util.Map;
  */
 public class AlleBuchungen extends JFrame {
     private static AlleBuchungen sharedInstance;
+    final public Stream stream = new Stream();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
 
     private AlleBuchungen() {
@@ -61,8 +59,9 @@ public class AlleBuchungen extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void refresh(Controller controller) {
-        table.setRows(parseBuchungen(controller.getModel().getLieferungen()));
+    public void refresh(Model model) {
+        table.setStream(stream);
+        table.setRows(parseBuchungen(model.getLieferungen()));
 
         this.pack();
         this.setVisible(true);

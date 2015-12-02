@@ -1,7 +1,6 @@
 package ui;
 
-import controller.Controller;
-import model.Model;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,7 +19,7 @@ import java.util.ArrayList;
  * @author Florian Bussmann
  */
 public class CustomTable extends JTable {
-    private Controller controller;
+    private Stream stream;
 
     public CustomTable(String[] columnNames) {
         super(new DefaultTableModel(new Object[][]{}, columnNames));
@@ -38,20 +37,16 @@ public class CustomTable extends JTable {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int rowIndex = CustomTable.this.rowAtPoint(evt.getPoint());
                 int columnIndex = CustomTable.this.columnAtPoint(evt.getPoint());
-                if (rowIndex >= 0 && columnIndex >= 0 && controller != null) {
+                if (rowIndex >= 0 && columnIndex >= 0 && stream != null) {
                     Object value = getValueAt(rowIndex, columnIndex);
-                    if (value instanceof String) {
-                        controller.öffneLieferung(value.toString());
-                    } else if (value instanceof Model.LagerHalle) {
-                        controller.öffneLagerX((Model.LagerHalle) value);
-                    }
+                    stream.push(value);
                 }
             }
         });
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
+    public void setStream(Stream stream) {
+        this.stream = stream;
     }
 
     public void setRows(Object[][] rows) {

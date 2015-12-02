@@ -1,14 +1,10 @@
 package ui;
 
-import controller.Controller;
 import model.Model;
+import utils.Stream;
 
 import javax.swing.*;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +15,7 @@ import java.util.Map;
  */
 public class LagerAnsicht extends JFrame {
     private static LagerAnsicht sharedInstance;
+    final public Stream stream = new Stream();
     private JLabel titleLabel = new JLabel();
     private JLabel bestandLabel = new JLabel();
     private JLabel kapazitätLabel = new JLabel();
@@ -67,15 +64,15 @@ public class LagerAnsicht extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Controller controller, Model.LagerHalle lager) {
+    public void build(Model model, Model.LagerHalle lager) {
         this.setTitle("Lageransicht: " + lager.getName());
         titleLabel.setText(lager.getName());
 
         bestandLabel.setText("Bestand: " + lager.getBestand());
         kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
 
-        table.setController(controller);
-        table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager)));
+        table.setStream(stream);
+        table.setRows(parseBuchungen(model.getBuchungenFürHalle(lager)));
 
         this.pack();
         this.setVisible(true);

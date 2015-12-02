@@ -1,15 +1,12 @@
 package ui;
 
-import controller.Controller;
 import model.Model;
 import model.Utils;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -19,6 +16,7 @@ import java.util.Map;
  */
 public class LieferungDatum extends JFrame {
     private static LieferungDatum sharedInstance;
+    final public Stream stream = new Stream();
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
@@ -58,12 +56,12 @@ public class LieferungDatum extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Controller controller, String datum) {
+    public void build(Model model, String datum) {
         this.setTitle("Lieferung vom " + Utils.parseDate(datum));
         titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
 
-        table.setController(controller);
-        table.setRows(parseBuchungen(controller.getModel().getLieferungen(), datum));
+        table.setStream(stream);
+        table.setRows(parseBuchungen(model.getLieferungen(), datum));
 
         this.pack();
         this.setVisible(true);
