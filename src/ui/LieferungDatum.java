@@ -12,10 +12,20 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Die Klassse LagerAnsicht bietet eine Einsicht in die Buchungen für ein Datum.
+ *
+ * @author Florian Bussmann
+ */
 public class LieferungDatum extends JFrame {
     private static LieferungDatum sharedInstance;
-    JLabel titleLabel = new JLabel();
-    CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
+    private JLabel titleLabel = new JLabel();
+    private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
+
+    private LieferungDatum() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.init();
+    }
 
     public static LieferungDatum getInstance() {
         if (sharedInstance == null) {
@@ -26,13 +36,8 @@ public class LieferungDatum extends JFrame {
         return sharedInstance;
     }
 
-    private LieferungDatum() {
-        this.init();
-    }
-
     public void init() {
         this.setResizable(false);
-        this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -41,15 +46,6 @@ public class LieferungDatum extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        table.setRowSelectionAllowed(false);
-        table.setAutoCreateRowSorter(true);
-        table.setEnabled(false);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
-        java.util.List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();
         DefaultTableCellRenderer valueRenderer = new DefaultTableCellRenderer();
         valueRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
         table.getColumn("Menge").setCellRenderer(valueRenderer);

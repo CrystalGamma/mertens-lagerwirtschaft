@@ -3,9 +3,9 @@ package ui;
 import model.Model;
 
 import javax.swing.JFrame;
+import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.*;
 
 public class Lieferung extends JFrame implements Observer {
@@ -27,6 +27,9 @@ public class Lieferung extends JFrame implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		Model m = (Model)o;
-
+		getContentPane().removeAll();
+		add(new LagerTree(m), BorderLayout.WEST);
+		pack();
+		repaint();
 	}
 }
