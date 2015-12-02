@@ -76,7 +76,7 @@ public class Controller {
 
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
-        alleBuchungen.refresh(this);
+        alleBuchungen.refresh(this.getModel());
         alleBuchungen.stream.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
@@ -95,7 +95,7 @@ public class Controller {
 
     public void öffneLagerX(LagerHalle lager) {
         LagerAnsicht lagerAnsicht = LagerAnsicht.getInstance();
-        lagerAnsicht.build(this, lager);
+        lagerAnsicht.build(this.getModel(), lager);
         lagerAnsicht.stream.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
@@ -108,7 +108,7 @@ public class Controller {
 
     public void öffneLieferung(String datum) {
         LieferungDatum lieferungDatum = LieferungDatum.getInstance();
-        lieferungDatum.build(this, datum);
+        lieferungDatum.build(this.getModel(), datum);
         lieferungDatum.stream.addObserver((view, value) -> {
             if (value instanceof Model.LagerHalle)
                 this.öffneLagerX((Model.LagerHalle) value);

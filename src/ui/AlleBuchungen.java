@@ -64,10 +64,9 @@ public class AlleBuchungen extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void refresh(Controller controller) {
-        table.setRows(parseBuchungen(controller.getModel().getLieferungen()));
-
+    public void refresh(Model model) {
         table.setStream(stream);
+        table.setRows(parseBuchungen(model.getLieferungen()));
 
         this.pack();
         this.setVisible(true);

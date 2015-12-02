@@ -61,12 +61,12 @@ public class LieferungDatum extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Controller controller, String datum) {
+    public void build(Model model, String datum) {
         this.setTitle("Lieferung vom " + Utils.parseDate(datum));
         titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
 
         table.setStream(stream);
-        table.setRows(parseBuchungen(controller.getModel().getLieferungen(), datum));
+        table.setRows(parseBuchungen(model.getLieferungen(), datum));
 
         this.pack();
         this.setVisible(true);

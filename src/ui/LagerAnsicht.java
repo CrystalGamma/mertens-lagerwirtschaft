@@ -70,7 +70,7 @@ public class LagerAnsicht extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Controller controller, Model.LagerHalle lager) {
+    public void build(Model model, Model.LagerHalle lager) {
         this.setTitle("Lageransicht: " + lager.getName());
         titleLabel.setText(lager.getName());
 
@@ -78,7 +78,7 @@ public class LagerAnsicht extends JFrame {
         kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
 
         table.setStream(stream);
-        table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager)));
+        table.setRows(parseBuchungen(model.getBuchungenFürHalle(lager)));
 
         this.pack();
         this.setVisible(true);
