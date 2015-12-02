@@ -16,25 +16,17 @@ import java.util.Observer;
  * @author Florian Bussmann
  */
 public class LagerAnsicht extends JFrame implements Observer {
-    private static LagerAnsicht sharedInstance;
     final public Stream stream = new Stream();
+    final private Model.LagerHalle lager;
     private JLabel titleLabel = new JLabel();
     private JLabel bestandLabel = new JLabel();
     private JLabel kapazitätLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
-    private LagerAnsicht() {
+    public LagerAnsicht(Model.LagerHalle lager) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.lager = lager;
         this.init();
-    }
-
-    public static LagerAnsicht getInstance() {
-        if (sharedInstance == null) {
-            sharedInstance = new LagerAnsicht();
-        }
-
-        sharedInstance.requestFocus();
-        return sharedInstance;
     }
 
     private void init() {
@@ -66,20 +58,6 @@ public class LagerAnsicht extends JFrame implements Observer {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Model model, Model.LagerHalle lager) {
-        this.setTitle("Lageransicht: " + lager.getName());
-        titleLabel.setText(lager.getName());
-
-        bestandLabel.setText("Bestand: " + lager.getBestand());
-        kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
-
-        table.setStream(stream);
-        table.setRows(parseBuchungen(model.getBuchungenFürHalle(lager)));
-
-        this.pack();
-        this.setVisible(true);
-    }
-
     /**
      * Führt die Daten in das benötigte Format für die Tabelle zusammen.
      *
@@ -100,6 +78,18 @@ public class LagerAnsicht extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        if(o instanceof Model) {
+            this.setTitle("Lageransicht: " + lager.getName());
+            titleLabel.setText(lager.getName());
 
+            bestandLabel.setText("Bestand: " + lager.getBestand());
+            kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
+
+            table.setStream(stream);
+            table.setRows(parseBuchungen(((Model)o).getBuchungenFürHalle(lager)));
+
+            this.pack();
+            this.setVisible(true);
+        }
     }
 }

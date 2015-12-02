@@ -94,8 +94,8 @@ public class Controller {
     }
 
     public void öffneLagerX(LagerHalle lager) {
-        LagerAnsicht lagerAnsicht = LagerAnsicht.getInstance();
-        lagerAnsicht.build(this.getModel(), lager);
+        LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
+        lagerAnsicht.update(this.getModel(), null);
         lagerAnsicht.stream.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
