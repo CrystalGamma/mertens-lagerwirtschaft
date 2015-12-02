@@ -18,9 +18,10 @@ public class Controller {
 
     public Controller() {
         this.model = new Model();
-        StartAnsicht startAnsicht =new StartAnsicht(this.model, this);
-        model.addObserver(startAnsicht);
-      //  this.generateDummyData();
+        //StartAnsicht startAnsicht =new StartAnsicht(this.model, this);
+        this.generateDummyData();
+        model.addObserver(new StartAnsicht(this.model, this));
+     
     }
 
     public void generateDummyData() {

@@ -43,7 +43,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		columnNames.addElement("Bestand");
 		columnNames.addElement("Kapazität");
 		tableData = new Vector<Vector<Object>>();
-		fülleTabellenDaten(model.getLager());
+		fülleTabellenDaten(model.getLager(),0);
 		table = new JTable(tableData, columnNames);
 
 		tablePanel.add(table.getTableHeader());
@@ -92,6 +92,7 @@ public class StartAnsicht extends JFrame implements Observer {
 					table.editCellAt(selectedTableRow, 1);
 					vectorAusgewählteZeile = (tableData.get(selectedTableRow));
 					String alterName= vectorAusgewählteZeile.get(1).toString();
+					
 					table.getModel().addTableModelListener(e -> controler.ändereLagerName(table.getValueAt(selectedTableRow, 1).toString(),LagerNameZuLager.get(alterName)));
 				}
 			}
@@ -110,14 +111,14 @@ public class StartAnsicht extends JFrame implements Observer {
 
 		// muss npch getestet werden
 		tableData.clear();
-		fülleTabellenDaten(model.getLager());
+		fülleTabellenDaten(model.getLager(),0);
 		table.repaint();
 	}
 
 	/*
 	 * 	
 	 */
-	public void fülleTabellenDaten(Model.Lager[] inputlager) {
+	public void fülleTabellenDaten(Model.Lager[] inputlager, int tiefe) {
 		for (Model.Lager lager : inputlager) {
 			Model.Lager[] unterLager = lager.getUnterLager();
 			if (unterLager != null) {
@@ -129,18 +130,21 @@ public class StartAnsicht extends JFrame implements Observer {
 				tmpVector.addElement("");
 				tableData.addElement(tmpVector);
 				fülleHashmap(LagerNameZuLager, lager.getName(), lager);
-				fülleTabellenDaten(unterLager);
+				System.out.println(lager.getName()+tiefe);
+				fülleTabellenDaten(unterLager, tiefe+1);
 			} else {
 				Vector<Object> tmpVector = new Vector<Object>();
 				tmpVector.addElement(new String(""));
+				//for()
 				tmpVector.addElement(lager.getName());
 				tmpVector.addElement(lager.getBestand() + "");
 				tmpVector.addElement(lager.getKapazität() + "");
 				tableData.addElement(tmpVector);
 				fülleHashmap(LagerNameZuLager, lager.getName(), lager);
-
+				System.out.println(lager.getName()+tiefe);
 			}
 		}
+		System.out.println(tableData);
 	}
 
 	/*

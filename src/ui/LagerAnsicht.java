@@ -40,7 +40,6 @@ public class LagerAnsicht extends JFrame {
 
     private void init() {
         this.setResizable(false);
-        this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -56,15 +55,6 @@ public class LagerAnsicht extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        table.setRowSelectionAllowed(false);
-        table.setAutoCreateRowSorter(true);
-        table.setEnabled(false);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();
         tablePanel.add(table.getTableHeader());
         tablePanel.add(table);
         buchungsPanel.add(tablePanel);
