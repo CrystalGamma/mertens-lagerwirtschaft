@@ -51,6 +51,8 @@ public class Lieferung extends JFrame implements Observer {
 		p.setLayout(layout);
 		add(p, BorderLayout.EAST);
 		p.add(new JLabel(strategy.toString()));
+		Panel undoRedo = new Panel();
+		p.add(undoRedo);
 		Panel form = new Panel();
 		form.add(new JLabel("Menge"), BorderLayout.WEST);
 		JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
