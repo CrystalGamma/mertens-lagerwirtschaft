@@ -3,6 +3,7 @@ package ui;
 import controller.Controller;
 import model.Model;
 import model.Utils;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -11,6 +12,7 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Observable;
 
 /**
  * Die Klassse LagerAnsicht bietet eine Einsicht in die Buchungen für ein Datum.
@@ -19,6 +21,7 @@ import java.util.Map;
  */
 public class LieferungDatum extends JFrame {
     private static LieferungDatum sharedInstance;
+    final public Stream stream = new Stream();
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
@@ -62,7 +65,7 @@ public class LieferungDatum extends JFrame {
         this.setTitle("Lieferung vom " + Utils.parseDate(datum));
         titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
 
-        table.setController(controller);
+        table.setStream(stream);
         table.setRows(parseBuchungen(controller.getModel().getLieferungen(), datum));
 
         this.pack();
