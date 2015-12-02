@@ -6,6 +6,8 @@ import utils.Stream;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Die Klassse LagerAnsicht bietet eine Einsicht in die bisherigen Buchungen für
@@ -13,7 +15,7 @@ import java.util.Map;
  *
  * @author Florian Bussmann
  */
-public class LagerAnsicht extends JFrame {
+public class LagerAnsicht extends JFrame implements Observer {
     private static LagerAnsicht sharedInstance;
     final public Stream stream = new Stream();
     private JLabel titleLabel = new JLabel();
@@ -94,5 +96,10 @@ public class LagerAnsicht extends JFrame {
             pos++;
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }

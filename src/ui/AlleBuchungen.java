@@ -7,13 +7,15 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Die Klassse AlleBuchungen bietet eine Übersicht über alle bisherigen Buchungen.
  *
  * @author Florian Bussmann
  */
-public class AlleBuchungen extends JFrame {
+public class AlleBuchungen extends JFrame implements Observer {
     private static AlleBuchungen sharedInstance;
     final public Stream stream = new Stream();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
@@ -81,5 +83,10 @@ public class AlleBuchungen extends JFrame {
             pos++;
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }
