@@ -100,6 +100,7 @@ public class Controller {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
         });
+        model.addObserver(lagerAnsicht);
     }
 
     public void ändereLagerName(String neuerName, Lager lager) {
@@ -107,12 +108,13 @@ public class Controller {
     }
 
     public void öffneLieferung(String datum) {
-        LieferungDatum lieferungDatum = LieferungDatum.getInstance();
-        lieferungDatum.build(this.getModel(), datum);
+        LieferungDatum lieferungDatum = new LieferungDatum(datum);
+        lieferungDatum.update(this.getModel(), datum);
         lieferungDatum.stream.addObserver((view, value) -> {
             if (value instanceof Model.LagerHalle)
                 this.öffneLagerX((Model.LagerHalle) value);
         });
+        model.addObserver(lieferungDatum);
     }
 
 }

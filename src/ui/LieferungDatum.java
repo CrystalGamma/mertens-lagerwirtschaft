@@ -17,23 +17,15 @@ import java.util.Observer;
  * @author Florian Bussmann
  */
 public class LieferungDatum extends JFrame implements Observer {
-    private static LieferungDatum sharedInstance;
+    private final String datum;
     final public Stream stream = new Stream();
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
-    private LieferungDatum() {
+    public LieferungDatum(String datum) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.datum = datum;
         this.init();
-    }
-
-    public static LieferungDatum getInstance() {
-        if (sharedInstance == null) {
-            sharedInstance = new LieferungDatum();
-        }
-
-        sharedInstance.requestFocus();
-        return sharedInstance;
     }
 
     public void init() {
@@ -58,17 +50,6 @@ public class LieferungDatum extends JFrame implements Observer {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Model model, String datum) {
-        this.setTitle("Lieferung vom " + Utils.parseDate(datum));
-        titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
-
-        table.setStream(stream);
-        table.setRows(parseBuchungen(model.getLieferungen(), datum));
-
-        this.pack();
-        this.setVisible(true);
-    }
-
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, String datum) {
         Object[][] data = null;
         int pos = 0;
@@ -90,6 +71,15 @@ public class LieferungDatum extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
+        if (o instanceof Model) {
+            this.setTitle("Lieferung vom " + Utils.parseDate(datum));
+            titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
 
+            table.setStream(stream);
+            table.setRows(parseBuchungen(((Model)o).getLieferungen(), datum));
+
+            this.pack();
+            this.setVisible(true);
+        }
     }
 }
