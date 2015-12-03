@@ -69,6 +69,12 @@ public class AlleBuchungen extends JFrame implements Observer {
         this.setVisible(true);
     }
 
+    /**
+     * Führt die Daten in das benötigte Format für die Tabelle zusammen.
+     *
+     * @param lieferungen Alle Buchungen
+     * @return Mehrdimensionales Array mit Daten (jeweils Datum und Menge)
+     */
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
