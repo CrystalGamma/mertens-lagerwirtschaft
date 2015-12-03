@@ -25,6 +25,11 @@ public class AlleBuchungen extends JFrame implements Observer {
         this.init();
     }
 
+    /**
+     * Globaler Zugriffspunkt auf die Instanz.
+     *
+     * @return Instanz der Ansicht für alle Buchungen.
+     */
     public static AlleBuchungen getInstance() {
         if (sharedInstance == null) {
             sharedInstance = new AlleBuchungen();
@@ -34,6 +39,9 @@ public class AlleBuchungen extends JFrame implements Observer {
         return sharedInstance;
     }
 
+    /**
+     * Initialisiert den Standardinhalt der Ansicht für alle Buchungen.
+     */
     public void init() {
         this.setResizable(false);
         this.setTitle("Alle Buchungen");

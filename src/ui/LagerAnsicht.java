@@ -29,6 +29,9 @@ public class LagerAnsicht extends JFrame implements Observer {
         this.init();
     }
 
+    /**
+     * Initialisiert den Standardinhalt der Lageransicht.
+     */
     private void init() {
         this.setResizable(false);
 

@@ -28,6 +28,9 @@ public class LieferungDatum extends JFrame implements Observer {
         this.init();
     }
 
+    /**
+     * Initialisiert den Standardinhalt der Lieferungsansicht.
+     */
     public void init() {
         this.setResizable(false);
 
