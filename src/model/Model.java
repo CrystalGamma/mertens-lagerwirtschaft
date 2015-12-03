@@ -47,6 +47,7 @@ public class Model extends Observable {
 		Lager[] getUnterLager();
 		String toString();
 		void setName(String name);
+		boolean getZeigeUnterlager();
 	}
 
 	public class LagerHalle implements Lager {
@@ -147,15 +148,22 @@ public class Model extends Observable {
 			setChanged();
 			notifyObservers(this);
 		}
+
+		@Override
+		public boolean getZeigeUnterlager() {
+			return true;
+		}
 	}
 
 	public class OberLager implements Lager {
 		private String name;
 		private Lager[] unterLager;
+		private boolean zeigeUnterlager;
 
 		public OberLager(String name, Lager[] unterLager){
 			this.name = name;
 			this.unterLager = unterLager;
+			zeigeUnterlager=true;
 		}
 
 		@Override
@@ -196,6 +204,16 @@ public class Model extends Observable {
 			this.name=name;
 			setChanged();
 			notifyObservers();
+		}
+		public void setZeigeUnterlager()
+		{
+			zeigeUnterlager=!zeigeUnterlager;
+			setChanged();
+			notifyObservers();
+		}
+		public boolean getZeigeUnterlager()
+		{
+			return zeigeUnterlager;
 		}
 	}
 }

@@ -3,6 +3,7 @@ package controller;
 import model.Model;
 import model.Model.Lager;
 import model.Model.LagerHalle;
+import model.Model.OberLager;
 import ui.AlleBuchungen;
 import ui.LagerAnsicht;
 import ui.LieferungDatum;
@@ -115,5 +116,9 @@ public class Controller {
                 this.öffneLagerX((Model.LagerHalle) value);
         });
         model.addObserver(lieferungDatum);
+    }
+
+    public void setZeigeUnterlager(OberLager oberLager) {
+        oberLager.setZeigeUnterlager();
     }
 }
