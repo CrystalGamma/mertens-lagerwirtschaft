@@ -3,6 +3,7 @@ package controller;
 import model.Model;
 import model.Model.Lager;
 import model.Model.LagerHalle;
+import model.Model.OberLager;
 import ui.AlleBuchungen;
 import ui.LagerAnsicht;
 import ui.LieferungDatum;
@@ -76,8 +77,8 @@ public class Controller {
 
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
-        alleBuchungen.refresh(this.getModel());
-        alleBuchungen.stream.addObserver((view, value) -> {
+        alleBuchungen.update(this.getModel(), null);
+        alleBuchungen.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
         });
@@ -94,12 +95,13 @@ public class Controller {
     }
 
     public void öffneLagerX(LagerHalle lager) {
-        LagerAnsicht lagerAnsicht = LagerAnsicht.getInstance();
-        lagerAnsicht.build(this.getModel(), lager);
-        lagerAnsicht.stream.addObserver((view, value) -> {
+        LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
+        lagerAnsicht.update(this.getModel(), lager);
+        lagerAnsicht.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
         });
+        model.addObserver(lagerAnsicht);
     }
 
     public void ändereLagerName(String neuerName, Lager lager) {
@@ -107,12 +109,16 @@ public class Controller {
     }
 
     public void öffneLieferung(String datum) {
-        LieferungDatum lieferungDatum = LieferungDatum.getInstance();
-        lieferungDatum.build(this.getModel(), datum);
-        lieferungDatum.stream.addObserver((view, value) -> {
+        LieferungDatum lieferungDatum = new LieferungDatum(datum);
+        lieferungDatum.update(this.getModel(), datum);
+        lieferungDatum.geklicktesLager.addObserver((view, value) -> {
             if (value instanceof Model.LagerHalle)
                 this.öffneLagerX((Model.LagerHalle) value);
         });
+        model.addObserver(lieferungDatum);
     }
 
+    public void setZeigeUnterlager(OberLager oberLager) {
+        oberLager.setZeigeUnterlager();
+    }
 }

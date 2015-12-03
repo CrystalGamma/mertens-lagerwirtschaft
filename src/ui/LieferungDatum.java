@@ -8,63 +8,49 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Die Klassse LagerAnsicht bietet eine Einsicht in die Buchungen für ein Datum.
  *
  * @author Florian Bussmann
  */
-public class LieferungDatum extends JFrame {
-    private static LieferungDatum sharedInstance;
-    final public Stream stream = new Stream();
+public class LieferungDatum extends JFrame implements Observer {
+    final public Observable geklicktesLager = new Stream();
+    private final String datum;
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
-    private LieferungDatum() {
+    public LieferungDatum(String datum) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.datum = datum;
         this.init();
     }
 
-    public static LieferungDatum getInstance() {
-        if (sharedInstance == null) {
-            sharedInstance = new LieferungDatum();
-        }
-
-        sharedInstance.requestFocus();
-        return sharedInstance;
-    }
-
+    /**
+     * Initialisiert den Standardinhalt der Lieferungsansicht.
+     */
     public void init() {
         this.setResizable(false);
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 20));
-        titlePanel.add(titleLabel);
+        this.titleLabel.setFont(new Font(this.titleLabel.getFont().getName(), Font.BOLD, 20));
+        titlePanel.add(this.titleLabel);
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         DefaultTableCellRenderer valueRenderer = new DefaultTableCellRenderer();
         valueRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-        table.getColumn("Menge").setCellRenderer(valueRenderer);
-        tablePanel.add(table.getTableHeader());
-        tablePanel.add(table);
+        this.table.getColumn("Menge").setCellRenderer(valueRenderer);
+        tablePanel.add(this.table.getTableHeader());
+        tablePanel.add(this.table);
 
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
         this.setLocationRelativeTo(null);
-    }
-
-    public void build(Model model, String datum) {
-        this.setTitle("Lieferung vom " + Utils.parseDate(datum));
-        titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
-
-        table.setStream(stream);
-        table.setRows(parseBuchungen(model.getLieferungen(), datum));
-
-        this.pack();
-        this.setVisible(true);
     }
 
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, String datum) {
@@ -84,5 +70,19 @@ public class LieferungDatum extends JFrame {
             }
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof Model) {
+            this.setTitle("Lieferung vom " + Utils.parseDate(this.datum));
+            this.titleLabel.setText("Lieferung vom " + Utils.parseDate(this.datum));
+
+            this.table.setStream((Stream) this.geklicktesLager);
+            this.table.setRows(parseBuchungen(((Model) o).getLieferungen(), this.datum));
+
+            this.pack();
+            this.setVisible(true);
+        }
     }
 }

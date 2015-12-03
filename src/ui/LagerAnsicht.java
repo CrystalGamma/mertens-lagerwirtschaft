@@ -6,6 +6,8 @@ import utils.Stream;
 import javax.swing.*;
 import java.awt.*;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Die Klassse LagerAnsicht bietet eine Einsicht in die bisherigen Buchungen für
@@ -13,47 +15,42 @@ import java.util.Map;
  *
  * @author Florian Bussmann
  */
-public class LagerAnsicht extends JFrame {
-    private static LagerAnsicht sharedInstance;
-    final public Stream stream = new Stream();
+public class LagerAnsicht extends JFrame implements Observer {
+    final public Observable geklicktesDatum = new Stream();
+    final private Model.LagerHalle lager;
     private JLabel titleLabel = new JLabel();
     private JLabel bestandLabel = new JLabel();
     private JLabel kapazitätLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
-    private LagerAnsicht() {
+    public LagerAnsicht(Model.LagerHalle lager) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.lager = lager;
         this.init();
     }
 
-    public static LagerAnsicht getInstance() {
-        if (sharedInstance == null) {
-            sharedInstance = new LagerAnsicht();
-        }
-
-        sharedInstance.requestFocus();
-        return sharedInstance;
-    }
-
+    /**
+     * Initialisiert den Standardinhalt der Lageransicht.
+     */
     private void init() {
         this.setResizable(false);
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 20));
-        titlePanel.add(titleLabel);
+        this.titleLabel.setFont(new Font(this.titleLabel.getFont().getName(), Font.BOLD, 20));
+        titlePanel.add(this.titleLabel);
 
         JPanel buchungsPanel = new JPanel();
         buchungsPanel.setLayout(new BoxLayout(buchungsPanel, BoxLayout.Y_AXIS));
         JLabel buchungsLabel = new JLabel("Buchungsübersicht");
         buchungsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buchungsLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 16));
+        buchungsLabel.setFont(new Font(this.titleLabel.getFont().getName(), Font.BOLD, 16));
         buchungsPanel.add(buchungsLabel);
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        tablePanel.add(table.getTableHeader());
-        tablePanel.add(table);
+        tablePanel.add(this.table.getTableHeader());
+        tablePanel.add(this.table);
         buchungsPanel.add(tablePanel);
 
         this.add(titlePanel, BorderLayout.NORTH);
@@ -62,20 +59,6 @@ public class LagerAnsicht extends JFrame {
         this.add(buchungsPanel, BorderLayout.SOUTH);
 
         this.setLocationRelativeTo(null);
-    }
-
-    public void build(Model model, Model.LagerHalle lager) {
-        this.setTitle("Lageransicht: " + lager.getName());
-        titleLabel.setText(lager.getName());
-
-        bestandLabel.setText("Bestand: " + lager.getBestand());
-        kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
-
-        table.setStream(stream);
-        table.setRows(parseBuchungen(model.getBuchungenFürHalle(lager)));
-
-        this.pack();
-        this.setVisible(true);
     }
 
     /**
@@ -94,5 +77,22 @@ public class LagerAnsicht extends JFrame {
             pos++;
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof Model && arg == this.lager) {
+            this.setTitle("Lageransicht: " + this.lager.getName());
+            this.titleLabel.setText(this.lager.getName());
+
+            this.bestandLabel.setText("Bestand: " + this.lager.getBestand());
+            this.kapazitätLabel.setText("Kapazität: " + this.lager.getKapazität());
+
+            this.table.setStream((Stream) this.geklicktesDatum);
+            this.table.setRows(parseBuchungen(((Model) o).getBuchungenFürHalle(this.lager)));
+
+            this.pack();
+            this.setVisible(true);
+        }
     }
 }

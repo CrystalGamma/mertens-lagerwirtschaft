@@ -7,15 +7,17 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Die Klassse AlleBuchungen bietet eine Übersicht über alle bisherigen Buchungen.
  *
  * @author Florian Bussmann
  */
-public class AlleBuchungen extends JFrame {
+public class AlleBuchungen extends JFrame implements Observer {
     private static AlleBuchungen sharedInstance;
-    final public Stream stream = new Stream();
+    final public Observable geklicktesDatum = new Stream();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
 
     private AlleBuchungen() {
@@ -23,6 +25,11 @@ public class AlleBuchungen extends JFrame {
         this.init();
     }
 
+    /**
+     * Globaler Zugriffspunkt auf die Instanz.
+     *
+     * @return Instanz der Ansicht für alle Buchungen.
+     */
     public static AlleBuchungen getInstance() {
         if (sharedInstance == null) {
             sharedInstance = new AlleBuchungen();
@@ -32,6 +39,9 @@ public class AlleBuchungen extends JFrame {
         return sharedInstance;
     }
 
+    /**
+     * Initialisiert den Standardinhalt der Ansicht für alle Buchungen.
+     */
     public void init() {
         this.setResizable(false);
         this.setTitle("Alle Buchungen");
@@ -46,12 +56,12 @@ public class AlleBuchungen extends JFrame {
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         DefaultTableCellRenderer keyRenderer = new DefaultTableCellRenderer();
         keyRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
-        table.getColumn("Datum").setCellRenderer(keyRenderer);
+        this.table.getColumn("Datum").setCellRenderer(keyRenderer);
         DefaultTableCellRenderer valueRenderer = new DefaultTableCellRenderer();
         valueRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-        table.getColumn("Menge").setCellRenderer(valueRenderer);
-        tablePanel.add(table.getTableHeader());
-        tablePanel.add(table);
+        this.table.getColumn("Menge").setCellRenderer(valueRenderer);
+        tablePanel.add(this.table.getTableHeader());
+        tablePanel.add(this.table);
 
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
@@ -59,14 +69,12 @@ public class AlleBuchungen extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void refresh(Model model) {
-        table.setStream(stream);
-        table.setRows(parseBuchungen(model.getLieferungen()));
-
-        this.pack();
-        this.setVisible(true);
-    }
-
+    /**
+     * Führt die Daten in das benötigte Format für die Tabelle zusammen.
+     *
+     * @param lieferungen Alle Buchungen
+     * @return Mehrdimensionales Array mit Daten (jeweils Datum und Menge)
+     */
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
@@ -81,5 +89,16 @@ public class AlleBuchungen extends JFrame {
             pos++;
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof Model) {
+            this.table.setStream((Stream) this.geklicktesDatum);
+            this.table.setRows(parseBuchungen(((Model) o).getLieferungen()));
+
+            this.pack();
+            this.setVisible(true);
+        }
     }
 }
