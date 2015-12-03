@@ -17,8 +17,8 @@ import java.util.Observer;
  * @author Florian Bussmann
  */
 public class LieferungDatum extends JFrame implements Observer {
+    final public Observable geklicktesLager = new Stream();
     private final String datum;
-    final public Stream stream = new Stream();
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
@@ -33,16 +33,16 @@ public class LieferungDatum extends JFrame implements Observer {
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 20));
-        titlePanel.add(titleLabel);
+        this.titleLabel.setFont(new Font(this.titleLabel.getFont().getName(), Font.BOLD, 20));
+        titlePanel.add(this.titleLabel);
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
         DefaultTableCellRenderer valueRenderer = new DefaultTableCellRenderer();
         valueRenderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
-        table.getColumn("Menge").setCellRenderer(valueRenderer);
-        tablePanel.add(table.getTableHeader());
-        tablePanel.add(table);
+        this.table.getColumn("Menge").setCellRenderer(valueRenderer);
+        tablePanel.add(this.table.getTableHeader());
+        tablePanel.add(this.table);
 
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
@@ -72,11 +72,11 @@ public class LieferungDatum extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof Model) {
-            this.setTitle("Lieferung vom " + Utils.parseDate(datum));
-            titleLabel.setText("Lieferung vom " + Utils.parseDate(datum));
+            this.setTitle("Lieferung vom " + Utils.parseDate(this.datum));
+            this.titleLabel.setText("Lieferung vom " + Utils.parseDate(this.datum));
 
-            table.setStream(stream);
-            table.setRows(parseBuchungen(((Model)o).getLieferungen(), datum));
+            this.table.setStream((Stream) this.geklicktesLager);
+            this.table.setRows(parseBuchungen(((Model) o).getLieferungen(), this.datum));
 
             this.pack();
             this.setVisible(true);

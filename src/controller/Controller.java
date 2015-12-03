@@ -77,7 +77,7 @@ public class Controller {
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
         alleBuchungen.refresh(this.getModel());
-        alleBuchungen.stream.addObserver((view, value) -> {
+        alleBuchungen.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
         });
@@ -95,8 +95,8 @@ public class Controller {
 
     public void öffneLagerX(LagerHalle lager) {
         LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
-        lagerAnsicht.update(this.getModel(), null);
-        lagerAnsicht.stream.addObserver((view, value) -> {
+        lagerAnsicht.update(this.getModel(), lager);
+        lagerAnsicht.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
         });
@@ -110,11 +110,10 @@ public class Controller {
     public void öffneLieferung(String datum) {
         LieferungDatum lieferungDatum = new LieferungDatum(datum);
         lieferungDatum.update(this.getModel(), datum);
-        lieferungDatum.stream.addObserver((view, value) -> {
+        lieferungDatum.geklicktesLager.addObserver((view, value) -> {
             if (value instanceof Model.LagerHalle)
                 this.öffneLagerX((Model.LagerHalle) value);
         });
         model.addObserver(lieferungDatum);
     }
-
 }
