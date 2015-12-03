@@ -1,38 +1,52 @@
 package ui;
 
-import controller.Controller;
-import model.Model;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.util.ArrayList;
 
+/**
+ * Die Klasse CustomTable erweitert die JTable um einen standardmäßig gesetzten
+ * Highlighter für Zellen mit einer negativen Zahl und ermöglicht darüber hinaus
+ * die Weiterleitung in andere Ansichten über einen Klick in eine dafür
+ * vorgesehene Zelle.
+ *
+ * @author Florian Bussmann
+ */
 public class CustomTable extends JTable {
-    private Controller controller;
+    private Stream stream;
 
     public CustomTable(String[] columnNames) {
         super(new DefaultTableModel(new Object[][]{}, columnNames));
+        this.setRowSelectionAllowed(false);
+        this.setAutoCreateRowSorter(true);
+        this.setEnabled(false);
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(this.getModel());
+        this.setRowSorter(sorter);
+        java.util.List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
         this.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int rowIndex = CustomTable.this.rowAtPoint(evt.getPoint());
                 int columnIndex = CustomTable.this.columnAtPoint(evt.getPoint());
-                if (rowIndex >= 0 && columnIndex >= 0 && controller != null) {
+                if (rowIndex >= 0 && columnIndex >= 0 && stream != null) {
                     Object value = getValueAt(rowIndex, columnIndex);
-                    if (value instanceof String) {
-                        controller.öffneLieferung(value.toString());
-                    } else if (value instanceof Model.LagerHalle) {
-                        controller.öffneLagerX((Model.LagerHalle) value);
-                    }
+                    stream.push(value);
                 }
             }
         });
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
+    public void setStream(Stream stream) {
+        this.stream = stream;
     }
 
     public void setRows(Object[][] rows) {

@@ -1,19 +1,29 @@
 package ui;
 
-import controller.Controller;
 import model.Model;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
-public class AlleBuchungen extends JFrame {
+/**
+ * Die Klassse AlleBuchungen bietet eine Übersicht über alle bisherigen Buchungen.
+ *
+ * @author Florian Bussmann
+ */
+public class AlleBuchungen extends JFrame implements Observer {
     private static AlleBuchungen sharedInstance;
-    CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
+    final public Stream stream = new Stream();
+    private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
+
+    private AlleBuchungen() {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.init();
+    }
 
     public static AlleBuchungen getInstance() {
         if (sharedInstance == null) {
@@ -24,14 +34,9 @@ public class AlleBuchungen extends JFrame {
         return sharedInstance;
     }
 
-    private AlleBuchungen() {
-        this.init();
-    }
-
     public void init() {
         this.setResizable(false);
         this.setTitle("Alle Buchungen");
-        this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -41,15 +46,6 @@ public class AlleBuchungen extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        table.setRowSelectionAllowed(false);
-        table.setAutoCreateRowSorter(true);
-        table.setEnabled(false);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
-        java.util.List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();
         DefaultTableCellRenderer keyRenderer = new DefaultTableCellRenderer();
         keyRenderer.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
         table.getColumn("Datum").setCellRenderer(keyRenderer);
@@ -65,8 +61,9 @@ public class AlleBuchungen extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void refresh(Controller controller) {
-        table.setRows(parseBuchungen(controller.getModel().getLieferungen()));
+    public void refresh(Model model) {
+        table.setStream(stream);
+        table.setRows(parseBuchungen(model.getLieferungen()));
 
         this.pack();
         this.setVisible(true);
@@ -86,5 +83,10 @@ public class AlleBuchungen extends JFrame {
             pos++;
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }

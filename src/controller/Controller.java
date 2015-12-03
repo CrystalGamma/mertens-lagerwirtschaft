@@ -4,7 +4,10 @@ import model.Model;
 import model.Model.Lager;
 import model.Model.LagerHalle;
 import model.Model.OberLager;
-import ui.*;
+import ui.AlleBuchungen;
+import ui.LagerAnsicht;
+import ui.LieferungDatum;
+import ui.StartAnsicht;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,16 +16,15 @@ import java.util.Vector;
 public class Controller {
     Model model;
 
-    public static void main(String[] args) {
-        Controller controller = new Controller();
-    }
-
     public Controller() {
         this.model = new Model();
         //StartAnsicht startAnsicht =new StartAnsicht(this.model, this);
         this.generateDummyData();
         model.addObserver(new StartAnsicht(this.model, this));
-     
+    }
+
+    public static void main(String[] args) {
+        Controller controller = new Controller();
     }
 
     public void generateDummyData() {
@@ -75,7 +77,11 @@ public class Controller {
 
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
-        alleBuchungen.refresh(this);
+        alleBuchungen.refresh(this.getModel());
+        alleBuchungen.stream.addObserver((view, value) -> {
+            if (value instanceof String)
+                this.öffneLieferung(value.toString());
+        });
     }
 
     public void öffneAuslieferung() {
@@ -89,27 +95,31 @@ public class Controller {
     }
 
     public void öffneLagerX(LagerHalle lager) {
-        LagerAnsicht lagerAnsicht = LagerAnsicht.getInstance();
-        lagerAnsicht.build(this, lager);
-        //model.addObserver(lagerAnsicht);
+        LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
+        lagerAnsicht.update(this.getModel(), null);
+        lagerAnsicht.stream.addObserver((view, value) -> {
+            if (value instanceof String)
+                this.öffneLieferung(value.toString());
+        });
+        model.addObserver(lagerAnsicht);
     }
 
-
-	
-	public void ändereLagerName(String neuerName, Lager lager)
-	{
-		lager.setName(neuerName);
-	}
+    public void ändereLagerName(String neuerName, Lager lager) {
+        lager.setName(neuerName);
+    }
 
     public void öffneLieferung(String datum) {
-        LieferungDatum lieferungDatum = LieferungDatum.getInstance();
-        lieferungDatum.build(this, datum);
-        //model.addObserver(lieferungDatum);
+        LieferungDatum lieferungDatum = new LieferungDatum(datum);
+        lieferungDatum.update(this.getModel(), datum);
+        lieferungDatum.stream.addObserver((view, value) -> {
+            if (value instanceof Model.LagerHalle)
+                this.öffneLagerX((Model.LagerHalle) value);
+        });
+        model.addObserver(lieferungDatum);
     }
     public void setZeigeUnterlager(OberLager oberLager)
 	{
 		oberLager.setZeigeUnterlager();
 	}
-
 
 }

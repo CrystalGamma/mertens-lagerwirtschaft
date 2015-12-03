@@ -1,38 +1,36 @@
 package ui;
 
-import controller.Controller;
 import model.Model;
+import utils.Stream;
 
-import java.awt.*;
 import javax.swing.*;
-import javax.swing.table.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
 import java.util.Map;
+import java.util.Observable;
+import java.util.Observer;
 
-public class LagerAnsicht extends JFrame {
-    private static LagerAnsicht sharedInstance;
-    JLabel titleLabel = new JLabel();
-    JLabel bestandLabel = new JLabel();
-    JLabel kapazitätLabel = new JLabel();
-    CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
+/**
+ * Die Klassse LagerAnsicht bietet eine Einsicht in die bisherigen Buchungen für
+ * ein Lager.
+ *
+ * @author Florian Bussmann
+ */
+public class LagerAnsicht extends JFrame implements Observer {
+    final public Stream stream = new Stream();
+    final private Model.LagerHalle lager;
+    private JLabel titleLabel = new JLabel();
+    private JLabel bestandLabel = new JLabel();
+    private JLabel kapazitätLabel = new JLabel();
+    private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
-    public static LagerAnsicht getInstance() {
-        if (sharedInstance == null) {
-            sharedInstance = new LagerAnsicht();
-        }
-
-        sharedInstance.requestFocus();
-        return sharedInstance;
-    }
-
-    private LagerAnsicht() {
+    public LagerAnsicht(Model.LagerHalle lager) {
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.lager = lager;
         this.init();
     }
 
     private void init() {
         this.setResizable(false);
-        this.setLayout(new BorderLayout());
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -48,15 +46,6 @@ public class LagerAnsicht extends JFrame {
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
-        table.setRowSelectionAllowed(false);
-        table.setAutoCreateRowSorter(true);
-        table.setEnabled(false);
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
-        table.setRowSorter(sorter);
-        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
-        sorter.setSortKeys(sortKeys);
-        sorter.sort();
         tablePanel.add(table.getTableHeader());
         tablePanel.add(table);
         buchungsPanel.add(tablePanel);
@@ -69,21 +58,13 @@ public class LagerAnsicht extends JFrame {
         this.setLocationRelativeTo(null);
     }
 
-    public void build(Controller controller, Model.LagerHalle lager) {
-        this.setTitle("Lageransicht: " + lager.getName());
-        titleLabel.setText(lager.getName());
-
-        bestandLabel.setText("Bestand: " + lager.getBestand());
-        kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
-
-        table.setController(controller);
-        table.setRows(parseBuchungen(controller.getModel().getBuchungenFürHalle(lager), lager));
-
-        this.pack();
-        this.setVisible(true);
-    }
-
-    public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, Model.LagerHalle lager) {
+    /**
+     * Führt die Daten in das benötigte Format für die Tabelle zusammen.
+     *
+     * @param lieferungen Buchungen für eine Lagerhalle
+     * @return Mehrdimensionales Array mit Daten (jeweils Datum und Bestandsänderung)
+     */
+    public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
@@ -93,5 +74,22 @@ public class LagerAnsicht extends JFrame {
             pos++;
         }
         return data;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof Model) {
+            this.setTitle("Lageransicht: " + lager.getName());
+            titleLabel.setText(lager.getName());
+
+            bestandLabel.setText("Bestand: " + lager.getBestand());
+            kapazitätLabel.setText("Kapazität: " + lager.getKapazität());
+
+            table.setStream(stream);
+            table.setRows(parseBuchungen(((Model)o).getBuchungenFürHalle(lager)));
+
+            this.pack();
+            this.setVisible(true);
+        }
     }
 }
