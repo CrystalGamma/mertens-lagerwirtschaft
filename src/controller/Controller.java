@@ -3,6 +3,7 @@ package controller;
 import model.Model;
 import model.Model.Lager;
 import model.Model.LagerHalle;
+import model.Model.OberLager;
 import ui.*;
 
 import java.util.HashMap;
@@ -90,6 +91,7 @@ public class Controller {
     public void öffneLagerX(LagerHalle lager) {
         LagerAnsicht lagerAnsicht = LagerAnsicht.getInstance();
         lagerAnsicht.build(this, lager);
+        //model.addObserver(lagerAnsicht);
     }
 
 
@@ -102,7 +104,12 @@ public class Controller {
     public void öffneLieferung(String datum) {
         LieferungDatum lieferungDatum = LieferungDatum.getInstance();
         lieferungDatum.build(this, datum);
+        //model.addObserver(lieferungDatum);
     }
+    public void setZeigeUnterlager(OberLager oberLager)
+	{
+		oberLager.setZeigeUnterlager();
+	}
 
 
 }
