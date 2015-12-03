@@ -77,7 +77,7 @@ public class Controller {
 
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
-        alleBuchungen.refresh(this.getModel());
+        alleBuchungen.update(this.getModel(), null);
         alleBuchungen.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());

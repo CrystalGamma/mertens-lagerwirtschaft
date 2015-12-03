@@ -61,14 +61,6 @@ public class AlleBuchungen extends JFrame implements Observer {
         this.setLocationRelativeTo(null);
     }
 
-    public void refresh(Model model) {
-        this.table.setStream((Stream) this.geklicktesDatum);
-        this.table.setRows(parseBuchungen(model.getLieferungen()));
-
-        this.pack();
-        this.setVisible(true);
-    }
-
     /**
      * Führt die Daten in das benötigte Format für die Tabelle zusammen.
      *
@@ -94,7 +86,11 @@ public class AlleBuchungen extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if(o instanceof Model) {
-            this.refresh((Model) o);
+            this.table.setStream((Stream) this.geklicktesDatum);
+            this.table.setRows(parseBuchungen(((Model) o).getLieferungen()));
+
+            this.pack();
+            this.setVisible(true);
         }
     }
 }
