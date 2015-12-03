@@ -87,6 +87,8 @@ public class AlleBuchungen extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-
+        if(o instanceof Model) {
+            this.refresh((Model) o);
+        }
     }
 }
