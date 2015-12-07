@@ -70,15 +70,26 @@ public class LagerAnsicht extends JFrame implements Observer {
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
+
+        // Iteriere über alle Tage an denen es Buchungen gab
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
-            Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
-            data[pos][1] = buchungen.get(buchungen.keySet().toArray()[0]);
+
+            // Hole die Buchung zu dem ausgewählten Lager zu dem aktuellen Tag
+            Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
+            data[pos][1] = buchungen.get(this.lager);
+
             pos++;
         }
         return data;
     }
 
+    /**
+     * Aktualisieren der Ansicht bei Änderungen am Model.
+     *
+     * @param o Beobachtetes Objekt
+     * @param arg Lagerhalle an der sich etwas geändert hat
+     */
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof Model && arg == this.lager) {

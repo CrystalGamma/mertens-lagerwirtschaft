@@ -35,7 +35,9 @@ public class AlleBuchungen extends JFrame implements Observer {
             sharedInstance = new AlleBuchungen();
         }
 
+        // Ansicht in den Vordergrund holen.
         sharedInstance.requestFocus();
+
         return sharedInstance;
     }
 
@@ -78,19 +80,31 @@ public class AlleBuchungen extends JFrame implements Observer {
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
+
+        // Iteriere über alle Tage an denen es Buchungen gab
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
-            Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data[pos][0] = entry.getKey();
+
+            // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen
+            Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             int menge = 0;
             for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
                 menge += buchung.getValue();
             }
             data[pos][1] = menge;
+
             pos++;
         }
+
         return data;
     }
 
+    /**
+     * Aktualisieren der Ansicht bei Änderungen am Model.
+     *
+     * @param o Beobachtetes Objekt
+     * @param arg nicht verwendet
+     */
     @Override
     public void update(Observable o, Object arg) {
         if(o instanceof Model) {
