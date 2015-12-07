@@ -53,9 +53,17 @@ public class LieferungDatum extends JFrame implements Observer {
         this.setLocationRelativeTo(null);
     }
 
+    /**
+     * Führt die Daten in das benötigte Format für die Tabelle zusammen.
+     *
+     * @param lieferungen Alle Buchungen
+     * @return Mehrdimensionales Array mit Daten (jeweils Datum und Menge)
+     */
     public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen, String datum) {
         Object[][] data = null;
         int pos = 0;
+
+        // Iteriere über alle Buchungen und suche Buchungen zu dem geüwnschten Tag
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             if (entry.getKey() != datum)
                 continue;
@@ -63,6 +71,7 @@ public class LieferungDatum extends JFrame implements Observer {
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data = new Object[buchungen.size()][2];
 
+            // Iteriere über alle Buchungen des Tages
             for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
                 data[pos][0] = buchung.getKey();
                 data[pos][1] = buchung.getValue();
@@ -72,6 +81,12 @@ public class LieferungDatum extends JFrame implements Observer {
         return data;
     }
 
+    /**
+     * Aktualisieren der Ansicht bei Änderungen am Model.
+     *
+     * @param o Beobachtetes Objekt
+     * @param arg nicht verwendet
+     */
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof Model) {
