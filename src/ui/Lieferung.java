@@ -70,7 +70,6 @@ public class Lieferung extends JFrame implements Observer {
 		Panel p = new Panel();
 		LayoutManager layout = new BoxLayout(p, BoxLayout.PAGE_AXIS);
 		p.setLayout(layout);
-		p.
 		add(p, BorderLayout.EAST);
 		p.add(new JLabel(strategy.toString()));
 		Panel undoRedo = new Panel();
