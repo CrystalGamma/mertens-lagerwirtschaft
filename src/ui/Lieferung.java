@@ -141,8 +141,16 @@ public class Lieferung extends JFrame implements Observer {
 			slListener.stateChanged(null);
 			slider.addChangeListener(slListener);
 			tree.geklickteLager.addObserver((_dummy, halle_) -> {
-				if (buchungen.get(aktuelleHalle) + vertMenge < lieferungsMenge)
-					addHalle(m, (Model.LagerHalle)halle_);
+				LagerHalle halle = (LagerHalle) halle_;
+				if (strategy.maxWert(halle) < 1) {
+					JOptionPane.showMessageDialog(this, "Diese Lieferung kann auf diesem Lager aufgrund von Bestand/Kapazität nicht ausgeführt werden");
+					return;
+				}
+				if (buchungen.get(aktuelleHalle) + vertMenge < lieferungsMenge) {
+					addHalle(m, halle);
+				} else {
+					JOptionPane.showMessageDialog(this, "Es wurde bereits die gesamte Menge der Lieferung verteilt");
+				}
 			});
 		}
 		pack();
