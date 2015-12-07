@@ -117,7 +117,7 @@ public class Lieferung extends JFrame implements Observer {
 				verteilteMenge += teilmenge;
 			}
 			Panel sliderPanel = new Panel();
-			JSlider slider = new JSlider(1, Math.max(lieferungsMenge - verteilteMenge, strategy.maxWert(aktuelleHalle)), buchungen.get(aktuelleHalle));
+			JSlider slider = new JSlider(1, Math.min(lieferungsMenge - verteilteMenge, strategy.maxWert(aktuelleHalle)), buchungen.get(aktuelleHalle));
 			JLabel sliderLabel = new JLabel(aktuelleHalle.getName() + ": 1 (" + (100.0f / lieferungsMenge) + "%)");
 			sliderPanel.add(sliderLabel);
 			sliderPanel.add(slider);
@@ -159,7 +159,7 @@ public class Lieferung extends JFrame implements Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		Model m = (Model)o;
-		buchungen.forEach((halle, wert) -> buchungen.put(halle, Math.max(wert, strategy.maxWert(halle))));
+		buchungen.forEach((halle, wert) -> buchungen.put(halle, Math.min(wert, strategy.maxWert(halle))));
 		rerender(m);
 	}
 }
