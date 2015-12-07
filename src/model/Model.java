@@ -54,7 +54,6 @@ public class Model extends Observable {
 		Lager[] getUnterLager();
 		String toString();
 		void setName(String name);
-		boolean getZeigeUnterlager();
 	}
 
 	public class LagerHalle implements Lager {
@@ -155,11 +154,6 @@ public class Model extends Observable {
 			setChanged();
 			notifyObservers(this);
 		}
-
-		@Override
-		public boolean getZeigeUnterlager() {
-			return true;
-		}
 	}
 
 	public class OberLager implements Lager {
@@ -217,10 +211,6 @@ public class Model extends Observable {
 			zeigeUnterlager=!zeigeUnterlager;
 			setChanged();
 			notifyObservers();
-		}
-		public boolean getZeigeUnterlager()
-		{
-			return zeigeUnterlager;
 		}
 	}
 }
