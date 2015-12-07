@@ -1,16 +1,36 @@
 package controller;
 
 import model.Model;
+import model.TransaktionsFehler;
 import ui.Lieferung;
 
-public class LieferungController {
-	Model model;
+import javax.swing.*;
+import java.util.Observable;
+import java.util.Observer;
 
-	public LieferungController(Model model) {
+public class LieferungController implements Observer {
+	final private Model model;
+	final private Lieferung view;
+
+	public LieferungController(Model model, Lieferung.Strategy strategy) {
 		this.model = model;
-		new Lieferung(model, Lieferung.ZULIEFERUNG).setVisible(true);
+		view = new Lieferung(model, strategy);
+		view.setVisible(true);
+		view.commitment.addObserver(this);
 	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		Lieferung.Commitment lieferung = (Lieferung.Commitment) arg;
+		try {
+			model.übernehmeLieferung(lieferung.buchungen, lieferung.datum);
+			view.dispose();
+		} catch (TransaktionsFehler e) {
+			JOptionPane.showMessageDialog(view, e.getMessage());
+		}
+	}
+
 	public static void main(String[] args) {
-		new LieferungController(new Model());
+		new LieferungController(new Model(), Lieferung.ZULIEFERUNG);
 	}
 }

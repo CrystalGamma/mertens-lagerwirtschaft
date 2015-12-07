@@ -1,7 +1,8 @@
 package ui;
 
 import model.Model;
-import model.TransaktionsFehler;
+import model.Model.LagerHalle;
+import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
@@ -9,14 +10,21 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
-import java.util.function.Function;
 
 public class Lieferung extends JFrame implements Observer {
-	private final Map<Model.LagerHalle, Integer> buchungen = new HashMap<>();
-	private final Vector<Model.LagerHalle> reihenfolge = new Vector<>(), redo = new Vector<>();
+	private final Map<LagerHalle, Integer> buchungen = new HashMap<>();
+	private final Vector<LagerHalle> reihenfolge = new Vector<>(), redo = new Vector<>();
 	private final Strategy strategy;
+	public final Observable commitment = new Stream();
 
-	private interface Strategy {
+	public static class Commitment {
+		final public Map<LagerHalle, Integer> buchungen;
+		final public String datum;
+
+		private Commitment(Map<LagerHalle, Integer> b, String d) {buchungen = b; datum = d;}
+	}
+
+	public interface Strategy {
 		int buchungsWert(int menge);
 		String toString();
 	}
@@ -43,6 +51,7 @@ public class Lieferung extends JFrame implements Observer {
 	}
 
 	private int lieferungsMenge = 1;
+	private String datum = "";
 
 	private void addHalle(Model m, Model.LagerHalle halle) {
 		buchungen.put(halle, 1);
@@ -81,7 +90,11 @@ public class Lieferung extends JFrame implements Observer {
 		}
 		p.add(undoRedo);
 		int verteilteMenge = 0;
-		JTextField datum = new JTextField();
+		JTextField datumField = new JTextField();
+		datumField.addActionListener(ev -> {datum = datumField.getText();});
+		JPanel datumPanel = new JPanel();
+		datumPanel.add(new JLabel("Datum"), BorderLayout.WEST);
+		datumPanel.add(datumField, BorderLayout.EAST);
 		if (reihenfolge.size() == 0) {
 			Panel form = new Panel();
 			form.add(new JLabel("Menge"), BorderLayout.WEST);
@@ -110,13 +123,8 @@ public class Lieferung extends JFrame implements Observer {
 			p.add(commit);
 			commit.addActionListener(ev -> {
 				Map<Model.LagerHalle, Integer> lieferung = new HashMap<>();
-				for (Model.LagerHalle halle: reihenfolge) {lieferung.put(halle, buchungen.get(halle));}
-				try {
-					m.übernehmeLieferung(lieferung, datum.getText());
-					dispose();
-				} catch (TransaktionsFehler e) {
-					JOptionPane.showMessageDialog(this, e.getMessage());
-				}
+				for (Model.LagerHalle halle: reihenfolge) {lieferung.put(halle, strategy.buchungsWert(buchungen.get(halle)));}
+				((Stream)commitment).push(new Commitment(lieferung, datum));
 			});
 			commit.setEnabled(buchungen.get(aktuelleHalle) + verteilteMenge >= lieferungsMenge);
 			final int vertMenge = verteilteMenge;
