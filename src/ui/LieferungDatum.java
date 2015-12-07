@@ -1,7 +1,7 @@
 package ui;
 
 import model.Model;
-import model.Utils;
+import utils.Utils;
 import utils.Stream;
 
 import javax.swing.*;

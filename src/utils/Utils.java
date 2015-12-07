@@ -1,4 +1,4 @@
-package model;
+package utils;
 
 import java.lang.reflect.Array;
 import java.text.DateFormat;
