@@ -8,6 +8,7 @@ import ui.AlleBuchungen;
 import ui.LagerAnsicht;
 import ui.LieferungDatum;
 import ui.StartAnsicht;
+import ui.LagerNamensänderung;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,13 @@ public class Controller {
         this.model = new Model();
         //StartAnsicht startAnsicht =new StartAnsicht(this.model, this);
         this.generateDummyData();
-        model.addObserver(new StartAnsicht(this.model, this));
+        StartAnsicht startAnsicht=new StartAnsicht(this.model);
+        model.addObserver(startAnsicht);
+        startAnsicht.ÖffneLagerX.addObserver((dummy, lagerhalle)->öffneLagerX((Model.LagerHalle)lagerhalle));
+        startAnsicht.öffneAlleBuchungen.addObserver((dummy,dummy2)->öffneAlleBuchungen());
+        startAnsicht.öffneAuslieferung.addObserver((dummy,dummy2)->öffneAuslieferung());
+        startAnsicht.öffneZulieferung.addObserver((dummy,dummy2)->öffneZulieferung());
+        startAnsicht.ändereLagerName.addObserver((dummy,lagerNamensänderung)->ändereLagerName(((LagerNamensänderung)lagerNamensänderung).getNeuerLagerName(), ((LagerNamensänderung)lagerNamensänderung).getLager()));
     }
 
     public static void main(String[] args) {
@@ -90,7 +97,7 @@ public class Controller {
     }
 
     public void öffneZulieferung() {
-        //Zulieferung zulieferung = new Zulieferung(model);
+        LieferungController lieferungController= new LieferungController(model);
         System.out.println("öffneZulieferung");
     }
 
@@ -116,9 +123,5 @@ public class Controller {
                 this.öffneLagerX((Model.LagerHalle) value);
         });
         model.addObserver(lieferungDatum);
-    }
-
-    public void setZeigeUnterlager(OberLager oberLager) {
-        oberLager.setZeigeUnterlager();
     }
 }

@@ -20,20 +20,30 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 
-import controller.Controller;
 import model.Model;
+import utils.Stream;
 
 public class StartAnsicht extends JFrame implements Observer {
 	Model model;
 	Vector<Vector<Object>> tableData;
 	HashMap<String, Model.Lager> LagerNameZuLager;
+	HashMap<Model.Lager,Boolean> LagerZuklappen;
 	JTable table;
 	int[] gesamtBestandUndKapazität;
 	JLabel bestand;
+	final public Observable ÖffneLagerX = new Stream();
+	final public Observable öffneAlleBuchungen = new Stream();
+	final public Observable öffneAuslieferung = new Stream();
+	final public Observable öffneZulieferung = new Stream();
+	final public Observable ändereLagerName = new Stream();
 
-	public StartAnsicht(Model model, Controller controler) {
+	public StartAnsicht(Model model) {
+		setResizable(false);
 		LagerNameZuLager = new HashMap<>();
+		LagerZuklappen= new HashMap<>();
 		this.model = model;
 		JLabel titel = new JLabel("Lagerstruktur");
 		JPanel statusPanel= new JPanel();
@@ -51,7 +61,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		table.getTableHeader().setReorderingAllowed(false);
 		//table.getColumn("").setCellRenderer(new ButtonRenderer());
 		//table.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
-
+		
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
 		JButton menu = new JButton("Menü");
@@ -81,15 +91,17 @@ public class StartAnsicht extends JFrame implements Observer {
 		};
 		// Menü bar action listener
 		menu.addMouseListener(popupListener);
-		menuItemAlleBuchungen.addActionListener(arg0 -> controler.öffneAlleBuchungen());
-		menuItemAuslieferung.addActionListener(x -> controler.öffneAuslieferung());
-		menuItemZulieferung.addActionListener(x -> controler.öffneZulieferung());
+		menuItemAlleBuchungen.addActionListener(x -> ((Stream)öffneAlleBuchungen).push(null));
+		menuItemAuslieferung.addActionListener(x -> ((Stream)öffneAuslieferung).push(null));
+		menuItemZulieferung.addActionListener(x -> ((Stream)öffneZulieferung).push(null));
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				// TODO Auto-generated method stub
 				
 				Vector<Object> vectorAusgewählteZeile;
+				System.out.println(arg0.getClickCount());
+				//if(arg0.getClickCount()==1)
 				if (arg0.getButton() == 1) {
 					int selectedColumn = table.getSelectedColumn();
 					vectorAusgewählteZeile = (tableData.get(table.getSelectedRow()));
@@ -99,13 +111,14 @@ public class StartAnsicht extends JFrame implements Observer {
 
 							Model.LagerHalle tmp = (Model.LagerHalle) LagerNameZuLager
 									.get(vectorAusgewählteZeile.get(1).toString().trim());
-							controler.öffneLagerX(tmp);
+							((Stream)ÖffneLagerX).push(tmp);
 						}
 					} else if (selectedColumn == 0) {
 						// button pressed
-						if(LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim()) instanceof Model.OberLager )
+						Model.Lager lager=LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim());
+						if(lager instanceof Model.OberLager )
 						{
-							controler.setZeigeUnterlager((Model.OberLager) LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim()));
+							LagerZuklappen.put(lager, !(LagerZuklappen.get(lager)));
 							update(null, null);
 						}
 					}
@@ -122,8 +135,7 @@ public class StartAnsicht extends JFrame implements Observer {
 						vectorAusgewählteZeile = (tableData.get(selectedTableRow));
 						String alterName = vectorAusgewählteZeile.get(1).toString().trim();
 
-						table.getModel().addTableModelListener(e -> controler.ändereLagerName(
-								table.getValueAt(selectedTableRow, 1).toString().trim(), LagerNameZuLager.get(alterName)));
+						table.getModel().addTableModelListener(e -> ((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(selectedTableRow, 1).toString().trim(), LagerNameZuLager.get(alterName))));
 					}
 				}
 
@@ -160,7 +172,7 @@ public class StartAnsicht extends JFrame implements Observer {
 			Model.Lager[] unterLager = lager.getUnterLager();
 			if (unterLager != null) {
 				Vector<Object> tmpVector = new Vector<Object>();
-				tmpVector.addElement("+");
+				tmpVector.addElement("-");
 				tmpVector.addElement(getEinrückung(tiefe)+lager.getName());
 				tmpVector.addElement("");
 				tmpVector.addElement("");
@@ -169,18 +181,23 @@ public class StartAnsicht extends JFrame implements Observer {
 				int indexErstesUnterelement=tableData.indexOf(tmpVector)+1;
 				
 				fülleHashmap(LagerNameZuLager, lager.getName(), lager);
+				//damit bei jedem Update der Tabelle nicht der Status aufgeklppt oder zugeklappt verlohren geht
+				if(!LagerZuklappen.containsKey(lager))
+				{
+					LagerZuklappen.put(lager, false);
+				}
 				int[] UnterlagerBestandUndKapazität=fülleTabellenDaten(unterLager, tiefe + 1);
 				gesamtBestandUndKapazität[0]+=UnterlagerBestandUndKapazität[0];
 				gesamtBestandUndKapazität[1]+=UnterlagerBestandUndKapazität[1];
 				tmpVector.set(2,UnterlagerBestandUndKapazität[0]);
 				tmpVector.set(3,UnterlagerBestandUndKapazität[1]);
-				if(!lager.getZeigeUnterlager())
+				if(LagerZuklappen.get(lager))
 				{
 					int indexLetztesUnterelement=tableData.indexOf((tableData.lastElement()));
 					for(int j=indexErstesUnterelement;j<=indexLetztesUnterelement;j++)
 					//lösche alle nach dem das Oberlagerhinzugefügt wurde bis zum letzten hinzugefügten
 					tableData.remove(indexErstesUnterelement);
-					tableData.lastElement().set(0,"-");
+					tableData.lastElement().set(0,"+");
 				}
 			} else {
 				Vector<Object> tmpVector = new Vector<Object>();
@@ -211,4 +228,5 @@ public class StartAnsicht extends JFrame implements Observer {
 		return rückgabe;
 	}
 }
+
 
