@@ -1,12 +1,15 @@
 package ui;
 
 import model.Model;
+import model.TransaktionsFehler;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
+import java.util.function.Function;
 
 public class Lieferung extends JFrame implements Observer {
 	private final Map<Model.LagerHalle, Integer> buchungen = new HashMap<>();
@@ -41,6 +44,12 @@ public class Lieferung extends JFrame implements Observer {
 
 	private int lieferungsMenge = 1;
 
+	private void addHalle(Model m, Model.LagerHalle halle) {
+		buchungen.put(halle, 1);
+		reihenfolge.add(halle);
+		rerender(m);
+	}
+
 	private void rerender(Model m) {
 		getContentPane().removeAll();
 		LagerTree tree = new LagerTree(m);
@@ -53,6 +62,7 @@ public class Lieferung extends JFrame implements Observer {
 		Panel undoRedo = new Panel();
 		p.add(undoRedo);
 		int verteilteMenge = 0;
+		JTextField datum = new JTextField();
 		if (reihenfolge.size() == 0) {
 			Panel form = new Panel();
 			form.add(new JLabel("Menge"), BorderLayout.WEST);
@@ -60,19 +70,48 @@ public class Lieferung extends JFrame implements Observer {
 			menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
 			form.add(menge);
 			p.add(form);
+			tree.geklickteLager.addObserver((stream, halle_) -> addHalle(m, (Model.LagerHalle)halle_));
 		} else {
 			p.add(new JLabel("Menge: " + lieferungsMenge));
+			Model.LagerHalle aktuelleHalle = reihenfolge.lastElement();
 			for (Model.LagerHalle halle : reihenfolge) {
-				if (halle == reihenfolge.lastElement())
+				if (halle == aktuelleHalle)
 					break;
 				int teilmenge = buchungen.get(halle);
-				p.add(new JLabel(halle.getName() + teilmenge + "(" + ((float) teilmenge / (float) lieferungsMenge * 100) + "%)"));
+				p.add(new JLabel(halle.getName() + ": " + teilmenge + "(" + ((float) teilmenge / (float) lieferungsMenge * 100) + "%)"));
 				verteilteMenge += teilmenge;
 			}
 			Panel sliderPanel = new Panel();
-			JSlider slider = new JSlider(1, lieferungsMenge - verteilteMenge, buchungen.get(reihenfolge.lastElement()));
+			JSlider slider = new JSlider(1, lieferungsMenge - verteilteMenge, buchungen.get(aktuelleHalle));
+			JLabel sliderLabel = new JLabel(aktuelleHalle.getName() + ": 1 (" + (100.0f / lieferungsMenge) + "%)");
+			sliderPanel.add(sliderLabel);
+			sliderPanel.add(slider);
+			p.add(sliderPanel);
+			JButton commit = new JButton("Übernehmen");
+			p.add(commit);
+			commit.addActionListener(ev -> {
+				try {
+					m.übernehmeLieferung(buchungen, datum.getText());
+					dispose();
+				} catch (TransaktionsFehler e) {
+					JOptionPane.showMessageDialog(this, e.getMessage());
+				}
+			});
+			commit.setEnabled(buchungen.get(aktuelleHalle) + verteilteMenge >= lieferungsMenge);
+			final int vertMenge = verteilteMenge;
+			ChangeListener slListener = ev -> {
+				int value = slider.getValue();
+				buchungen.put(aktuelleHalle, value);
+				sliderLabel.setText(aktuelleHalle.getName() + ": " + value + " (" + ((float)value / lieferungsMenge * 100) + "%)");
+				commit.setEnabled(buchungen.get(aktuelleHalle) + vertMenge >= lieferungsMenge);
+			};
+			slListener.stateChanged(null);
+			slider.addChangeListener(slListener);
+			tree.geklickteLager.addObserver((_dummy, halle_) -> {
+				if (buchungen.get(aktuelleHalle) + vertMenge < lieferungsMenge)
+					addHalle(m, (Model.LagerHalle)halle_);
+			});
 		}
-		tree.geklickteLager.addObserver((view, lager) -> System.out.println(lager));
 		pack();
 		repaint();
 	}

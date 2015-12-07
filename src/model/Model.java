@@ -27,9 +27,16 @@ public class Model extends Observable {
 		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(halle));
 	}
 
+	public void checkLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
+		buchungen.forEach(LagerHalle::dryRunBuchung);	// <- VISITOR PATTERN!  ☺
+		// TODO: datumsformat?
+		if (lieferungen.containsKey(datum))
+			throw new LieferungExistiert();
+	}
+
 	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen = Collections.unmodifiableMap(buchungen);
-		buchungen.forEach(LagerHalle::dryRunBuchung);	// <- VISITOR PATTERN!  ☺
+		checkLieferung(buchungen, datum);
 		buchungen.forEach(LagerHalle::buchen);
 		lieferungen.put(datum, buchungen);
 		setChanged();
