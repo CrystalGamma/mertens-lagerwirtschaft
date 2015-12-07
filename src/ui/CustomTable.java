@@ -23,6 +23,7 @@ public class CustomTable extends JTable {
 
     public CustomTable(String[] columnNames) {
         super(new DefaultTableModel(new Object[][]{}, columnNames));
+        this.getTableHeader().setReorderingAllowed(false);
         this.setRowSelectionAllowed(false);
         this.setAutoCreateRowSorter(true);
         this.setEnabled(false);
