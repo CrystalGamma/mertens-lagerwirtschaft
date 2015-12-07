@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 public class Lieferung extends JFrame implements Observer {
 	private final Map<Model.LagerHalle, Integer> buchungen = new HashMap<>();
-	private final Vector<Model.LagerHalle> reihenfolge = new Vector<>();
+	private final Vector<Model.LagerHalle> reihenfolge = new Vector<>(), redo = new Vector<>();
 	private final Strategy strategy;
 
 	private interface Strategy {
@@ -47,6 +47,7 @@ public class Lieferung extends JFrame implements Observer {
 	private void addHalle(Model m, Model.LagerHalle halle) {
 		buchungen.put(halle, 1);
 		reihenfolge.add(halle);
+		redo.clear();
 		rerender(m);
 	}
 
@@ -60,6 +61,24 @@ public class Lieferung extends JFrame implements Observer {
 		add(p, BorderLayout.EAST);
 		p.add(new JLabel(strategy.toString()));
 		Panel undoRedo = new Panel();
+		if (reihenfolge.size() > 0) {
+			JButton undo = new JButton("Rückgängig");
+			undo.addActionListener(ev -> {
+				redo.add(reihenfolge.lastElement());
+				reihenfolge.setSize(reihenfolge.size() - 1);
+				rerender(m);
+			});
+			undoRedo.add(undo);
+		}
+		if (redo.size() > 0) {
+			JButton redoButton = new JButton("Wiederherstellen");
+			redoButton.addActionListener(ev -> {
+				reihenfolge.add(redo.lastElement());
+				redo.setSize(redo.size() - 1);
+				rerender(m);
+			});
+			undoRedo.add(redoButton);
+		}
 		p.add(undoRedo);
 		int verteilteMenge = 0;
 		JTextField datum = new JTextField();
@@ -90,8 +109,10 @@ public class Lieferung extends JFrame implements Observer {
 			JButton commit = new JButton("Übernehmen");
 			p.add(commit);
 			commit.addActionListener(ev -> {
+				Map<Model.LagerHalle, Integer> lieferung = new HashMap<>();
+				for (Model.LagerHalle halle: reihenfolge) {lieferung.put(halle, buchungen.get(halle));}
 				try {
-					m.übernehmeLieferung(buchungen, datum.getText());
+					m.übernehmeLieferung(lieferung, datum.getText());
 					dispose();
 				} catch (TransaktionsFehler e) {
 					JOptionPane.showMessageDialog(this, e.getMessage());
