@@ -90,8 +90,8 @@ public class LieferungDatum extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof Model) {
-            this.setTitle("Lieferung vom " + Utils.parseDate(this.datum));
-            this.titleLabel.setText("Lieferung vom " + Utils.parseDate(this.datum));
+            this.setTitle("Lieferung vom " + this.datum);
+            this.titleLabel.setText("Lieferung vom " + this.datum);
 
             this.table.setStream((Stream) this.geklicktesLager);
             this.table.setRows(parseBuchungen(((Model) o).getLieferungen(), this.datum));

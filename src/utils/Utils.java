@@ -10,9 +10,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Utils {
-	static DateFormat idf = new SimpleDateFormat("yyyy-MM-dd");
-	static DateFormat odf = new SimpleDateFormat("dd.MM.yyyy");
-
 	public static <T> Set<T>filterSet(Set<T> set, Predicate<T> predicate) {
 		HashSet<T> res = new HashSet<>();
 		for (T el : set) {
@@ -49,13 +46,5 @@ public class Utils {
 			res.put(key, f.apply(value));
 		});
 		return Collections.unmodifiableMap(res);
-	}
-	public static String parseDate(String datum) {
-		try {
-			return odf.format(idf.parse(datum));
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return datum;
-		}
 	}
 }
