@@ -191,6 +191,7 @@ public class Model extends Observable {
 			return bestand;
 		}
 
+		@Override
 		public Lager[] getUnterLager() {
 			return unterLager.clone();
 		}
@@ -202,13 +203,12 @@ public class Model extends Observable {
 
 		@Override
 		public void setName(String name) {
-			// TODO Auto-generated method stub
 			this.name=name;
 			setChanged();
 			notifyObservers();
 		}
-		public void setZeigeUnterlager()
-		{
+
+		public void setZeigeUnterlager() {
 			zeigeUnterlager=!zeigeUnterlager;
 			setChanged();
 			notifyObservers();
