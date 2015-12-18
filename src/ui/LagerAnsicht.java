@@ -131,7 +131,7 @@ public class LagerAnsicht extends JFrame implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof Model && arg == this.lager) {
+        if (o instanceof Model) {
             this.setTitle("Lageransicht: " + this.lager.getName());
             this.titleLabel.setText(this.lager.getName());
 
