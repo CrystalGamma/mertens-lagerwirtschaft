@@ -6,6 +6,8 @@ import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -91,11 +93,17 @@ public class Lieferung extends JFrame implements Observer {
 		add(p, BorderLayout.CENTER);
 		p.add(new JLabel(strategy.toString()));
 		undoRedoButtons(m, p);
-		JTextField datumField = new JTextField();
-		datumField.addActionListener(ev -> {datum = datumField.getText();});
+		JTextField datumField = new JTextField(datum);
+		datumField.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {changedUpdate(e);}
+			public void removeUpdate(DocumentEvent e) {changedUpdate(e);}
+			public void changedUpdate(DocumentEvent e) {datum = datumField.getText();}
+		});
+		datumField.setColumns(10);
 		JPanel datumPanel = new JPanel();
 		datumPanel.add(new JLabel("Datum"), BorderLayout.WEST);
 		datumPanel.add(datumField, BorderLayout.EAST);
+		p.add(datumPanel);
 		if (reihenfolge.size() == 0) {
 			mengenAuswahl(m, tree, p);
 		} else {
