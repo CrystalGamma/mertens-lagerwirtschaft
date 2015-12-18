@@ -29,8 +29,8 @@ import javax.swing.table.TableModel;
 import model.Model;
 import utils.Stream;
 /**
- * 
- * @author Kuhaku
+ * Diese Klasse erzeugt die Startansicht der Applikation
+ * @author Leon Westhof
  *	
  */
 public class StartAnsicht extends JFrame implements Observer {

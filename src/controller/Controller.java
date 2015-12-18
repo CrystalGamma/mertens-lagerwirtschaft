@@ -13,13 +13,18 @@ import ui.LagerNamensänderung;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-
+/**
+ * Diese Klasse ist der zentrale Controller, der alle Klassen erzeugt. Darüber hinaus nimmt er alle Ändeurngen an den Views über den Stream Observable an und führt die FOlge Aktionen aus.
+ * @author Leon Westhof
+ *
+ */
 public class Controller {
     Model model;
-
+/**
+ * KOnstruktor erzeugt Model und Startasicht. Er fügt die Startansicht als Observer dem Modell hinzu, sowie weitere Aktionen der Startansicht als Observer
+ */
     public Controller() {
         this.model = new Model();
-        //StartAnsicht startAnsicht =new StartAnsicht(this.model, this);
         this.generateDummyData();
         StartAnsicht startAnsicht=new StartAnsicht(this.model);
         model.addObserver(startAnsicht);
@@ -77,11 +82,16 @@ public class Controller {
             amount--;
         }
     }
-
+/**
+ * Gibt das Model zurück
+ * @return das Model
+ */
     public Model getModel() {
         return this.model;
     }
-
+/**
+ * Die Methode öffnet alle Buchungen des Systems
+ */
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
         alleBuchungen.update(this.getModel(), null);
@@ -90,15 +100,22 @@ public class Controller {
                 this.öffneLieferung(value.toString());
         });
     }
-
+/**
+ * Erstellt den Lieferungskontroller für die Auslieferung
+ */
     public void öffneAuslieferung() {
     	LieferungController lieferungController= new LieferungController(model, ui.Lieferung.AUSLIEFERUNG);
     }
-
+/**
+ * Erstellt den Lieferungskontroller für die Zulierferung
+ */
     public void öffneZulieferung() {
         LieferungController lieferungController= new LieferungController(model, ui.Lieferung.ZULIEFERUNG);
     }
-
+/**
+ * Die Methode erzeugt eine ANsicht auf das Übergebene Lager
+ * @param lager Das zu öffnende Lager
+ */
     public void öffneLagerX(LagerHalle lager) {
         LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
         lagerAnsicht.update(this.getModel(), lager);
@@ -108,11 +125,18 @@ public class Controller {
         });
         model.addObserver(lagerAnsicht);
     }
-
+/**
+ * Die Methode ändert den Namen eines bestimmten Lagers
+ * @param neuerName neuer Name des Lagers
+ * @param lager Lager, dessen Namen geändert werden soll
+ */
     public void ändereLagerName(String neuerName, Lager lager) {
         lager.setName(neuerName);
     }
-
+/**
+ * Die Methode öffnet eine Lieferung eines bestimmten Datums
+ * @param datum Das Datum an dem die Lieferungen gemacht wurden
+ */
     public void öffneLieferung(String datum) {
         LieferungDatum lieferungDatum = new LieferungDatum(datum);
         lieferungDatum.update(this.getModel(), datum);
