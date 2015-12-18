@@ -30,17 +30,27 @@ public class Model extends Observable {
 
 	public void checkLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen.forEach(LagerHalle::dryRunBuchung);	// <- VISITOR PATTERN!  ☺
-		String[] datumString = datum.split("-");
-		int jear=Integer.valueOf(datumString[0]);
-		int month=Integer.valueOf(datumString[1]);
-		int day=Integer.valueOf(datumString[2]);
+		try{
+		int jear=Integer.valueOf(datum.substring(0,4));
+		int month=Integer.valueOf(datum.substring(5,7));
+		int day=Integer.valueOf(datum.substring(8,10));
 		Calendar cal = Calendar.getInstance();
 		cal.set(jear,month-1, day);
 		if(jear!=cal.get(Calendar.YEAR)|month!=(cal.get(Calendar.MONTH)+1)|day!=cal.get(Calendar.DAY_OF_MONTH))
 			throw new UngültigesDatum();
+		
 		if (lieferungen.containsKey(datum))
 			throw new LieferungExistiert();
+		}catch(IndexOutOfBoundsException e)
+		{
+			throw new UngültigesDatum();
+		}catch(NumberFormatException nfe)
+		{
+			throw new UngültigesDatum();
+		}
+
 	}
+	
 
 	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen = Collections.unmodifiableMap(buchungen);
