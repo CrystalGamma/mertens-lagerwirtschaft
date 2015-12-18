@@ -151,7 +151,7 @@ public class Lieferung extends JFrame implements Observer {
 			if (halle == aktuelleHalle)
 				break;
 			int teilmenge = buchungen.get(halle);
-			panel.add(new JLabel(halle.getName() + ": " + teilmenge + "(" + ((float) teilmenge / (float) lieferungsMenge * 100) + "%)"));
+			panel.add(new JLabel(halle.getName() + ": " + teilmenge + "(" + ((double) teilmenge / lieferungsMenge * 100) + "%)"));
 			verteilteMenge += teilmenge;
 		}
 		final int vertMenge = verteilteMenge;
@@ -185,7 +185,7 @@ public class Lieferung extends JFrame implements Observer {
 		ChangeListener slListener = ev -> {
 			int value = slider.getValue();
 			buchungen.put(halle, value);
-			sliderLabel.setText(halle.getName() + ": " + value + " (" + ((float)value / lieferungsMenge * 100) + "%)");
+			sliderLabel.setText(halle.getName() + ": " + value + " (" + ((double)value / lieferungsMenge * 100) + "%)");
 			commit.setEnabled(buchungen.get(halle) + verteilteMenge >= lieferungsMenge);
 		};
 		slListener.stateChanged(null);
