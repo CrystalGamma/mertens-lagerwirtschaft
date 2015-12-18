@@ -6,6 +6,8 @@ import utils.Stream;
 
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -16,6 +18,8 @@ public class Lieferung extends JFrame implements Observer {
 	private final Map<LagerHalle, Integer> buchungen = new HashMap<>();
 	private final Vector<LagerHalle> reihenfolge = new Vector<>(), redo = new Vector<>();
 	private final Strategy strategy;
+
+	/** Event-Stream */
 	public final Observable commitment = new Stream();
 
 	/** Event für das Observable: Nutzer möchte eine Lieferung übernehmen */
@@ -69,15 +73,18 @@ public class Lieferung extends JFrame implements Observer {
 		rerender(m);
 	}
 
-	/** fügt einem Container ein Widget zur Auswahl einer Menge hinzu */
-	private void mengenAuswahl(Model m, LagerTree tree, Container p) {
-		Panel form = new Panel();
-		form.add(new JLabel("Menge"), BorderLayout.WEST);
-		JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
-		menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
-		form.add(menge);
-		p.add(form);
-		tree.geklickteLager.addObserver((stream, halle_) -> addHalle(m, (LagerHalle)halle_));
+	/** Ansicht zur Auswahl der Gesamtliefermenge */
+	private class MengenAuswahl extends Panel {
+		public MengenAuswahl(Model m, LagerTree tree) {
+			add(new JLabel("Menge"), BorderLayout.WEST);
+			JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+			menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
+			add(menge);
+			tree.geklickteLager.addObserver((stream, halle_) -> {
+				if (halle_ instanceof LagerHalle)
+					addHalle(m, (LagerHalle)halle_);
+			});
+		}
 	}
 
 	/** rendert den Inhalt (z. B. nach Änderung im Model) erneut */
@@ -91,13 +98,19 @@ public class Lieferung extends JFrame implements Observer {
 		add(p, BorderLayout.CENTER);
 		p.add(new JLabel(strategy.toString()));
 		undoRedoButtons(m, p);
-		JTextField datumField = new JTextField();
-		datumField.addActionListener(ev -> {datum = datumField.getText();});
+		JTextField datumField = new JTextField(datum);
+		datumField.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {changedUpdate(e);}
+			public void removeUpdate(DocumentEvent e) {changedUpdate(e);}
+			public void changedUpdate(DocumentEvent e) {datum = datumField.getText();}
+		});
+		datumField.setColumns(10);
 		JPanel datumPanel = new JPanel();
 		datumPanel.add(new JLabel("Datum"), BorderLayout.WEST);
 		datumPanel.add(datumField, BorderLayout.EAST);
+		p.add(datumPanel);
 		if (reihenfolge.size() == 0) {
-			mengenAuswahl(m, tree, p);
+			p.add(new MengenAuswahl(m, tree));
 		} else {
 			verteilung(m, tree, p);
 		}
@@ -141,12 +154,14 @@ public class Lieferung extends JFrame implements Observer {
 			if (halle == aktuelleHalle)
 				break;
 			int teilmenge = buchungen.get(halle);
-			panel.add(new JLabel(halle.getName() + ": " + teilmenge + "(" + ((float) teilmenge / (float) lieferungsMenge * 100) + "%)"));
+			panel.add(new JLabel(halle.getName() + ": " + teilmenge + "(" + ((double) teilmenge / lieferungsMenge * 100) + "%)"));
 			verteilteMenge += teilmenge;
 		}
 		final int vertMenge = verteilteMenge;
 		addSliderPanel(panel, verteilteMenge, aktuelleHalle);
 		tree.geklickteLager.addObserver((_dummy, halle_) -> {
+			if (!(halle_ instanceof LagerHalle))
+				return;
 			LagerHalle halle = (LagerHalle) halle_;
 			if (strategy.maxWert(halle) < 1) {
 				JOptionPane.showMessageDialog(this, "Diese Lieferung kann auf diesem Lager aufgrund von Bestand/Kapazität nicht ausgeführt werden");
@@ -175,7 +190,7 @@ public class Lieferung extends JFrame implements Observer {
 		ChangeListener slListener = ev -> {
 			int value = slider.getValue();
 			buchungen.put(halle, value);
-			sliderLabel.setText(halle.getName() + ": " + value + " (" + ((float)value / lieferungsMenge * 100) + "%)");
+			sliderLabel.setText(halle.getName() + ": " + value + " (" + ((double)value / lieferungsMenge * 100) + "%)");
 			commit.setEnabled(buchungen.get(halle) + verteilteMenge >= lieferungsMenge);
 		};
 		slListener.stateChanged(null);
