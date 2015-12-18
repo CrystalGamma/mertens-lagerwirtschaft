@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
@@ -74,10 +76,6 @@ public class StartAnsicht extends JFrame implements Observer {
 		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
-		//Button einfügen
-		table.getColumn("").setCellRenderer(new ButtonRenderer());
-		ButtonEditor buttonEditor=new ButtonEditor(new JCheckBox());
-		table.getColumn("").setCellEditor(buttonEditor);
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
@@ -139,7 +137,6 @@ public class StartAnsicht extends JFrame implements Observer {
 						Model.Lager lager=LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim());
 						if(lager instanceof Model.OberLager )
 						{
-							buttonEditor.fireEditingStopped();
 							LagerZuklappen.put(lager, !(LagerZuklappen.get(lager)));
 							update(null, null);
 						}
@@ -169,6 +166,13 @@ public class StartAnsicht extends JFrame implements Observer {
 					}
 				}
 		}});
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				model.deleteObserver(StartAnsicht.this);
+			}
+		});
 		setResizable(false);
 		this.pack();
 		this.setVisible(true);
