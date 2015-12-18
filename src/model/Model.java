@@ -17,6 +17,7 @@ public class Model extends Observable {
                     new OberLager("Italien", new Lager[]{new LagerHalle("Mailand", 50), new LagerHalle("L´Aquila", 50)}),
                     new LagerHalle("Spanien", 50)}),
             new LagerHalle("Großbritannien", 50)};
+  
 
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 

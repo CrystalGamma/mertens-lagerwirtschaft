@@ -167,7 +167,7 @@ public class StartAnsicht extends JFrame implements Observer {
 					}
 				}
 		}});
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
