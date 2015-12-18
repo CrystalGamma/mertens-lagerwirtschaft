@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Checkbox;
 import java.awt.FlowLayout;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -20,12 +21,18 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import model.Model;
 import utils.Stream;
-
+/**
+ * 
+ * @author Kuhaku
+ *	
+ */
 public class StartAnsicht extends JFrame implements Observer {
 	Model model;
 	Vector<Vector<Object>> tableData;
@@ -39,16 +46,24 @@ public class StartAnsicht extends JFrame implements Observer {
 	final public Observable öffneAuslieferung = new Stream();
 	final public Observable öffneZulieferung = new Stream();
 	final public Observable ändereLagerName = new Stream();
-
+	long time;
+	String alterName;
+boolean isDoppelklick;
+/**
+ * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemte der Start-GUI mit Actionlistenern
+ * @param model Das Modell was der Controller erzeugt hat
+ */
 	public StartAnsicht(Model model) {
-		setResizable(false);
+		this.model = model;
+		
 		LagerNameZuLager = new HashMap<>();
 		LagerZuklappen= new HashMap<>();
-		this.model = model;
+		//Definition der Panels
 		JLabel titel = new JLabel("Lagerstruktur");
 		JPanel statusPanel= new JPanel();
 		JPanel tablePanel = new JPanel();
 		JPanel bodyPanel= new JPanel();
+		//Definition der table
 		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
 		Vector<String> columnNames = new Vector<>();
 		columnNames.addElement("");
@@ -57,25 +72,32 @@ public class StartAnsicht extends JFrame implements Observer {
 		columnNames.addElement("Kapazität");
 		tableData = new Vector<Vector<Object>>();
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
-		table = new JTable(tableData, columnNames);
+		MyTableModel defaultModel= new MyTableModel(tableData, columnNames); 
+		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
-		//table.getColumn("").setCellRenderer(new ButtonRenderer());
-		//table.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
-		
+		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
+		//
 		JButton menu = new JButton("Menü");
+		//Belegung der Werte im Statuspanel
 		bestand= new JLabel("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
 		JLabel kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
+		//
 		statusPanel.setLayout(new FlowLayout());
+		//Hinzfügen der Elemente des Statuspanels
 		statusPanel.add(bestand);
 		statusPanel.add(kapazität);
+		//
 		bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.Y_AXIS));
+		//Hinzufügen der ELemente des Bodypanels
 		bodyPanel.add(statusPanel);
 		bodyPanel.add(tablePanel);
+		//Hinzufügen der Panels
 		this.add(menu, BorderLayout.EAST);
 		this.add(titel, BorderLayout.WEST);
 		this.add(bodyPanel, BorderLayout.SOUTH);
+		//Popup Menu
 		JPopupMenu menuPopup = new JPopupMenu();
 		JMenuItem menuItemZulieferung = new JMenuItem("Zulieferung");
 		menuPopup.add(menuItemZulieferung);
@@ -89,7 +111,7 @@ public class StartAnsicht extends JFrame implements Observer {
 				menuPopup.show(menu, 0, 20);
 			}
 		};
-		// Menü bar action listener
+		// Menubar action listener
 		menu.addMouseListener(popupListener);
 		menuItemAlleBuchungen.addActionListener(x -> ((Stream)öffneAlleBuchungen).push(null));
 		menuItemAuslieferung.addActionListener(x -> ((Stream)öffneAuslieferung).push(null));
@@ -97,15 +119,14 @@ public class StartAnsicht extends JFrame implements Observer {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
 				Vector<Object> vectorAusgewählteZeile;
-				System.out.println(arg0.getClickCount());
-				//if(arg0.getClickCount()==1)
+				//Wenn ein linksklick erfolgte
 				if (arg0.getButton() == 1) {
 					int selectedColumn = table.getSelectedColumn();
 					vectorAusgewählteZeile = (tableData.get(table.getSelectedRow()));
+					//Wenn eine Spalte äusgewählt wurde, die nicht die 0. ist
 					if (selectedColumn != 0 & selectedColumn != -1) {
+					// Wenn die erste Spalte "" und damit einer Lagerhalle entspricht, dann öffnen wir die Lagerhalle
 						
 						if (vectorAusgewählteZeile.get(0).equals("")) {
 
@@ -113,49 +134,59 @@ public class StartAnsicht extends JFrame implements Observer {
 									.get(vectorAusgewählteZeile.get(1).toString().trim());
 							((Stream)ÖffneLagerX).push(tmp);
 						}
-					} else if (selectedColumn == 0) {
-						// button pressed
+					}//	Wenn die ausgewählte Spalte die 0. ist und sie eine instance eines Lagers ist wird sie Zu bzw ausgeklappt
+					else if (selectedColumn == 0) {
 						Model.Lager lager=LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim());
 						if(lager instanceof Model.OberLager )
 						{
 							LagerZuklappen.put(lager, !(LagerZuklappen.get(lager)));
 							update(null, null);
 						}
+						//alterName = vectorAusgewählteZeile.get(1).toString().trim();
 					}
-				} else if (arg0.getButton() == 3) {
-					Point klickedPoint = arg0.getPoint();
-					table.changeSelection(table.rowAtPoint(klickedPoint), table.columnAtPoint(klickedPoint), false,
-							false);
+				}//Wenn ein Rechtsklick erfolgte, wird bei der Auf- und Zuklappspalte nichts unternommen, bei den anderen Spalten wird der Name des Lagers editierbar 
+				else if (arg0.getButton() == 3) {
 					if (table.getSelectedColumn() == 0) {
 						//button pressed
 					} else {
+						//Markierung aus aktuelle Spalte setzen und Zelle markierbar machen
+						Point klickedPoint = arg0.getPoint();
+						table.changeSelection(table.rowAtPoint(klickedPoint), table.columnAtPoint(klickedPoint), false, false);
 						int selectedTableRow = table.getSelectedRow();
 						table.requestFocus();
 						table.editCellAt(selectedTableRow, 1);
 						vectorAusgewählteZeile = (tableData.get(selectedTableRow));
-						String alterName = vectorAusgewählteZeile.get(1).toString().trim();
+						//Namensspeicherung zwecks Hashmap
+						alterName = vectorAusgewählteZeile.get(1).toString().trim();
+						//In dem geänderten TableModell sind die Zellen standardmäßig nicht editierbar, damit Änderungen der Zelleninhalte nur über diese Funktion und nicht bspw den Doppelklick realisiert werden können
+						defaultModel.setEdibility(true);
 
-						table.getModel().addTableModelListener(e -> ((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(selectedTableRow, 1).toString().trim(), LagerNameZuLager.get(alterName))));
+				//		table.getModel().addTableModelListener(e -> ((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(selectedTableRow, 1).toString().trim(), LagerNameZuLager.get(alterName))));
+						table.getModel().addTableModelListener(new TableModelListener() {
+							
+							@Override
+							public void tableChanged(TableModelEvent arg0) {
+								//Dem Observer wird der neue Name und das geänderte Lager in einer Klasse übergeben
+								((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(arg0.getLastRow(), 1).toString().trim(), LagerNameZuLager.get(alterName)));
+								//Wiederherrstellung der Nicht-editierbarkeit
+								defaultModel.setEdibility(false);
+
+							}
+						});
 					}
 				}
-
-			}
-
-		});
+		}});
+		setResizable(false);
 		this.pack();
 		this.setVisible(true);
 
 	}
-
+	/**
+	 * Auf Änderungen am Lager folgt eine Neuinitialisierung der Tabelle.
+	 * Die Methode leert die Tabelle, aktualisiert die Werte und zeichnet sie erneut. Zudem wird der Bestandswert aktualisiert
+	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		// Änderungen am Lager werden mit der Neuinitialisierung der Tabelle
-		// behandelt
-
-		// muss npch getestet werden
-		
-		//gegen Construktoraufruf entschieden
 		tableData.clear();
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
 		table.repaint();
@@ -164,42 +195,47 @@ public class StartAnsicht extends JFrame implements Observer {
 	}
 
 	/*
-	 * 	
+	 * 	Die Methode befüllt die für die Erzeugung der Tabelle notwenigen Vectoren.
 	 */
 	public int[] fülleTabellenDaten(Model.Lager[] inputlager, int tiefe) {
 		int[] gesamtBestandUndKapazität=new int[2];
+		//Alle Übergebenen Lager werden durchgegangen
 		for (Model.Lager lager : inputlager) {
 			Model.Lager[] unterLager = lager.getUnterLager();
+			//Wenn das Lager Unterlager hat ist es ein Oberlager
 			if (unterLager != null) {
 				Vector<Object> tmpVector = new Vector<Object>();
 				tmpVector.addElement("-");
 				tmpVector.addElement(getEinrückung(tiefe)+lager.getName());
 				tmpVector.addElement("");
 				tmpVector.addElement("");
-			
 				tableData.addElement(tmpVector);
 				int indexErstesUnterelement=tableData.indexOf(tmpVector)+1;
-				
+				//Befüllung der HashMap mit der Zuordnung von Lagernamen zu Lagern
 				fülleHashmap(LagerNameZuLager, lager.getName(), lager);
-				//damit bei jedem Update der Tabelle nicht der Status aufgeklppt oder zugeklappt verlohren geht
+				//Damit bei jedem Update der Tabelle nicht der Status aufgeklppt oder zugeklappt verlohren geht, wird die HashMap nur befüllt wenn zu dem Schlüssel noch nichts drinnen steht
 				if(!LagerZuklappen.containsKey(lager))
 				{
 					LagerZuklappen.put(lager, false);
 				}
+				//rekursiver Neuaufruf der Methode
 				int[] UnterlagerBestandUndKapazität=fülleTabellenDaten(unterLager, tiefe + 1);
+				//Aufsummierung der Kapazitäts- und Bestandswerte
 				gesamtBestandUndKapazität[0]+=UnterlagerBestandUndKapazität[0];
 				gesamtBestandUndKapazität[1]+=UnterlagerBestandUndKapazität[1];
+				//Eintrag der Werte in die Tabelle
 				tmpVector.set(2,UnterlagerBestandUndKapazität[0]);
 				tmpVector.set(3,UnterlagerBestandUndKapazität[1]);
+				//Wenn das Lager zugeklappt ist und nicht in der Tabelle auftauchen soll, werden alle Vektoren bis zum Vektor des Oberlagers gelöscht
 				if(LagerZuklappen.get(lager))
 				{
 					int indexLetztesUnterelement=tableData.indexOf((tableData.lastElement()));
 					for(int j=indexErstesUnterelement;j<=indexLetztesUnterelement;j++)
-					//lösche alle nach dem das Oberlagerhinzugefügt wurde bis zum letzten hinzugefügten
 					tableData.remove(indexErstesUnterelement);
 					tableData.lastElement().set(0,"+");
 				}
-			} else {
+			}// Wenn das Lager eine Lagerhalle ist, werden die Werte aus der Lagerhalle geholt und in den Vector geschrieben
+			else {
 				Vector<Object> tmpVector = new Vector<Object>();
 				tmpVector.addElement(new String(""));
 				tmpVector.addElement(getEinrückung(tiefe)+lager.getName());
@@ -215,11 +251,16 @@ public class StartAnsicht extends JFrame implements Observer {
 	}
 
 	/*
-	 * muss noch verallgemeinert werden
+	 * Diese Methode befüllt die HashMap mit der Zuordnung von Lagernamen zu Lagern
 	 */
 	public void fülleHashmap(HashMap<String, Model.Lager> map, String key, Model.Lager value) {
 		map.put(key, value);
 	}
+	/**
+	 * Die Methode bestimmt die Anzahl an Einrückungsschritten entsprechend der Tiefe des Lagers in der Hierarchie
+	 * @param anzahl Hierarchieebene
+	 * @return Der String der Einrückung
+	 */
 	public String getEinrückung(int anzahl)
 	{
 		String rückgabe="";

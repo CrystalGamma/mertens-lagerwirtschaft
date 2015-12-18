@@ -92,13 +92,11 @@ public class Controller {
     }
 
     public void öffneAuslieferung() {
-        //Auslieferung auslieferung = new Auslieferung(model);
-        System.out.println("öffneAuslieferung");
+    	LieferungController lieferungController= new LieferungController(model, ui.Lieferung.AUSLIEFERUNG);
     }
 
     public void öffneZulieferung() {
-        LieferungController lieferungController= new LieferungController(model);
-        System.out.println("öffneZulieferung");
+        LieferungController lieferungController= new LieferungController(model, ui.Lieferung.ZULIEFERUNG);
     }
 
     public void öffneLagerX(LagerHalle lager) {
