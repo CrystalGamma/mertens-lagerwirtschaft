@@ -167,12 +167,10 @@ public class Model extends Observable {
 	public class OberLager implements Lager {
 		private String name;
 		private Lager[] unterLager;
-		private boolean zeigeUnterlager;
 
 		public OberLager(String name, Lager[] unterLager){
 			this.name = name;
 			this.unterLager = unterLager;
-			zeigeUnterlager=true;
 		}
 
 		@Override
@@ -211,12 +209,6 @@ public class Model extends Observable {
 		@Override
 		public void setName(String name) {
 			this.name=name;
-			setChanged();
-			notifyObservers();
-		}
-
-		public void setZeigeUnterlager() {
-			zeigeUnterlager=!zeigeUnterlager;
 			setChanged();
 			notifyObservers();
 		}
