@@ -1,5 +1,7 @@
 package utils;
 
+import model.Model;
+
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -46,5 +48,17 @@ public class Utils {
 			res.put(key, f.apply(value));
 		});
 		return Collections.unmodifiableMap(res);
+	}
+	public static Set<Model.LagerHalle> getLagerHallen(Model.OberLager oberLager) {
+		Set<Model.LagerHalle> lagerHallen = new HashSet<>();
+
+		for(Model.Lager lager : oberLager.getUnterLager()) {
+			if(lager instanceof Model.LagerHalle)
+				lagerHallen.add((Model.LagerHalle) lager);
+			else if(lager instanceof Model.OberLager)
+				lagerHallen.addAll(getLagerHallen((Model.OberLager) lager));
+		}
+
+		return lagerHallen;
 	}
 }
