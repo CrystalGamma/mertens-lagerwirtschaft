@@ -1,7 +1,4 @@
-import model.LagerNichtVollGenug;
-import model.LagerÜbervoll;
-import model.Model;
-import model.UngültigesDatum;
+import model.*;
 
 import org.junit.Test;
 
@@ -12,11 +9,17 @@ public class ModelTests {
 	@Test
 	public void transaktion() {
 		Model model = new Model();
+		model.getLieferungen();
 		Model.LagerHalle halle1 = (Model.LagerHalle)model.getLager()[0].getUnterLager()[0].getUnterLager()[0];
 		assert halle1.getBestand() == 0;
 		Map<Model.LagerHalle, Integer> buchungen = new HashMap<>();
 		buchungen.put(halle1, 10);
 		model.übernehmeLieferung(buchungen, "2015-11-24");
+		try {
+			model.übernehmeLieferung(buchungen, "2015-11-24");
+		} catch (Exception e) {
+			assert e instanceof LieferungExistiert;
+		}
 		assert halle1.getBestand() == 10;
 		assert model.getBuchungenFürHalle(halle1).get("2015-11-24").get(halle1) == 10;
 		Map<Model.LagerHalle, Integer> ungültig = new HashMap<>();
@@ -37,6 +40,49 @@ public class ModelTests {
 		}
 		assert !noexcept;
 
+		// IndexOutOfBoundsException
+		try {
+			model.checkLieferung(buchungen, "2010");
+		} catch (Exception e) {
+			assert e instanceof UngültigesDatum;
+		}
+
+		// Wirklich ungültiges Datum
+		try {
+			model.checkLieferung(buchungen, "2015-13-01");
+		} catch (Exception e) {
+			assert e instanceof UngültigesDatum;
+		}
+
+		// LagerÜbervoll
+		try {
+			buchungen.put(halle1, halle1.getKapazität()+1);
+			model.checkLieferung(buchungen, "2015-13-01");
+		} catch (Exception e) {
+			assert e instanceof LagerÜbervoll;
+		}
 	}
 
+	@Test
+	public void OberLager() {
+		Model model = new Model();
+		Model.OberLager deutschland = (Model.OberLager)model.getLager()[0];
+		assert deutschland.toString().equals("Deutschland");
+		deutschland.setName("Neuer Name");
+		assert deutschland.getName().equals("Neuer Name");
+		assert deutschland.getBestand() == 0;
+		assert deutschland.getKapazität() == 400;
+	}
+
+	@Test
+	public void LagerHalle() {
+		Model model = new Model();
+		Model.LagerHalle nienburg = (Model.LagerHalle)model.getLager()[0].getUnterLager()[0].getUnterLager()[1];
+		assert nienburg.toString().equals("Nienburg");
+		nienburg.setName("Neuer Name");
+		assert nienburg.getName().equals("Neuer Name");
+		assert nienburg.getBestand() == 0;
+		assert nienburg.getKapazität() == 50;
+		assert nienburg.getUnterLager() == null;
+	}
 }
