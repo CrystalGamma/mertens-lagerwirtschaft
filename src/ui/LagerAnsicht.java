@@ -90,18 +90,13 @@ public class LagerAnsicht extends JFrame implements Observer {
                 pos++;
             } else if(this.lager instanceof Model.OberLager) {
                 // Iteriere über alle Unterlager und identifiziere deren LagerHallen
-                ArrayList<Model.LagerHalle> hallen = new ArrayList<>();
-                for(Model.Lager halle : lager.getUnterLager()) {
-                    if(halle instanceof Model.LagerHalle)
-                        hallen.add((Model.LagerHalle) halle);
-                }
+                Set<Model.LagerHalle> hallen = Utils.getLagerHallen((Model.OberLager) this.lager);
 
                 // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen
                 Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
                 int menge = 0;
 
                 for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
-                    System.out.println(buchung.getKey());
                     if(hallen.contains(buchung.getKey())) {
                         menge += buchung.getValue();
                     }
@@ -111,7 +106,6 @@ public class LagerAnsicht extends JFrame implements Observer {
                     row[0] = entry.getKey();
                     row[1] = menge;
                     tableData.add(row);
-                    System.out.println(tableData);
                 }
                 data = tableData.toArray(new Object[tableData.size()][]);
             }

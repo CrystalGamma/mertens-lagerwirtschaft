@@ -9,10 +9,10 @@ import ui.LagerAnsicht;
 import ui.LieferungDatum;
 import ui.StartAnsicht;
 import ui.LagerNamensänderung;
+import utils.Utils;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
+
 /**
  * Diese Klasse ist der zentrale Controller, der alle Klassen erzeugt. Darüber hinaus nimmt er alle Ändeurngen an den Views über den Stream Observable an und führt die FOlge Aktionen aus.
  * @author Leon Westhof
@@ -41,25 +41,15 @@ public class Controller {
 
     public void generateDummyData() {
         Map<Model.LagerHalle, Integer> buchung;
-        Vector<LagerHalle> lagerHallen = new Vector<>();
+        Set<LagerHalle> lagerHallen = new HashSet<>();
 
         int day = 1;
         int amount = 15;
-        for (Model.Lager tier1 : model.getLager()) {
-            if (tier1 instanceof LagerHalle) {
-                lagerHallen.add((LagerHalle) tier1);
-                continue;
-            }
-
-            for (Model.Lager tier2 : tier1.getUnterLager()) {
-                if (tier2 instanceof LagerHalle) {
-                    lagerHallen.add((LagerHalle) tier2);
-                    continue;
-                }
-
-                for (Model.Lager tier3 : tier2.getUnterLager())
-                    if (tier3 instanceof LagerHalle)
-                        lagerHallen.add((LagerHalle) tier3);
+        for (Model.Lager lager : model.getLager()) {
+            if (lager instanceof OberLager) {
+                lagerHallen.addAll(Utils.getLagerHallen((OberLager) lager));
+            } else if(lager instanceof  LagerHalle) {
+                lagerHallen.add((Model.LagerHalle) lager);
             }
         }
 
