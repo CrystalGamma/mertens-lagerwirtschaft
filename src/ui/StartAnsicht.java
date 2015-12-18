@@ -48,13 +48,13 @@ public class StartAnsicht extends JFrame implements Observer {
 	final public Observable ändereLagerName = new Stream();
 
 	String alterName;
-/**
- * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemte der Start-GUI mit Actionlistenern
- * @param model Das Modell was der Controller erzeugt hat
- */
+	/**
+	 * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemte der Start-GUI mit Actionlistenern
+	 * @param model Das Modell was der Controller erzeugt hat
+	 */
+
 	public StartAnsicht(Model model) {
 		this.model = model;
-		
 		LagerNameZuLager = new HashMap<>();
 		LagerZuklappen= new HashMap<>();
 		//Definition der Panels
@@ -69,7 +69,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		columnNames.addElement("Lager");
 		columnNames.addElement("Bestand");
 		columnNames.addElement("Kapazität");
-		tableData = new Vector<Vector<Object>>();
+		tableData = new Vector<>();
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
 		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
@@ -81,12 +81,10 @@ public class StartAnsicht extends JFrame implements Observer {
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
-		//
 		JButton menu = new JButton("Menü");
 		//Belegung der Werte im Statuspanel
 		bestand= new JLabel("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
 		JLabel kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
-		//
 		statusPanel.setLayout(new FlowLayout());
 		//Hinzfügen der Elemente des Statuspanels
 		statusPanel.add(bestand);
@@ -130,7 +128,6 @@ public class StartAnsicht extends JFrame implements Observer {
 					//Wenn eine Spalte äusgewählt wurde, die nicht die 0. ist
 					if (selectedColumn != 0 & selectedColumn != -1) {
 					// Wenn die erste Spalte "" und damit einer Lagerhalle entspricht, dann öffnen wir die Lagerhalle
-						
 						if (vectorAusgewählteZeile.get(0).equals("")) {
 
 							Model.LagerHalle tmp = (Model.LagerHalle) LagerNameZuLager
@@ -146,13 +143,11 @@ public class StartAnsicht extends JFrame implements Observer {
 							LagerZuklappen.put(lager, !(LagerZuklappen.get(lager)));
 							update(null, null);
 						}
-						//alterName = vectorAusgewählteZeile.get(1).toString().trim();
 					}
-				}//Wenn ein Rechtsklick erfolgte, wird bei der Auf- und Zuklappspalte nichts unternommen, bei den anderen Spalten wird der Name des Lagers editierbar 
+				}
+				//Wenn ein Rechtsklick erfolgte, wird bei der Auf- und Zuklappspalte nichts unternommen, bei den anderen Spalten wird der Name des Lagers editierbar
 				else if (arg0.getButton() == 3) {
-					if (table.getSelectedColumn() == 0) {
-						//button pressed
-					} else {
+					if (table.getSelectedColumn() != 0) {
 						//Markierung aus aktuelle Spalte setzen und Zelle markierbar machen
 						Point klickedPoint = arg0.getPoint();
 						table.changeSelection(table.rowAtPoint(klickedPoint), table.columnAtPoint(klickedPoint), false, false);
@@ -165,17 +160,11 @@ public class StartAnsicht extends JFrame implements Observer {
 						//In dem geänderten TableModell sind die Zellen standardmäßig nicht editierbar, damit Änderungen der Zelleninhalte nur über diese Funktion und nicht bspw den Doppelklick realisiert werden können
 						defaultModel.setEdibility(true);
 
-				//		table.getModel().addTableModelListener(e -> ((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(selectedTableRow, 1).toString().trim(), LagerNameZuLager.get(alterName))));
-						table.getModel().addTableModelListener(new TableModelListener() {
-							
-							@Override
-							public void tableChanged(TableModelEvent arg0) {
-								//Dem Observer wird der neue Name(Leereichen vor dem ersten Buchstaben werden ignoriert) und das geänderte Lager in einer Klasse übergeben
-								((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(arg0.getLastRow(), 1).toString().trim(), LagerNameZuLager.get(alterName)));
-								//Wiederherrstellung der Nicht-editierbarkeit
-								defaultModel.setEdibility(false);
-
-							}
+						table.getModel().addTableModelListener(arg01 -> {
+							//Dem Observer wird der neue Name und das geänderte Lager in einer Klasse übergeben
+							((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(arg01.getLastRow(), 1).toString().trim(), LagerNameZuLager.get(alterName)));
+							//Wiederherrstellung der Nicht-editierbarkeit
+							defaultModel.setEdibility(false);
 						});
 					}
 				}
@@ -195,7 +184,6 @@ public class StartAnsicht extends JFrame implements Observer {
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
 		table.repaint();
 		bestand.setText("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
-		
 	}
 
 	/*

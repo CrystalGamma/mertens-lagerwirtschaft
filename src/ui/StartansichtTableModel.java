@@ -19,20 +19,9 @@ public class StartansichtTableModel extends DefaultTableModel {
 	/**
 	 * Die Methode gibt zurück ob eine Zelle Editierbar ist.
 	 * Von dem Namen(Namensspalte) abgesehen sind keine Zellen veränderbar.
-	 * @param row Die Zeile der Tabelle
-	 * @param column Spalte der Tabelle
-	 * @return true wenn die Zelle editierbar ist
 	 */
-	public boolean isCellEditable(int row,int column)
-	{
-		if(column!=1)
-		{
-			return false;
-		}else
-		{
-			return isEditable;	
-		}
-		
+	public boolean isCellEditable(int row,int column) {
+		return column == 1 && isEditable;
 	}
 	/**
 	 * Methode setzt der Variable isEditable einen boolschen Wert.
@@ -42,5 +31,4 @@ public class StartansichtTableModel extends DefaultTableModel {
 	{
 		this.isEditable=isEditable;
 	}
-
 }
