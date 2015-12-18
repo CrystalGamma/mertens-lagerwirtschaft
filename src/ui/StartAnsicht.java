@@ -46,9 +46,8 @@ public class StartAnsicht extends JFrame implements Observer {
 	final public Observable öffneAuslieferung = new Stream();
 	final public Observable öffneZulieferung = new Stream();
 	final public Observable ändereLagerName = new Stream();
-	long time;
+
 	String alterName;
-boolean isDoppelklick;
 /**
  * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemte der Start-GUI mit Actionlistenern
  * @param model Das Modell was der Controller erzeugt hat
@@ -166,7 +165,7 @@ boolean isDoppelklick;
 							
 							@Override
 							public void tableChanged(TableModelEvent arg0) {
-								//Dem Observer wird der neue Name und das geänderte Lager in einer Klasse übergeben
+								//Dem Observer wird der neue Name(Leereichen vor dem ersten Buchstaben werden ignoriert) und das geänderte Lager in einer Klasse übergeben
 								((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(arg0.getLastRow(), 1).toString().trim(), LagerNameZuLager.get(alterName)));
 								//Wiederherrstellung der Nicht-editierbarkeit
 								defaultModel.setEdibility(false);
