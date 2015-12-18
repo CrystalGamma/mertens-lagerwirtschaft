@@ -1,6 +1,8 @@
 import model.LagerNichtVollGenug;
 import model.LagerÜbervoll;
 import model.Model;
+import model.UngültigesDatum;
+
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -27,5 +29,14 @@ public class ModelTests {
 		}
 		assert !noexcept;
 		assert halle1.getBestand() == 10;
- 	}
+		model.checkLieferung(buchungen, "2035-06-25");
+		try {
+			model.checkLieferung(buchungen, "2035-0-1");
+		} catch (UngültigesDatum üd) {
+			noexcept = false;
+		}
+		assert !noexcept;
+
+	}
+
 }

@@ -26,6 +26,7 @@ import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import model.Model;
@@ -77,7 +78,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
-		table.getColumn("").setPreferredWidth(5);
+		//setTableWidth();
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
@@ -263,6 +264,18 @@ public class StartAnsicht extends JFrame implements Observer {
 		for(int i=0;i<anzahl;i++)
 			rückgabe+="   ";
 		return rückgabe;
+	}
+	public void setTableWidtch()
+	{
+		for(int Spalten=0;Spalten< table.getColumnCount(); Spalten++)
+		{
+			TableColumn tableColumn= table.getColumnModel().getColumn(Spalten);	
+			int preferredWidth = tableColumn.getMinWidth();
+			for(int zeile=0; zeile <table.getRowCount();zeile++)
+			{
+				
+			}
+		}
 	}
 }
 
