@@ -18,6 +18,8 @@ public class Lieferung extends JFrame implements Observer {
 	private final Map<LagerHalle, Integer> buchungen = new HashMap<>();
 	private final Vector<LagerHalle> reihenfolge = new Vector<>(), redo = new Vector<>();
 	private final Strategy strategy;
+
+	/** Event-Stream */
 	public final Observable commitment = new Stream();
 
 	/** Event für das Observable: Nutzer möchte eine Lieferung übernehmen */
