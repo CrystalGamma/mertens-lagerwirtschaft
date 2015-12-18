@@ -102,12 +102,12 @@ public class AlleBuchungen extends JFrame implements Observer {
     /**
      * Aktualisieren der Ansicht bei Änderungen am Model.
      *
-     * @param o Beobachtetes Objekt
+     * @param o   Beobachtetes Objekt
      * @param arg nicht verwendet
      */
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof Model) {
+        if (o instanceof Model) {
             this.table.setStream((Stream) this.geklicktesDatum);
             this.table.setRows(parseBuchungen(((Model) o).getLieferungen()));
 

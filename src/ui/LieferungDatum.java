@@ -1,7 +1,6 @@
 package ui;
 
 import model.Model;
-import utils.Utils;
 import utils.Stream;
 
 import javax.swing.*;
@@ -84,7 +83,7 @@ public class LieferungDatum extends JFrame implements Observer {
     /**
      * Aktualisieren der Ansicht bei Änderungen am Model.
      *
-     * @param o Beobachtetes Objekt
+     * @param o   Beobachtetes Objekt
      * @param arg nicht verwendet
      */
     @Override

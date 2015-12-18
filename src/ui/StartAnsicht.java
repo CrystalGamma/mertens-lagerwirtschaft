@@ -129,13 +129,9 @@ public class StartAnsicht extends JFrame implements Observer {
 					vectorAusgewählteZeile = (tableData.get(table.getSelectedRow()));
 					//Wenn eine Spalte äusgewählt wurde, die nicht die 0. ist
 					if (selectedColumn != 0 & selectedColumn != -1) {
-					// Wenn die erste Spalte "" und damit einer Lagerhalle entspricht, dann öffnen wir die Lagerhalle
-
-
 							Model.Lager tmp = LagerNameZuLager
 									.get(vectorAusgewählteZeile.get(1).toString().trim());
 							((Stream)ÖffneLagerX).push(tmp);
-
 					}//	Wenn die ausgewählte Spalte die 0. ist und sie eine instance eines Lagers ist wird sie Zu bzw ausgeklappt
 					else if (selectedColumn == 0) {
 						Model.Lager lager=LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim());
