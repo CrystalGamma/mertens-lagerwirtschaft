@@ -73,15 +73,15 @@ public class Lieferung extends JFrame implements Observer {
 		rerender(m);
 	}
 
-	/** fügt einem Container ein Widget zur Auswahl einer Menge hinzu */
-	private void mengenAuswahl(Model m, LagerTree tree, Container p) {
-		Panel form = new Panel();
-		form.add(new JLabel("Menge"), BorderLayout.WEST);
-		JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
-		menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
-		form.add(menge);
-		p.add(form);
-		tree.geklickteLager.addObserver((stream, halle_) -> addHalle(m, (LagerHalle)halle_));
+	/** Ansicht zur Auswahl der Gesamtliefermenge */
+	private class MengenAuswahl extends Panel {
+		public MengenAuswahl(Model m, LagerTree tree) {
+			add(new JLabel("Menge"), BorderLayout.WEST);
+			JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+			menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
+			add(menge);
+			tree.geklickteLager.addObserver((stream, halle_) -> addHalle(m, (LagerHalle)halle_));
+		}
 	}
 
 	/** rendert den Inhalt (z. B. nach Änderung im Model) erneut */
@@ -107,7 +107,7 @@ public class Lieferung extends JFrame implements Observer {
 		datumPanel.add(datumField, BorderLayout.EAST);
 		p.add(datumPanel);
 		if (reihenfolge.size() == 0) {
-			mengenAuswahl(m, tree, p);
+			p.add(new MengenAuswahl(m, tree));
 		} else {
 			verteilung(m, tree, p);
 		}
