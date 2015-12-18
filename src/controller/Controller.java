@@ -83,7 +83,7 @@ public class Controller {
  * Die Methode öffnet alle Buchungen des Systems
  */
     public void öffneAlleBuchungen() {
-        AlleBuchungen alleBuchungen = AlleBuchungen.getInstance();
+        AlleBuchungen alleBuchungen = AlleBuchungen.getInstance(this.model);
         alleBuchungen.update(this.getModel(), null);
         alleBuchungen.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
@@ -107,7 +107,7 @@ public class Controller {
  * @param lager Das zu öffnende Lager
  */
     public void öffneLagerX(Lager lager) {
-        LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
+        LagerAnsicht lagerAnsicht = new LagerAnsicht(this.model, lager);
         lagerAnsicht.update(this.getModel(), lager);
         lagerAnsicht.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
@@ -128,7 +128,7 @@ public class Controller {
  * @param datum Das Datum an dem die Lieferungen gemacht wurden
  */
     public void öffneLieferung(String datum) {
-        LieferungDatum lieferungDatum = new LieferungDatum(datum);
+        LieferungDatum lieferungDatum = new LieferungDatum(this.model, datum);
         lieferungDatum.update(this.getModel(), datum);
         lieferungDatum.geklicktesLager.addObserver((view, value) -> {
             if (value instanceof Model.LagerHalle)

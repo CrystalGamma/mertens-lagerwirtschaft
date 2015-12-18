@@ -6,6 +6,8 @@ import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.*;
 
 /**
@@ -22,8 +24,14 @@ public class LagerAnsicht extends JFrame implements Observer {
     private JLabel kapazitätLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
-    public LagerAnsicht(Model.Lager lager) {
+    public LagerAnsicht(Model model, Model.Lager lager) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                model.deleteObserver(LagerAnsicht.this);
+            }
+        });
         this.lager = lager;
         this.init();
     }
@@ -106,9 +114,12 @@ public class LagerAnsicht extends JFrame implements Observer {
                     row[1] = menge;
                     tableData.add(row);
                 }
-                data = tableData.toArray(new Object[tableData.size()][]);
             }
         }
+
+        if(!tableData.isEmpty())
+            data = tableData.toArray(new Object[tableData.size()][]);
+
         return data;
     }
 
