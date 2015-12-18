@@ -2,12 +2,12 @@ package ui;
 
 import model.Model;
 import utils.Stream;
+import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Die Klassse LagerAnsicht bietet eine Einsicht in die bisherigen Buchungen für
@@ -17,13 +17,13 @@ import java.util.Observer;
  */
 public class LagerAnsicht extends JFrame implements Observer {
     final public Observable geklicktesDatum = new Stream();
-    final private Model.LagerHalle lager;
+    final private Model.Lager lager;
     private JLabel titleLabel = new JLabel();
     private JLabel bestandLabel = new JLabel();
     private JLabel kapazitätLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Bestandsänderung"});
 
-    public LagerAnsicht(Model.LagerHalle lager) {
+    public LagerAnsicht(Model.Lager lager) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.lager = lager;
         this.init();
@@ -64,22 +64,57 @@ public class LagerAnsicht extends JFrame implements Observer {
     /**
      * Führt die Daten in das benötigte Format für die Tabelle zusammen.
      *
-     * @param lieferungen Buchungen für eine Lagerhalle
+     * @param model Model
      * @return Mehrdimensionales Array mit Daten (jeweils Datum und Bestandsänderung)
      */
-    public Object[][] parseBuchungen(Map<String, Map<Model.LagerHalle, Integer>> lieferungen) {
+    public Object[][] parseBuchungen(Model model) {
+        Map<String, Map<Model.LagerHalle, Integer>> lieferungen = new HashMap<>();
+        ArrayList<Object[]> tableData = new ArrayList<Object[]>();
+        if(this.lager instanceof Model.LagerHalle) {
+            lieferungen = model.getBuchungenFürHalle((Model.LagerHalle) this.lager);
+        } else if(this.lager instanceof Model.OberLager) {
+            lieferungen = model.getLieferungen();
+        }
+
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
 
         // Iteriere über alle Tage an denen es Buchungen gab
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
-            data[pos][0] = entry.getKey();
+            if(this.lager instanceof Model.LagerHalle) {
+                data[pos][0] = entry.getKey();
 
-            // Hole die Buchung zu dem ausgewählten Lager zu dem aktuellen Tag
-            Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
-            data[pos][1] = buchungen.get(this.lager);
+                // Hole die Buchung zu dem ausgewählten Lager zu dem aktuellen Tag
+                Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
+                data[pos][1] = buchungen.get(this.lager);
+                pos++;
+            } else if(this.lager instanceof Model.OberLager) {
+                // Iteriere über alle Unterlager und identifiziere deren LagerHallen
+                ArrayList<Model.LagerHalle> hallen = new ArrayList<>();
+                for(Model.Lager halle : lager.getUnterLager()) {
+                    if(halle instanceof Model.LagerHalle)
+                        hallen.add((Model.LagerHalle) halle);
+                }
 
-            pos++;
+                // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen
+                Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
+                int menge = 0;
+
+                for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
+                    System.out.println(buchung.getKey());
+                    if(hallen.contains(buchung.getKey())) {
+                        menge += buchung.getValue();
+                    }
+                }
+                if(menge != 0)  {
+                    Object[] row = new Object[2];
+                    row[0] = entry.getKey();
+                    row[1] = menge;
+                    tableData.add(row);
+                    System.out.println(tableData);
+                }
+                data = tableData.toArray(new Object[tableData.size()][]);
+            }
         }
         return data;
     }
@@ -100,7 +135,7 @@ public class LagerAnsicht extends JFrame implements Observer {
             this.kapazitätLabel.setText("Kapazität: " + this.lager.getKapazität());
 
             this.table.setStream((Stream) this.geklicktesDatum);
-            this.table.setRows(parseBuchungen(((Model) o).getBuchungenFürHalle(this.lager)));
+            this.table.setRows(parseBuchungen((Model) o));
 
             this.pack();
             this.setVisible(true);
