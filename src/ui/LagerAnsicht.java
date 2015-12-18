@@ -6,7 +6,6 @@ import utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -70,9 +69,9 @@ public class LagerAnsicht extends JFrame implements Observer {
     public Object[][] parseBuchungen(Model model) {
         Map<String, Map<Model.LagerHalle, Integer>> lieferungen = new HashMap<>();
         ArrayList<Object[]> tableData = new ArrayList<Object[]>();
-        if(this.lager instanceof Model.LagerHalle) {
+        if (this.lager instanceof Model.LagerHalle) {
             lieferungen = model.getBuchungenFürHalle((Model.LagerHalle) this.lager);
-        } else if(this.lager instanceof Model.OberLager) {
+        } else if (this.lager instanceof Model.OberLager) {
             lieferungen = model.getLieferungen();
         }
 
@@ -81,14 +80,14 @@ public class LagerAnsicht extends JFrame implements Observer {
 
         // Iteriere über alle Tage an denen es Buchungen gab
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
-            if(this.lager instanceof Model.LagerHalle) {
+            if (this.lager instanceof Model.LagerHalle) {
                 data[pos][0] = entry.getKey();
 
                 // Hole die Buchung zu dem ausgewählten Lager zu dem aktuellen Tag
                 Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
                 data[pos][1] = buchungen.get(this.lager);
                 pos++;
-            } else if(this.lager instanceof Model.OberLager) {
+            } else if (this.lager instanceof Model.OberLager) {
                 // Iteriere über alle Unterlager und identifiziere deren LagerHallen
                 Set<Model.LagerHalle> hallen = Utils.getLagerHallen((Model.OberLager) this.lager);
 
@@ -97,11 +96,11 @@ public class LagerAnsicht extends JFrame implements Observer {
                 int menge = 0;
 
                 for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
-                    if(hallen.contains(buchung.getKey())) {
+                    if (hallen.contains(buchung.getKey())) {
                         menge += buchung.getValue();
                     }
                 }
-                if(menge != 0)  {
+                if (menge != 0) {
                     Object[] row = new Object[2];
                     row[0] = entry.getKey();
                     row[1] = menge;
@@ -116,7 +115,7 @@ public class LagerAnsicht extends JFrame implements Observer {
     /**
      * Aktualisieren der Ansicht bei Änderungen am Model.
      *
-     * @param o Beobachtetes Objekt
+     * @param o   Beobachtetes Objekt
      * @param arg Lagerhalle an der sich etwas geändert hat
      */
     @Override
