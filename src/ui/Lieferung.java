@@ -80,7 +80,10 @@ public class Lieferung extends JFrame implements Observer {
 			JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
 			menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
 			add(menge);
-			tree.geklickteLager.addObserver((stream, halle_) -> addHalle(m, (LagerHalle)halle_));
+			tree.geklickteLager.addObserver((stream, halle_) -> {
+				if (halle_ instanceof LagerHalle)
+					addHalle(m, (LagerHalle)halle_);
+			});
 		}
 	}
 
@@ -157,6 +160,8 @@ public class Lieferung extends JFrame implements Observer {
 		final int vertMenge = verteilteMenge;
 		addSliderPanel(panel, verteilteMenge, aktuelleHalle);
 		tree.geklickteLager.addObserver((_dummy, halle_) -> {
+			if (!(halle_ instanceof LagerHalle))
+				return;
 			LagerHalle halle = (LagerHalle) halle_;
 			if (strategy.maxWert(halle) < 1) {
 				JOptionPane.showMessageDialog(this, "Diese Lieferung kann auf diesem Lager aufgrund von Bestand/Kapazität nicht ausgeführt werden");
