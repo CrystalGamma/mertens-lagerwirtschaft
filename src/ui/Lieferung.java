@@ -158,7 +158,7 @@ public class Lieferung extends JFrame implements Observer {
 			verteilteMenge += teilmenge;
 		}
 		final int vertMenge = verteilteMenge;
-		addSliderPanel(panel, verteilteMenge, aktuelleHalle);
+		addSliderPanelAndCommit(panel, verteilteMenge, aktuelleHalle);
 		tree.geklickteLager.addObserver((_dummy, halle_) -> {
 			if (!(halle_ instanceof LagerHalle))
 				return;
@@ -175,8 +175,8 @@ public class Lieferung extends JFrame implements Observer {
 		});
 	}
 
-	/** fügt ein Widget zur Auswahl des zu vergebenden Anteils einem Container hinzu */
-	private void addSliderPanel(Container panel, final int verteilteMenge, LagerHalle halle) {
+	/** fügt ein Widget zur Auswahl des zu vergebenden Anteils und einen „Übernehmen”-Button einem Container hinzu */
+	private void addSliderPanelAndCommit(Container panel, final int verteilteMenge, LagerHalle halle) {
 		Panel sliderPanel = new Panel();
 		JSlider slider = new JSlider(1, Math.min(lieferungsMenge - verteilteMenge, strategy.maxWert(halle)), buchungen.get(halle));
 		JLabel sliderLabel = new JLabel(halle.getName() + ": 1 (" + (100.0f / lieferungsMenge) + "%)");
