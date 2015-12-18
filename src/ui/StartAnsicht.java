@@ -64,6 +64,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		JPanel statusPanel= new JPanel();
 		JPanel tablePanel = new JPanel();
 		JPanel bodyPanel= new JPanel();
+		
 		//Definition der table
 		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
 		Vector<String> columnNames = new Vector<>();
@@ -76,14 +77,17 @@ public class StartAnsicht extends JFrame implements Observer {
 		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
+		table.getColumn("").setPreferredWidth(5);
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
 		JButton menu = new JButton("Menü");
+		
 		//Belegung der Werte im Statuspanel
 		bestand= new JLabel("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
 		JLabel kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
 		statusPanel.setLayout(new FlowLayout());
+		
 		//Hinzfügen der Elemente des Statuspanels
 		statusPanel.add(bestand);
 		statusPanel.add(kapazität);
@@ -126,12 +130,12 @@ public class StartAnsicht extends JFrame implements Observer {
 					//Wenn eine Spalte äusgewählt wurde, die nicht die 0. ist
 					if (selectedColumn != 0 & selectedColumn != -1) {
 					// Wenn die erste Spalte "" und damit einer Lagerhalle entspricht, dann öffnen wir die Lagerhalle
-						if (vectorAusgewählteZeile.get(0).equals("")) {
 
-							Model.LagerHalle tmp = (Model.LagerHalle) LagerNameZuLager
+
+							Model.Lager tmp = LagerNameZuLager
 									.get(vectorAusgewählteZeile.get(1).toString().trim());
 							((Stream)ÖffneLagerX).push(tmp);
-						}
+
 					}//	Wenn die ausgewählte Spalte die 0. ist und sie eine instance eines Lagers ist wird sie Zu bzw ausgeklappt
 					else if (selectedColumn == 0) {
 						Model.Lager lager=LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim());

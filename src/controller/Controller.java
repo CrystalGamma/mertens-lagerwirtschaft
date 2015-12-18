@@ -28,7 +28,7 @@ public class Controller {
         this.generateDummyData();
         StartAnsicht startAnsicht=new StartAnsicht(this.model);
         model.addObserver(startAnsicht);
-        startAnsicht.ÖffneLagerX.addObserver((dummy, lagerhalle)->öffneLagerX((Model.LagerHalle)lagerhalle));
+        startAnsicht.ÖffneLagerX.addObserver((dummy, lager)->öffneLagerX((Model.Lager) lager));
         startAnsicht.öffneAlleBuchungen.addObserver((dummy,dummy2)->öffneAlleBuchungen());
         startAnsicht.öffneAuslieferung.addObserver((dummy,dummy2)->öffneAuslieferung());
         startAnsicht.öffneZulieferung.addObserver((dummy,dummy2)->öffneZulieferung());
@@ -116,7 +116,7 @@ public class Controller {
  * Die Methode erzeugt eine ANsicht auf das Übergebene Lager
  * @param lager Das zu öffnende Lager
  */
-    public void öffneLagerX(LagerHalle lager) {
+    public void öffneLagerX(Lager lager) {
         LagerAnsicht lagerAnsicht = new LagerAnsicht(lager);
         lagerAnsicht.update(this.getModel(), lager);
         lagerAnsicht.geklicktesDatum.addObserver((view, value) -> {
