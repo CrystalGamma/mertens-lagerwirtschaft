@@ -8,11 +8,12 @@ import javax.swing.table.DefaultTableModel;
  * @author Leon Westhof
  *
  */
-public class MyTableModel extends DefaultTableModel {
+public class StartansichtTableModel extends DefaultTableModel {
 	//Boolscher Wert, der angiebt, ob die Spalte editierbar ist
 	boolean isEditable=false;
 
-	public MyTableModel(Vector<Vector<Object>> tableData, Vector<String> columnNames) {
+	public StartansichtTableModel(Vector<Vector<Object>> tableData, Vector<String> columnNames) {
+		// TODO Auto-generated constructor stub
 		super(tableData, columnNames);
 	}
 	/**

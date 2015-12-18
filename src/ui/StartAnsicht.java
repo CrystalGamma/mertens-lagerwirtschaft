@@ -46,11 +46,13 @@ public class StartAnsicht extends JFrame implements Observer {
 	final public Observable öffneAuslieferung = new Stream();
 	final public Observable öffneZulieferung = new Stream();
 	final public Observable ändereLagerName = new Stream();
+
 	String alterName;
 	/**
 	 * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemte der Start-GUI mit Actionlistenern
 	 * @param model Das Modell was der Controller erzeugt hat
 	 */
+
 	public StartAnsicht(Model model) {
 		this.model = model;
 		LagerNameZuLager = new HashMap<>();
@@ -69,9 +71,13 @@ public class StartAnsicht extends JFrame implements Observer {
 		columnNames.addElement("Kapazität");
 		tableData = new Vector<>();
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
-		MyTableModel defaultModel= new MyTableModel(tableData, columnNames); 
+		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
+		//Button einfügen
+		table.getColumn("").setCellRenderer(new ButtonRenderer());
+		ButtonEditor buttonEditor=new ButtonEditor(new JCheckBox());
+		table.getColumn("").setCellEditor(buttonEditor);
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
@@ -133,6 +139,7 @@ public class StartAnsicht extends JFrame implements Observer {
 						Model.Lager lager=LagerNameZuLager.get(vectorAusgewählteZeile.get(1).toString().trim());
 						if(lager instanceof Model.OberLager )
 						{
+							buttonEditor.fireEditingStopped();
 							LagerZuklappen.put(lager, !(LagerZuklappen.get(lager)));
 							update(null, null);
 						}
@@ -152,6 +159,7 @@ public class StartAnsicht extends JFrame implements Observer {
 						alterName = vectorAusgewählteZeile.get(1).toString().trim();
 						//In dem geänderten TableModell sind die Zellen standardmäßig nicht editierbar, damit Änderungen der Zelleninhalte nur über diese Funktion und nicht bspw den Doppelklick realisiert werden können
 						defaultModel.setEdibility(true);
+
 						table.getModel().addTableModelListener(arg01 -> {
 							//Dem Observer wird der neue Name und das geänderte Lager in einer Klasse übergeben
 							((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(arg01.getLastRow(), 1).toString().trim(), LagerNameZuLager.get(alterName)));

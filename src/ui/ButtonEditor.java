@@ -22,15 +22,6 @@ public class ButtonEditor extends DefaultCellEditor {
 		super(arg0);
 	   JButton button = new JButton("button");
 		button.setOpaque(true);
-	   button.addActionListener(new  ActionListener() {
-		
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			fireEditingStopped();
-			//todo was?
-			System.out.println("halli");
-		}
-	});
 	}
 	//Wann wird das aufgerufen?
 	public Component getTableCellEditorComponent(JTable table, Object value,
@@ -39,24 +30,25 @@ public class ButtonEditor extends DefaultCellEditor {
 		      button.setForeground(table.getSelectionForeground());
 		      button.setBackground(table.getSelectionBackground());
 		    } else {
-		    	System.out.println(table.getForeground());
-		    	//Color test= new Color(table.getForeground().getRGB());
-		    	//button.setForeground(test);
-		      //button.setBackground(table.getBackground());
-		    }
-		   // label = (value == null) ? "" : value.toString();
-		   // button.setText(label);
-		    isPushed = true;
-		    return button;
+		        button.setForeground(table.getForeground());
+		        button.setBackground(table.getBackground());
+		      }
+		      label = (value == null) ? "" : value.toString();
+		      button.setText(label);
+		      isPushed = true;
+		      return button;
 
 }
 public Object getCellEditorValue() {
-    if (isPushed) {
- System.out.println("drückt");
-    }
-    isPushed = false;
-    return new String(label);
-  }
+	if (isPushed) {
+	      // 
+	      // 
+	      
+	       System.out.println(label + ": Ouch!");
+	    }
+	    isPushed = false;
+	    return new String(label);
+	  }
 
   public boolean stopCellEditing() {
     isPushed = false;
@@ -64,5 +56,6 @@ public Object getCellEditorValue() {
   }
 
   protected void fireEditingStopped() {
+	  System.out.println("hallio");
     super.fireEditingStopped();
   }}

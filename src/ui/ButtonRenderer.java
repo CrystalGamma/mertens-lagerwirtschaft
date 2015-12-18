@@ -8,7 +8,10 @@ import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 
-
+/** 
+ * @author Leon Westhof
+ * Klasse immitiert einen Button in der JTable
+ */
 public class ButtonRenderer extends JButton implements TableCellRenderer 
 {
 	public ButtonRenderer() {
@@ -24,7 +27,8 @@ public class ButtonRenderer extends JButton implements TableCellRenderer
 	      setForeground(table.getForeground());
 	      setBackground(UIManager.getColor("Button.background"));
 	    }
-	    setText("hallo");
+	    	setText(value.toString());
+	   // setText((value == null) ? "" : value.toString());
 	   //TODO
 	    return this;
 	  }
