@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
@@ -164,6 +166,13 @@ public class StartAnsicht extends JFrame implements Observer {
 					}
 				}
 		}});
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				model.deleteObserver(StartAnsicht.this);
+			}
+		});
 		setResizable(false);
 		this.pack();
 		this.setVisible(true);
