@@ -12,14 +12,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Utils {
-	public static <T> Set<T>filterSet(Set<T> set, Predicate<T> predicate) {
-		HashSet<T> res = new HashSet<>();
-		for (T el : set) {
-			if (predicate.test(el))
-				res.add(el);
-		}
-		return res;
-	}
 	public static <K, V> Map<K, V> filterMap(Map<K, V> map, BiPredicate<K, V> predicate) {
 		HashMap<K, V> res = new HashMap<>();
 		 map.forEach((key, value) -> {
@@ -28,26 +20,12 @@ public class Utils {
 		});
 		return res;
 	}
-	public static <T> boolean setAny(Set<T> set, Predicate<T> predicate) {
-		for (T el : set) {
-			if (predicate.test(el))
-				return true;
-		}
-		return true;
-	}
 	public static <T, S> T[] arrayMap(Class<T> klass, S[] arr, Function<S, T> f) {
 		T[] res = (T[])Array.newInstance(klass, arr.length);
 		for (int i = 0; i < arr.length; i++) {
 			res[i] = f.apply(arr[i]);
 		}
 		return res;
-	}
-	public static <K, S, T> Map<K, T> mapMap(Map<K, S> map, Function<S, T> f) {
-		HashMap<K, T> res = new HashMap<>();
-		map.forEach((key, value) -> {
-			res.put(key, f.apply(value));
-		});
-		return Collections.unmodifiableMap(res);
 	}
 	public static Set<Model.LagerHalle> getLagerHallen(Model.OberLager oberLager) {
 		Set<Model.LagerHalle> lagerHallen = new HashSet<>();
