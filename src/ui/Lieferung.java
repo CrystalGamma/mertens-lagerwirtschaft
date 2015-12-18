@@ -204,7 +204,7 @@ public class Lieferung extends JFrame implements Observer {
 		((Stream)commitment).push(new Commitment(lieferung, datum));
 	}
 
-	@Override
+	/** nehme Änderungen des Model entgegen */
 	public void update(Observable o, Object arg) {
 		Model m = (Model)o;
 		buchungen.forEach((halle, wert) -> buchungen.put(halle, Math.min(wert, strategy.maxWert(halle))));
