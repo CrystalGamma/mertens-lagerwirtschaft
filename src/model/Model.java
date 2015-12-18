@@ -8,14 +8,14 @@ public class Model extends Observable {
     private Lager[] lager = new Lager[]{
             new OberLager("Deutschland",
                 new Lager[]{new OberLager("Niedersachsen",
-                        new LagerHalle[]{new LagerHalle("Hannover-Misburg", 50), new LagerHalle("Nienburg", 50)}),
-                new LagerHalle("NRW", 50), new LagerHalle("Bremen", 50), new LagerHalle("Hessen", 50), new LagerHalle("Sachsen", 50), new LagerHalle("Brandenburg", 50), new LagerHalle("MV", 50)}),
+                        new LagerHalle[]{new LagerHalle("Hannover-Misburg", 5000), new LagerHalle("Nienburg", 5000)}),
+                new LagerHalle("NRW", 5000), new LagerHalle("Bremen", 5000), new LagerHalle("Hessen", 5000), new LagerHalle("Sachsen", 5000), new LagerHalle("Brandenburg", 5000), new LagerHalle("MV", 5000)}),
             new OberLager("Europa", new Lager[]{
                     new OberLager("Frankreich",
-                            new Lager[]{new LagerHalle("Paris-Nord", 50), new LagerHalle("Orléans", 50), new LagerHalle("Marseille", 50), new LagerHalle("Nîmes", 50)}),
-                    new OberLager("Italien", new Lager[]{new LagerHalle("Mailand", 50), new LagerHalle("L´Aquila", 50)}),
-                    new LagerHalle("Spanien", 50)}),
-            new LagerHalle("Großbritannien", 50)};
+                            new Lager[]{new LagerHalle("Paris-Nord", 5000), new LagerHalle("Orléans", 5000), new LagerHalle("Marseille", 5000), new LagerHalle("Nîmes", 5000)}),
+                    new OberLager("Italien", new Lager[]{new LagerHalle("Mailand", 5000), new LagerHalle("L´Aquila", 5000)}),
+                    new LagerHalle("Spanien", 5000)}),
+            new LagerHalle("Großbritannien", 5000)};
 
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 
