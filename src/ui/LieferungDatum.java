@@ -6,6 +6,8 @@ import utils.Stream;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -21,8 +23,14 @@ public class LieferungDatum extends JFrame implements Observer {
     private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
-    public LieferungDatum(String datum) {
+    public LieferungDatum(Model model, String datum) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                model.deleteObserver(LieferungDatum.this);
+            }
+        });
         this.datum = datum;
         this.init();
     }
