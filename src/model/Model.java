@@ -1,3 +1,4 @@
+/** @author Jona Stubbe */
 package model;
 
 import utils.Utils;
@@ -17,6 +18,10 @@ public class Model extends Observable {
                     new LagerHalle("Spanien", 50000)}),
             new LagerHalle("Großbritannien", 50000)};
 
+	/**
+	 *  alle bisherigen Lieferungen
+	 *  für den Grund, warum die Lieferungen als Map&lt;LagerHalle, Integer&gt; dargestellt werden, siehe https://www.youtube.com/watch?v=o9pEzgHorH0
+	 */
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 
 	public Map<String, Map<LagerHalle, Integer>> getLieferungen() {

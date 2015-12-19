@@ -1,3 +1,4 @@
+/** @author Jona Stubbe */
 package ui;
 
 import model.Model;
@@ -62,7 +63,9 @@ public class Lieferung extends JFrame implements Observer {
 		update(model, null);
 	}
 
+	/** Gesamtmenge der Lieferung */
 	private int lieferungsMenge = 1;
+	/** Datum der Lieferung */
 	private String datum = "";
 
 	/** fügt der Lieferung ein neues betroffenes Lager hinzu */
