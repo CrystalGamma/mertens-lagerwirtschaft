@@ -1,10 +1,10 @@
 package ui;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -16,19 +16,14 @@ import java.util.Observer;
 import java.util.Vector;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-
 import model.Model;
 import utils.Stream;
 /**
@@ -78,7 +73,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
-		//setTableWidth();
+		setTableWidth(table);
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
@@ -265,17 +260,36 @@ public class StartAnsicht extends JFrame implements Observer {
 			rückgabe+="   ";
 		return rückgabe;
 	}
-	public void setTableWidtch()
+	public void setTableWidth(JTable tmpTable)
 	{
-		for(int Spalten=0;Spalten< table.getColumnCount(); Spalten++)
+		for(int spalte=0;spalte< tmpTable.getColumnCount(); spalte++)
 		{
-			TableColumn tableColumn= table.getColumnModel().getColumn(Spalten);	
-			int preferredWidth = tableColumn.getMinWidth();
-			for(int zeile=0; zeile <table.getRowCount();zeile++)
+			TableColumn tableColumn= tmpTable.getColumnModel().getColumn(spalte);
+			int zellenWortBreite=0;
+			tmpTable.setIntercellSpacing(new Dimension(5, 5) );
+			//Bestimmung der Breite des Headers
+			Object headerValue = tableColumn.getHeaderValue();
+			TableCellRenderer renderer = tableColumn.getHeaderRenderer();
+
+			if (renderer == null)
 			{
-				
+				renderer = tmpTable.getTableHeader().getDefaultRenderer();
 			}
+
+			Component c = renderer.getTableCellRendererComponent(tmpTable, headerValue, false, false, -1, spalte);
+			zellenWortBreite=c.getPreferredSize().width+tmpTable.getIntercellSpacing().width;
+			//Bestimmung der Breite des breitesten Elements
+			for(int zeile=0; zeile <tmpTable.getRowCount();zeile++)
+			{
+				TableCellRenderer cellRenderer = tmpTable.getCellRenderer(zeile, spalte);
+		        Component comp = tmpTable.prepareRenderer(cellRenderer, zeile, spalte);
+		        int tmpZellenWortBreite= 0;
+		        tmpZellenWortBreite = comp.getPreferredSize().width + tmpTable.getIntercellSpacing().width;
+		        zellenWortBreite=Math.max(zellenWortBreite, tmpZellenWortBreite);
+			}
+			tableColumn.setPreferredWidth(zellenWortBreite);
 		}
+			
 	}
 }
 
