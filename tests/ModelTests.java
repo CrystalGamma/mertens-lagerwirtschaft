@@ -71,7 +71,7 @@ public class ModelTests {
 		deutschland.setName("Neuer Name");
 		assert deutschland.getName().equals("Neuer Name");
 		assert deutschland.getBestand() == 0;
-		assert deutschland.getKapazität() == 40000;
+		assert deutschland.getKapazität() == 400000;
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class ModelTests {
 		nienburg.setName("Neuer Name");
 		assert nienburg.getName().equals("Neuer Name");
 		assert nienburg.getBestand() == 0;
-		assert nienburg.getKapazität() == 5000;
+		assert nienburg.getKapazität() == 50000;
 		assert nienburg.getUnterLager() == null;
 	}
 }
