@@ -33,7 +33,7 @@ public class Model extends Observable {
 	}
 
 	public void checkLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
-		buchungen.forEach(LagerHalle::dryRunBuchung);	// <- VISITOR PATTERN!  ☺
+		buchungen.forEach(LagerHalle::dryRunBuchung);
 		try{
 		int jear=Integer.valueOf(datum.substring(0,4));
 		int month=Integer.valueOf(datum.substring(5,7));

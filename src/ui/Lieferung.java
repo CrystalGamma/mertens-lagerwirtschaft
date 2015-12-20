@@ -101,6 +101,18 @@ public class Lieferung extends JFrame implements Observer {
 		add(p, BorderLayout.CENTER);
 		p.add(new JLabel(strategy.toString()));
 		undoRedoButtons(m, p);
+		addDatumPanel(p);
+		if (reihenfolge.size() == 0) {
+			p.add(new MengenAuswahl(m, tree));
+		} else {
+			verteilung(m, tree, p);
+		}
+		pack();
+		repaint();
+	}
+
+	/** Fügt ein Datumsauswahlfeld hinzu */
+	private void addDatumPanel(Container p) {
 		JTextField datumField = new JTextField(datum);
 		datumField.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {changedUpdate(e);}
@@ -112,13 +124,6 @@ public class Lieferung extends JFrame implements Observer {
 		datumPanel.add(new JLabel("Datum"), BorderLayout.WEST);
 		datumPanel.add(datumField, BorderLayout.EAST);
 		p.add(datumPanel);
-		if (reihenfolge.size() == 0) {
-			p.add(new MengenAuswahl(m, tree));
-		} else {
-			verteilung(m, tree, p);
-		}
-		pack();
-		repaint();
 	}
 
 	/** Fügt die Undo/Redo Buttons zu einem Container hinzu */
