@@ -70,7 +70,9 @@ public class Lieferung extends JFrame implements Observer {
 
 	/** fügt der Lieferung ein neues betroffenes Lager hinzu */
 	private void addHalle(Model m, Model.LagerHalle halle) {
-		buchungen.put(halle, 1);
+		if(!reihenfolge.removeIf(x -> x == halle)) {
+			buchungen.put(halle, 1);
+		}
 		reihenfolge.add(halle);
 		redo.clear();
 		rerender(m);
