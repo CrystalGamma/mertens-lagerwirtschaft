@@ -32,30 +32,27 @@ public class Model extends Observable {
 		return Utils.filterMap(lieferungen, (datum, buchungen) -> buchungen.containsKey(halle));
 	}
 
+	/** überprüfe, ob eine Lieferung übernommen werden kann, ansonsten werfe die passende Exception */
 	public void checkLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen.forEach(LagerHalle::dryRunBuchung);
 		try{
-		int jear=Integer.valueOf(datum.substring(0,4));
-		int month=Integer.valueOf(datum.substring(5,7));
-		int day=Integer.valueOf(datum.substring(8,10));
-		Calendar cal = Calendar.getInstance();
-		cal.set(jear,month-1, day);
-		if(jear!=cal.get(Calendar.YEAR)|month!=(cal.get(Calendar.MONTH)+1)|day!=cal.get(Calendar.DAY_OF_MONTH))
+			int jear=Integer.valueOf(datum.substring(0,4));
+			int month=Integer.valueOf(datum.substring(5,7));
+			int day=Integer.valueOf(datum.substring(8,10));
+			Calendar cal = Calendar.getInstance();
+			cal.set(jear,month-1, day);
+			if(jear!=cal.get(Calendar.YEAR)|month!=(cal.get(Calendar.MONTH)+1)|day!=cal.get(Calendar.DAY_OF_MONTH))
+				throw new UngültigesDatum();
+		} catch(IndexOutOfBoundsException e) {
 			throw new UngültigesDatum();
-		
-		if (lieferungen.containsKey(datum))
-			throw new LieferungExistiert();
-		}catch(IndexOutOfBoundsException e)
-		{
-			throw new UngültigesDatum();
-		}catch(NumberFormatException nfe)
-		{
+		} catch(NumberFormatException nfe) {
 			throw new UngültigesDatum();
 		}
-
+		if (lieferungen.containsKey(datum))
+			throw new LieferungExistiert();
 	}
-	
 
+	/** übernehme eine Lieferung; atomisch: änderungen werden entweder alle, oder gar nicht übernommen */
 	public void übernehmeLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen = Collections.unmodifiableMap(buchungen);
 		checkLieferung(buchungen, datum);
@@ -74,6 +71,7 @@ public class Model extends Observable {
 		int getKapazität();
 		int getBestand();
 		Lager[] getUnterLager();
+		/** @return den Namen des Lagers */
 		String toString();
 		void setName(String name);
 	}
@@ -103,6 +101,7 @@ public class Model extends Observable {
 			return this.bestand;
 		}
 
+		/** überprüfe, ob die Buchung auf dieser LagerHalle gemacht werden kann */
 		public void dryRunBuchung(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll{
 			if (änderung > 0) {
 				if (bestand + änderung < bestand || bestand + änderung > kapazität) {
@@ -115,6 +114,7 @@ public class Model extends Observable {
 			}
 		}
 
+		/** führe Buchung auf dieser LagerHalle durch */
 		void buchen(int änderung) throws  LagerNichtVollGenug, LagerÜbervoll {
 			dryRunBuchung(änderung);
 			bestand += änderung;
