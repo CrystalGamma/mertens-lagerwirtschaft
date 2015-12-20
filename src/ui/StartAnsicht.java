@@ -182,6 +182,9 @@ public class StartAnsicht extends JFrame implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		tableData.clear();
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
+		this.setResizable(true);
+		this.setSize(new Dimension(setTableWidth(table), this.getPreferredSize().height));
+		this.setResizable(false);
 		table.repaint();
 		bestand.setText("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
 	}
@@ -260,8 +263,10 @@ public class StartAnsicht extends JFrame implements Observer {
 			rückgabe+="   ";
 		return rückgabe;
 	}
-	public void setTableWidth(JTable tmpTable)
+	public int setTableWidth(JTable tmpTable)
 	{
+		int wholeTableWidth=0;
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		for(int spalte=0;spalte< tmpTable.getColumnCount(); spalte++)
 		{
 			TableColumn tableColumn= tmpTable.getColumnModel().getColumn(spalte);
@@ -288,8 +293,9 @@ public class StartAnsicht extends JFrame implements Observer {
 		        zellenWortBreite=Math.max(zellenWortBreite, tmpZellenWortBreite);
 			}
 			tableColumn.setPreferredWidth(zellenWortBreite);
+			wholeTableWidth+=zellenWortBreite;
 		}
-			
+		return wholeTableWidth;	
 	}
 }
 
