@@ -1,3 +1,4 @@
+/** @author Jona Stubbe */
 package ui;
 
 import model.Model;
@@ -62,7 +63,9 @@ public class Lieferung extends JFrame implements Observer {
 		update(model, null);
 	}
 
+	/** Gesamtmenge der Lieferung */
 	private int lieferungsMenge = 1;
+	/** Datum der Lieferung */
 	private String datum = "";
 
 	/** fügt der Lieferung ein neues betroffenes Lager hinzu */
@@ -98,6 +101,18 @@ public class Lieferung extends JFrame implements Observer {
 		add(p, BorderLayout.CENTER);
 		p.add(new JLabel(strategy.toString()));
 		undoRedoButtons(m, p);
+		addDatumPanel(p);
+		if (reihenfolge.size() == 0) {
+			p.add(new MengenAuswahl(m, tree));
+		} else {
+			verteilung(m, tree, p);
+		}
+		pack();
+		repaint();
+	}
+
+	/** Fügt ein Datumsauswahlfeld hinzu */
+	private void addDatumPanel(Container p) {
 		JTextField datumField = new JTextField(datum);
 		datumField.getDocument().addDocumentListener(new DocumentListener() {
 			public void insertUpdate(DocumentEvent e) {changedUpdate(e);}
@@ -109,13 +124,6 @@ public class Lieferung extends JFrame implements Observer {
 		datumPanel.add(new JLabel("Datum"), BorderLayout.WEST);
 		datumPanel.add(datumField, BorderLayout.EAST);
 		p.add(datumPanel);
-		if (reihenfolge.size() == 0) {
-			p.add(new MengenAuswahl(m, tree));
-		} else {
-			verteilung(m, tree, p);
-		}
-		pack();
-		repaint();
 	}
 
 	/** Fügt die Undo/Redo Buttons zu einem Container hinzu */
@@ -158,7 +166,7 @@ public class Lieferung extends JFrame implements Observer {
 			verteilteMenge += teilmenge;
 		}
 		final int vertMenge = verteilteMenge;
-		addSliderPanel(panel, verteilteMenge, aktuelleHalle);
+		addSliderPanelAndCommit(panel, verteilteMenge, aktuelleHalle);
 		tree.geklickteLager.addObserver((_dummy, halle_) -> {
 			if (!(halle_ instanceof LagerHalle))
 				return;
@@ -175,8 +183,8 @@ public class Lieferung extends JFrame implements Observer {
 		});
 	}
 
-	/** fügt ein Widget zur Auswahl des zu vergebenden Anteils einem Container hinzu */
-	private void addSliderPanel(Container panel, final int verteilteMenge, LagerHalle halle) {
+	/** fügt ein Widget zur Auswahl des zu vergebenden Anteils und einen „Übernehmen”-Button einem Container hinzu */
+	private void addSliderPanelAndCommit(Container panel, final int verteilteMenge, LagerHalle halle) {
 		Panel sliderPanel = new Panel();
 		JSlider slider = new JSlider(1, Math.min(lieferungsMenge - verteilteMenge, strategy.maxWert(halle)), buchungen.get(halle));
 		JLabel sliderLabel = new JLabel(halle.getName() + ": 1 (" + (100.0f / lieferungsMenge) + "%)");
@@ -204,7 +212,7 @@ public class Lieferung extends JFrame implements Observer {
 		((Stream)commitment).push(new Commitment(lieferung, datum));
 	}
 
-	@Override
+	/** nehme Änderungen des Model entgegen */
 	public void update(Observable o, Object arg) {
 		Model m = (Model)o;
 		buchungen.forEach((halle, wert) -> buchungen.put(halle, Math.min(wert, strategy.maxWert(halle))));

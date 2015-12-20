@@ -1,6 +1,6 @@
+/** @author Jona Stubbe */
 package model;
 
-import org.junit.Test;
 import utils.Utils;
 
 import java.util.*;
@@ -9,16 +9,19 @@ public class Model extends Observable {
     private Lager[] lager = new Lager[]{
             new OberLager("Deutschland",
                 new Lager[]{new OberLager("Niedersachsen",
-                        new LagerHalle[]{new LagerHalle("Hannover-Misburg", 50), new LagerHalle("Nienburg", 50)}),
-                new LagerHalle("NRW", 50), new LagerHalle("Bremen", 50), new LagerHalle("Hessen", 50), new LagerHalle("Sachsen", 50), new LagerHalle("Brandenburg", 50), new LagerHalle("MV", 50)}),
+                        new LagerHalle[]{new LagerHalle("Hannover-Misburg", 50000), new LagerHalle("Nienburg", 50000)}),
+                new LagerHalle("NRW", 50000), new LagerHalle("Bremen", 50000), new LagerHalle("Hessen", 50000), new LagerHalle("Sachsen", 50000), new LagerHalle("Brandenburg", 50000), new LagerHalle("MV", 50000)}),
             new OberLager("Europa", new Lager[]{
                     new OberLager("Frankreich",
-                            new Lager[]{new LagerHalle("Paris-Nord", 50), new LagerHalle("Orléans", 50), new LagerHalle("Marseille", 50), new LagerHalle("Nîmes", 50)}),
-                    new OberLager("Italien", new Lager[]{new LagerHalle("Mailand", 50), new LagerHalle("L´Aquila", 50)}),
-                    new LagerHalle("Spanien", 50)}),
-            new LagerHalle("Großbritannien", 50)};
-  
+                            new Lager[]{new LagerHalle("Paris-Nord", 50000), new LagerHalle("Orléans", 50000), new LagerHalle("Marseille", 50000), new LagerHalle("Nîmes", 50000)}),
+                    new OberLager("Italien", new Lager[]{new LagerHalle("Mailand", 50000), new LagerHalle("L´Aquila", 50000)}),
+                    new LagerHalle("Spanien", 50000)}),
+            new LagerHalle("Großbritannien", 50000)};
 
+	/**
+	 *  alle bisherigen Lieferungen
+	 *  für den Grund, warum die Lieferungen als Map&lt;LagerHalle, Integer&gt; dargestellt werden, siehe https://www.youtube.com/watch?v=o9pEzgHorH0 (insbesondere ab 17:30)
+	 */
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 
 	public Map<String, Map<LagerHalle, Integer>> getLieferungen() {
@@ -30,7 +33,7 @@ public class Model extends Observable {
 	}
 
 	public void checkLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
-		buchungen.forEach(LagerHalle::dryRunBuchung);	// <- VISITOR PATTERN!  ☺
+		buchungen.forEach(LagerHalle::dryRunBuchung);
 		try{
 		int jear=Integer.valueOf(datum.substring(0,4));
 		int month=Integer.valueOf(datum.substring(5,7));
@@ -138,12 +141,10 @@ public class Model extends Observable {
 	public class OberLager implements Lager {
 		private String name;
 		private Lager[] unterLager;
-		private boolean zeigeUnterlager;
 
 		public OberLager(String name, Lager[] unterLager){
 			this.name = name;
 			this.unterLager = unterLager;
-			zeigeUnterlager=true;
 		}
 
 		@Override
@@ -182,12 +183,6 @@ public class Model extends Observable {
 		@Override
 		public void setName(String name) {
 			this.name=name;
-			setChanged();
-			notifyObservers();
-		}
-
-		public void setZeigeUnterlager() {
-			zeigeUnterlager=!zeigeUnterlager;
 			setChanged();
 			notifyObservers();
 		}

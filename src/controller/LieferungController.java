@@ -1,3 +1,4 @@
+/** @author Jona Stubbe */
 package controller;
 
 import model.Model;
@@ -19,7 +20,7 @@ public class LieferungController implements Observer {
 		view.commitment.addObserver(this);
 	}
 
-	@Override
+	/** Lieferung wird übernommen */
 	public void update(Observable o, Object arg) {
 		Lieferung.Commitment lieferung = (Lieferung.Commitment) arg;
 		try {

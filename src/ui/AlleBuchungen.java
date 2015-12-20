@@ -6,6 +6,8 @@ import utils.Stream;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
@@ -20,8 +22,14 @@ public class AlleBuchungen extends JFrame implements Observer {
     final public Observable geklicktesDatum = new Stream();
     private CustomTable table = new CustomTable(new String[]{"Datum", "Menge"});
 
-    private AlleBuchungen() {
+    private AlleBuchungen(Model model) {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                model.deleteObserver(AlleBuchungen.this);
+            }
+        });
         this.init();
     }
 
@@ -30,9 +38,9 @@ public class AlleBuchungen extends JFrame implements Observer {
      *
      * @return Instanz der Ansicht für alle Buchungen.
      */
-    public static AlleBuchungen getInstance() {
+    public static AlleBuchungen getInstance(Model model) {
         if (sharedInstance == null) {
-            sharedInstance = new AlleBuchungen();
+            sharedInstance = new AlleBuchungen(model);
         }
 
         // Ansicht in den Vordergrund holen.
@@ -81,11 +89,11 @@ public class AlleBuchungen extends JFrame implements Observer {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
 
-        // Iteriere über alle Tage an denen es Buchungen gab
+        // Iteriere über alle Tage an denen es Buchungen gab.
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             data[pos][0] = entry.getKey();
 
-            // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen
+            // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen.
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             int menge = 0;
             for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
