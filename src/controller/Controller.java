@@ -33,6 +33,7 @@ public class Controller {
         startAnsicht.öffneAuslieferung.addObserver((dummy,dummy2)->öffneAuslieferung());
         startAnsicht.öffneZulieferung.addObserver((dummy,dummy2)->öffneZulieferung());
         startAnsicht.ändereLagerName.addObserver((dummy,lagerNamensänderung)->ändereLagerName(((LagerNamensänderung)lagerNamensänderung).getNeuerLagerName(), ((LagerNamensänderung)lagerNamensänderung).getLager()));
+
     }
 
     public static void main(String[] args) {
