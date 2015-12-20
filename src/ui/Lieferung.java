@@ -74,7 +74,11 @@ public class Lieferung extends JFrame implements Observer {
 			buchungen.put(halle, 1);
 		}
 		reihenfolge.add(halle);
-		redo.clear();
+		if (redo.size() > 0 && redo.lastElement() == halle) {
+			redo.setSize(redo.size() - 1); // ist ein Redo
+		} else {
+			redo.clear();
+		}
 		rerender(m);
 	}
 
@@ -82,7 +86,7 @@ public class Lieferung extends JFrame implements Observer {
 	private class MengenAuswahl extends Panel {
 		public MengenAuswahl(Model m, LagerTree tree) {
 			add(new JLabel("Menge"), BorderLayout.WEST);
-			JSpinner menge = new JSpinner(new SpinnerNumberModel(1, 1, null, 1));
+			JSpinner menge = new JSpinner(new SpinnerNumberModel(lieferungsMenge, 1, null, 1));
 			menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
 			add(menge);
 			tree.geklickteLager.addObserver((stream, halle_) -> {
@@ -139,13 +143,16 @@ public class Lieferung extends JFrame implements Observer {
 			});
 		}
 		if (redo.size() > 0) {
-			addButton(undoRedo, "Wiederherstellen", ev -> {
-				reihenfolge.add(redo.lastElement());
-				redo.setSize(redo.size() - 1);
-				rerender(m);
-			});
+			addButton(undoRedo, "Wiederherstellen", ev -> tryAddHalle(m,redo.lastElement()));
 		}
 		panel.add(undoRedo);
+	}
+
+	/** @return die insgesamt bereits verteilte Menge der Lieferung */
+	private int getVerteilteMenge() {
+		int vertMenge = 0;
+		for (LagerHalle halle: reihenfolge) {vertMenge += buchungen.get(halle);}
+		return vertMenge;
 	}
 
 	/** fügt einen Button mit gegebener Beschriftung und ActionListener zu einem Panel hinzu */
@@ -167,28 +174,44 @@ public class Lieferung extends JFrame implements Observer {
 			panel.add(new JLabel(halle.getName() + ": " + teilmenge + "(" + ((double) teilmenge / lieferungsMenge * 100) + "%)"));
 			verteilteMenge += teilmenge;
 		}
-		final int vertMenge = verteilteMenge;
 		addSliderPanelAndCommit(panel, verteilteMenge, aktuelleHalle);
 		tree.geklickteLager.addObserver((_dummy, halle_) -> {
 			if (!(halle_ instanceof LagerHalle))
 				return;
 			LagerHalle halle = (LagerHalle) halle_;
-			if (strategy.maxWert(halle) < 1) {
-				JOptionPane.showMessageDialog(this, "Diese Lieferung kann auf diesem Lager aufgrund von Bestand/Kapazität nicht ausgeführt werden");
-				return;
-			}
-			if (buchungen.get(aktuelleHalle) + vertMenge < lieferungsMenge) {
-				addHalle(m, halle);
-			} else {
-				JOptionPane.showMessageDialog(this, "Es wurde bereits die gesamte Menge der Lieferung verteilt");
-			}
+			tryAddHalle(m, halle);
 		});
 	}
 
-	/** fügt ein Widget zur Auswahl des zu vergebenden Anteils und einen „Übernehmen”-Button einem Container hinzu */
+	/** versucht, eine Halle hinzuzufügen, zeigt ansonsten Fehlermeldungen an */
+	private boolean tryAddHalle(Model m, LagerHalle halle) {
+		if (strategy.maxWert(halle) < 1) {
+			JOptionPane.showMessageDialog(this, "Diese Lieferung kann auf diesem Lager aufgrund von Bestand/Kapazität nicht ausgeführt werden");
+			return false;
+		}
+		if (getVerteilteMenge() < lieferungsMenge) {
+			addHalle(m, halle);
+			return true;
+		} else {
+			JOptionPane.showMessageDialog(this, "Es wurde bereits die gesamte Menge der Lieferung verteilt");
+			return false;
+		}
+	}
+
+	/**
+	 * fügt ein Widget zur Auswahl des zu vergebenden Anteils und einen „Übernehmen”-Button einem Container hinzu
+	 * @param verteilteMenge: verteilte Menge *ohne* letzte Halle
+	 */
 	private void addSliderPanelAndCommit(Container panel, final int verteilteMenge, LagerHalle halle) {
 		Panel sliderPanel = new Panel();
-		JSlider slider = new JSlider(1, Math.min(lieferungsMenge - verteilteMenge, strategy.maxWert(halle)), buchungen.get(halle));
+		Integer startWert = buchungen.get(halle);
+		if (lieferungsMenge - startWert < verteilteMenge) {
+			startWert = lieferungsMenge - verteilteMenge;
+			buchungen.put(halle, startWert);
+			redo.clear();
+		}
+		final int maxVal = Math.min(lieferungsMenge - verteilteMenge, strategy.maxWert(halle));
+		JSlider slider = new JSlider(1, maxVal, startWert);
 		JLabel sliderLabel = new JLabel(halle.getName() + ": 1 (" + (100.0f / lieferungsMenge) + "%)");
 		sliderPanel.add(sliderLabel);
 		sliderPanel.add(slider);
@@ -201,6 +224,8 @@ public class Lieferung extends JFrame implements Observer {
 			int value = slider.getValue();
 			buchungen.put(halle, value);
 			sliderLabel.setText(halle.getName() + ": " + value + " (" + ((double)value / lieferungsMenge * 100) + "%)");
+			if (value >= maxVal) // beuge Layout-Glitches vor
+				repaint();
 			commit.setEnabled(buchungen.get(halle) + verteilteMenge >= lieferungsMenge);
 		};
 		slListener.stateChanged(null);
