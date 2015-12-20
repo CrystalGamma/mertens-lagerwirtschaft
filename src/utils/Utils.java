@@ -9,9 +9,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class Utils {
+	/** erzeugt ein eine Map, die nur die Elemente enthält, die das Prädikat (Parameter: Schlüssel, Wert) auswählt */
 	public static <K, V> Map<K, V> filterMap(Map<K, V> map, BiPredicate<K, V> predicate) {
 		HashMap<K, V> res = new HashMap<>();
 		 map.forEach((key, value) -> {
@@ -20,6 +20,7 @@ public class Utils {
 		});
 		return res;
 	}
+	/** erzeugt ein Array, das durch die Abbildung der Elemente des übergebenen Arrays gefüllt wird */
 	public static <T, S> T[] arrayMap(Class<T> klass, S[] arr, Function<S, T> f) {
 		T[] res = (T[])Array.newInstance(klass, arr.length);
 		for (int i = 0; i < arr.length; i++) {
@@ -27,6 +28,7 @@ public class Utils {
 		}
 		return res;
 	}
+	/** Stellt (rekursiv) alle Unterlager eines Oberlagers zusammen */
 	public static Set<Model.LagerHalle> getLagerHallen(Model.OberLager oberLager) {
 		Set<Model.LagerHalle> lagerHallen = new HashSet<>();
 

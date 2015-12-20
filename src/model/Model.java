@@ -62,6 +62,7 @@ public class Model extends Observable {
 		notifyObservers();
 	}
 
+	/** gibt alle Lager auf oberster Ebene zurück */
 	public Lager[] getLager() {
 		return Utils.arrayMap(Lager.class, lager, x -> x);
 	}
