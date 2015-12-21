@@ -54,7 +54,6 @@ public class AlleBuchungen extends JFrame implements Observer {
      */
     public void init() {
         this.setResizable(false);
-        this.setTitle("Alle Buchungen");
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
