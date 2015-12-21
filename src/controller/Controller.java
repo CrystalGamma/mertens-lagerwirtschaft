@@ -151,7 +151,6 @@ public class Controller {
  */
     public void öffneAlleBuchungen() {
         AlleBuchungen alleBuchungen = AlleBuchungen.getInstance(this.model);
-        alleBuchungen.update(this.getModel(), null);
         alleBuchungen.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
@@ -175,7 +174,6 @@ public class Controller {
  */
     public void öffneLagerX(Lager lager) {
         LagerAnsicht lagerAnsicht = new LagerAnsicht(this.model, lager);
-        lagerAnsicht.update(this.getModel(), lager);
         lagerAnsicht.geklicktesDatum.addObserver((view, value) -> {
             if (value instanceof String)
                 this.öffneLieferung(value.toString());
@@ -196,7 +194,6 @@ public class Controller {
  */
     public void öffneLieferung(String datum) {
         LieferungDatum lieferungDatum = new LieferungDatum(this.model, datum);
-        lieferungDatum.update(this.getModel(), datum);
         lieferungDatum.geklicktesLager.addObserver((view, value) -> {
             if (value instanceof Model.LagerHalle)
                 this.öffneLagerX((Model.LagerHalle) value);

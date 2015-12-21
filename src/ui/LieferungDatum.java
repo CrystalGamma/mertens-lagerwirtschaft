@@ -20,7 +20,6 @@ import java.util.Observer;
 public class LieferungDatum extends JFrame implements Observer {
     final public Observable geklicktesLager = new Stream();
     private final String datum;
-    private JLabel titleLabel = new JLabel();
     private CustomTable table = new CustomTable(new String[]{"Lager", "Menge"});
 
     public LieferungDatum(Model model, String datum) {
@@ -33,6 +32,7 @@ public class LieferungDatum extends JFrame implements Observer {
         });
         this.datum = datum;
         this.init();
+        this.update(model, this.datum);
     }
 
     /**
@@ -43,8 +43,10 @@ public class LieferungDatum extends JFrame implements Observer {
 
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        this.titleLabel.setFont(new Font(this.titleLabel.getFont().getName(), Font.BOLD, 20));
-        titlePanel.add(this.titleLabel);
+        JLabel titleLabel = new JLabel();
+        titleLabel.setFont(new Font(titleLabel.getFont().getName(), Font.BOLD, 20));
+        titleLabel.setText("Lieferung vom " + this.datum);
+        titlePanel.add(titleLabel);
 
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
@@ -57,7 +59,10 @@ public class LieferungDatum extends JFrame implements Observer {
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
+        this.table.setStream((Stream) this.geklicktesLager);
+
         this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     /**
@@ -97,14 +102,8 @@ public class LieferungDatum extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof Model) {
-            this.setTitle("Lieferung vom " + this.datum);
-            this.titleLabel.setText("Lieferung vom " + this.datum);
-
-            this.table.setStream((Stream) this.geklicktesLager);
             this.table.setRows(parseBuchungen(((Model) o).getLieferungen(), this.datum));
-
             this.pack();
-            this.setVisible(true);
         }
     }
 }

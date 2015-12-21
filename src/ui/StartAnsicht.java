@@ -65,6 +65,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		
 		//TITEL-PANEL
 		titel = new JLabel("Lagerstruktur");
+		
 		//BODY-PANEL
 		JPanel bodyPanel= new JPanel();
 		bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.Y_AXIS));
@@ -190,8 +191,6 @@ public class StartAnsicht extends JFrame implements Observer {
 		try
 		{
 			Dimension d=Toolkit.getDefaultToolkit().getScreenSize();
-			System.out.println(d);
-			System.out.println(this.getWidth());
 			setLocation((int)(d.getWidth()/2-this.getWidth()/2),0);
 		}catch(HeadlessException He)
 		{
