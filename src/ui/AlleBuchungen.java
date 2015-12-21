@@ -99,7 +99,7 @@ public class AlleBuchungen extends JFrame implements Observer {
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             data[pos][0] = entry.getKey();
 
-            // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen.
+            // Iteriere über alle Buchungen des Tages um die Summe der Mengenänderung zu erfassen.
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             int menge = 0;
             for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {

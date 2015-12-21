@@ -25,20 +25,24 @@ public class CustomTable extends JTable {
         super(new DefaultTableModel(new Object[][]{}, columnNames));
         this.getTableHeader().setReorderingAllowed(false);
         this.setRowSelectionAllowed(false);
-        this.setAutoCreateRowSorter(true);
         this.setEnabled(false);
+
+        // Tabellen absteigend sortieren.
+        this.setAutoCreateRowSorter(true);
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(this.getModel());
         this.setRowSorter(sorter);
         java.util.List<RowSorter.SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new RowSorter.SortKey(0, SortOrder.DESCENDING));
         sorter.setSortKeys(sortKeys);
         sorter.sort();
+
         this.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int rowIndex = CustomTable.this.rowAtPoint(evt.getPoint());
                 int columnIndex = CustomTable.this.columnAtPoint(evt.getPoint());
-                if (rowIndex >= 0 && columnIndex >= 0 && stream != null) {
+                if (stream != null) {
+                    // Angegklickte Zelle an den Observer übergeben.
                     Object value = getValueAt(rowIndex, columnIndex);
                     stream.push(value);
                 }
@@ -52,8 +56,10 @@ public class CustomTable extends JTable {
 
     public void setRows(Object[][] rows) {
         DefaultTableModel tableModel = ((DefaultTableModel) this.getModel());
+        // Lösche alle alten Einträge um Tabelle neu zu zeichnen.
         tableModel.setRowCount(0);
 
+        // Füge die Einträge aus dem Parameter der Tabelle hinzu.
         for (Object[] row : rows) {
             tableModel.addRow(row);
         }
@@ -65,8 +71,10 @@ public class CustomTable extends JTable {
         JComponent component = (JComponent) super.prepareRenderer(renderer, rowIndex, columnIndex);
 
         if (columnIndex > 0 && Integer.parseInt(getValueAt(rowIndex, columnIndex).toString()) < 0) {
+            // Zellen mit negativem Wert mit einer entzückenden Farbe hervorheben.
             component.setBackground(Color.PINK);
         } else {
+            // Ansonsten wird die Standardhintergrundfarbe verwendet.
             component.setBackground(null);
         }
 
