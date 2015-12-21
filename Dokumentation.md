@@ -1,3 +1,8 @@
+# Einleitung
+Im Rahmen des Praxisstudiums wurde eine einfache Lösung zur Lagerverwaltung entwickelt. Das entwickelte System bildet die Zu- und Ablieferung einzelner Lager ab und ermöglicht eine detaillierte Verfolgung der getätigten Buchungen in dem System.
+Das in diesem Rahmen entwickelte Softwareprojekt überzeuigt durch eine Testabdeckung von 100 % für das Model. Die entwickelten Ansichten können je nach Belieben zu einem späteren Zeitpunkt angepasst oder auch komplett ausgetauscht werden.
+Eine erste Einführung in die Funktionsweise des Systems erfolgt in dem beiligenden Benutzerhandbuch.
+
 # Verwendete Entwurfsmuster
 ## Model-View-Controller (Leon Westhof)
 Unter dem Model-View-Controller wird ein Muster (Pattern) zur Strukturierten Softwareentwicklung verstanden. Eine genaue Zuordnung zu Architektur oder Entwurfsmuster konnte bis heute noch nicht vollzogen werden. Dieses Pattern besteht aus den Teilen Model, View und Controller. Im Model werden die darzustellenden Daten gespeichert. Die Klasse Model im Projekt enthält alle Lager (Lagerhallen und Oberlager), sowie die Transaktionsliste mit ihren Daten. Die View kommt bei der Darstellung der Benutzerdaten und der Entgegennahme von Benutzeraktionen zum Einsatz. Im Normalfall kennt die View ihren Controller und das Model. Im Projekt kennt sie das Model direkt, während der Controller über Observer erreicht wird. Damit sind die Elemente entkoppelt.
