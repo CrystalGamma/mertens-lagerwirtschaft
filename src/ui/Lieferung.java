@@ -88,6 +88,7 @@ public class Lieferung extends JFrame implements Observer {
 			add(new JLabel("Menge"), BorderLayout.WEST);
 			JSpinner menge = new JSpinner(new SpinnerNumberModel(lieferungsMenge, 1, null, 1));
 			menge.addChangeListener(ev -> {lieferungsMenge = (Integer)menge.getValue();});
+			((JSpinner.DefaultEditor)menge.getEditor()).getTextField().setColumns(5);	// Größe des Spinners setzen
 			add(menge);
 			tree.geklickteLager.addObserver((stream, halle_) -> {
 				if (halle_ instanceof LagerHalle)
