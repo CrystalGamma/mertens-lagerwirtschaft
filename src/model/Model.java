@@ -23,6 +23,8 @@ public class Model extends Observable {
 	 *  für den Inspiration, die Lieferungen als Map&lt;LagerHalle, Integer&gt; darzustellen, siehe https://www.youtube.com/watch?v=o9pEzgHorH0 (insbesondere ab 17:30)
 	 */
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
+	/** Datum der neuesten Lieferung */
+	private String letzteLieferung = null;
 
 	public Map<String, Map<LagerHalle, Integer>> getLieferungen() {
 		return Collections.unmodifiableMap(lieferungen);
@@ -35,6 +37,15 @@ public class Model extends Observable {
 	/** überprüfe, ob eine Lieferung übernommen werden kann, ansonsten werfe die passende Exception */
 	public void checkLieferung(Map<LagerHalle, Integer> buchungen, String datum) {
 		buchungen.forEach(LagerHalle::dryRunBuchung);
+		Calendar cal = parseDate(datum);
+		if (letzteLieferung != null && parseDate(letzteLieferung).after(cal))
+			throw new LieferungZuFrüh();
+		if (lieferungen.containsKey(datum))
+			throw new LieferungExistiert();
+	}
+
+	/** versucht, ein Datum zu parsen und wirft sonst die passende Exception */
+	private static Calendar parseDate(String datum) {
 		try{
 			int jear=Integer.valueOf(datum.substring(0,4));
 			int month=Integer.valueOf(datum.substring(5,7));
@@ -43,13 +54,12 @@ public class Model extends Observable {
 			cal.set(jear,month-1, day);
 			if(jear!=cal.get(Calendar.YEAR)|month!=(cal.get(Calendar.MONTH)+1)|day!=cal.get(Calendar.DAY_OF_MONTH))
 				throw new UngültigesDatum();
+			return cal;
 		} catch(IndexOutOfBoundsException e) {
 			throw new UngültigesDatum();
 		} catch(NumberFormatException nfe) {
 			throw new UngültigesDatum();
 		}
-		if (lieferungen.containsKey(datum))
-			throw new LieferungExistiert();
 	}
 
 	/** übernehme eine Lieferung; atomisch: änderungen werden entweder alle, oder gar nicht übernommen */
@@ -58,6 +68,7 @@ public class Model extends Observable {
 		checkLieferung(buchungen, datum);
 		buchungen.forEach(LagerHalle::buchen);
 		lieferungen.put(datum, buchungen);
+		letzteLieferung = datum;
 		setChanged();
 		notifyObservers();
 	}

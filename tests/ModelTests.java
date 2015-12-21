@@ -33,6 +33,7 @@ public class ModelTests {
 		assert !noexcept;
 		assert halle1.getBestand() == 10;
 		model.checkLieferung(buchungen, "2035-06-25");
+		noexcept = true;
 		try {
 			model.checkLieferung(buchungen, "2035-0-1");
 		} catch (UngültigesDatum üd) {
@@ -41,26 +42,40 @@ public class ModelTests {
 		assert !noexcept;
 
 		// IndexOutOfBoundsException
+		noexcept = true;
 		try {
 			model.checkLieferung(buchungen, "2010");
-		} catch (Exception e) {
-			assert e instanceof UngültigesDatum;
+		} catch (UngültigesDatum e) {
+			noexcept = false;
 		}
+		assert !noexcept;
 
 		// Wirklich ungültiges Datum
+		noexcept = true;
 		try {
 			model.checkLieferung(buchungen, "2015-13-01");
-		} catch (Exception e) {
-			assert e instanceof UngültigesDatum;
+		} catch (UngültigesDatum e) {
+			noexcept = false;
 		}
+		assert !noexcept;
 
 		// LagerÜbervoll
+		noexcept = true;
 		try {
 			buchungen.put(halle1, halle1.getKapazität()+1);
 			model.checkLieferung(buchungen, "2015-13-01");
-		} catch (Exception e) {
-			assert e instanceof LagerÜbervoll;
+		} catch (LagerÜbervoll e) {
+			noexcept = false;
 		}
+		assert !noexcept;
+
+		noexcept = true;
+		try {
+			model.checkLieferung(new HashMap<>(), "1994-12-14");
+		} catch (LieferungZuFrüh e) {
+			noexcept = false;
+		}
+		assert !noexcept;
 	}
 
 	@Test
