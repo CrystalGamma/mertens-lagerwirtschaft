@@ -36,12 +36,12 @@ Ein wichtiger Einsatz des Strategy Pattern in dieser Anwendung  ist im Lieferung
 ## Lagerstruktur
 Nach Start der Applikation sehen Sie eine Übersicht über die verschiedenen Lagerhierarchien, sowie den Gesamtbestand und die Gesamtkapazität.
 
-Durch Klicken des Menü-Buttons können Zulieferungen und Auslieferungen erstellt werden und alle Buchungen im Überblick angezeigt werden. Mit Klick auf erste Spalte in der Tabelle können Lager mit niedriger er Hierarchiestufen, sofern die Spalte mit einem „+” bzw. „”- versehen ist, auf- oder zugeklappt werden. Mit einem Linksklick auf die anderen Spalten wird die Lagerübersicht geöffnet. Durch einen Rechtklick kann der Name des Lagers geändert werden.
+Nach Klicken des Menü-Buttons �ffnet sich ein Men� mit dem  Zulieferungen und Auslieferungen erstellt werden und alle Buchungen im Überblick angezeigt werden. Mit Klick auf die erste Spalte in der Tabelle können Lager mit niedrigeren Hierarchiestufen, sofern die Spalte mit einem „+” bzw. „”- versehen ist, auf- oder zugeklappt werden. Mit einem Linksklick auf die anderen Spalten wird die Lagerübersicht geöffnet. Durch einen Rechtklick auf diese Spalten kann der Name des Lagers geändert werden. Der Fokus liegt direkt im Feld, wodurch direkt losgetippt werden kann.
 
 ## Zulieferung/Auslieferung
 Auf den Masken stellt man zuerst ein Datum (Datumsformat ISO 8601: JJJJ-MM-TT) sowie die zu liefernde Gesamtmenge ein. Danach kann man die einzelnen Lager im linken Verzeichnisbaum auswählen und über den Slider die Menge an zu transferierenden Waren bestimmen.
 
-Mit Hilfe des Rückgängig-Buttons können vorherige Verteilungen, die in der Mitte angezeigt werden, rückgängig gemacht bzw. mit dem Wiederherstellungsbutton wiederhergestellt werden. Nachdem alle Güter verteilt wurden kann die Lieferung übernommen werden. Ein Rückgängigmachen ist ab diesem Zeitpunkt nicht mehr möglich.
+Mit Hilfe des Rückgängig-Buttons können vorherige Verteilungen, die in der Mitte angezeigt werden, rückgängig gemacht bzw. mit dem Wiederherstellungsbutton wiederhergestellt werden. Nachdem alle Güter verteilt wurden, kann die Lieferung übernommen werden. Ein Rückgängigmachen ist ab diesem Zeitpunkt nicht mehr möglich.
 
 ## Alle Buchungen
 Auf dieser Maske sind alle Buchungen mit Datum und Menge dargestellt. Es lässt sich nach beiden Kriterien sortieren. Mit Klick auf ein Datum öffnet sich die Lieferungsübersicht für das ausgewählte Datum.
