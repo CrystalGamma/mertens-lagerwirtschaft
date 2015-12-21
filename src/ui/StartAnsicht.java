@@ -201,8 +201,6 @@ public class StartAnsicht extends JFrame implements Observer {
 		Dimension optimalFrameDimension= setTableSize(table);
 		optimalFrameDimension.setSize(optimalFrameDimension.getWidth(), optimalFrameDimension.getHeight()+getPanelHeight());
 		this.setSize(optimalFrameDimension);
-		System.out.println("realPanel"+titel.getSize().getHeight()+kapazität.getSize().getHeight()+18);
-		System.out.println(table.getSize().getHeight());
 		this.setResizable(false);
 		table.repaint();
 		bestand.setText("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
