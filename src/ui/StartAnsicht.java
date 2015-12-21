@@ -159,13 +159,13 @@ public class StartAnsicht extends JFrame implements Observer {
 						//Namensspeicherung zwecks Hashmap
 						alterName = vectorAusgewählteZeile.get(1).toString().trim();
 						//In dem geänderten TableModell sind die Zellen standardmäßig nicht editierbar, damit Änderungen der Zelleninhalte nur über diese Funktion und nicht bspw den Doppelklick realisiert werden können
-						defaultModel.setEdibility(true);
+						defaultModel.setEditability(true);
 
 						table.getModel().addTableModelListener(arg01 -> {
 							//Dem Observer wird der neue Name und das geänderte Lager in einer Klasse übergeben
 							((Stream)ändereLagerName).push( new LagerNamensänderung(table.getValueAt(arg01.getLastRow(), 1).toString().trim(), LagerNameZuLager.get(alterName)));
 							//Wiederherrstellung der Nicht-editierbarkeit
-							defaultModel.setEdibility(false);
+							defaultModel.setEditability(false);
 						});
 					}
 				}

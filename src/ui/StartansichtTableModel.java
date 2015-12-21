@@ -13,7 +13,6 @@ public class StartansichtTableModel extends DefaultTableModel {
 	boolean isEditable=false;
 
 	public StartansichtTableModel(Vector<Vector<Object>> tableData, Vector<String> columnNames) {
-		// TODO Auto-generated constructor stub
 		super(tableData, columnNames);
 	}
 	/**
@@ -27,7 +26,7 @@ public class StartansichtTableModel extends DefaultTableModel {
 	 * Methode setzt der Variable isEditable einen boolschen Wert.
 	 * @param isEditable Übergabeparameter, der entscheidet ob die Tabelle ( bzw. der Name) veränderbar ist oder nicht
 	 */
-	public void setEdibility(boolean isEditable)
+	public void setEditability(boolean isEditable)
 	{
 		this.isEditable=isEditable;
 	}
