@@ -147,7 +147,8 @@ public class LagerAnsicht extends JFrame implements Observer {
             this.table.setRows(parseBuchungen((Model) o));
 
             this.pack();
-            this.setVisible(true);
+            if(arg == this.lager)
+                this.setVisible(true);
         }
     }
 }
