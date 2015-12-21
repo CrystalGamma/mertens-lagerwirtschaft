@@ -35,6 +35,7 @@ public class LagerAnsicht extends JFrame implements Observer {
         });
         this.lager = lager;
         this.init();
+        this.update(model, this.lager);
     }
 
     /**
@@ -70,7 +71,10 @@ public class LagerAnsicht extends JFrame implements Observer {
         this.add(kapazitätLabel, BorderLayout.EAST);
         this.add(buchungsPanel, BorderLayout.SOUTH);
 
+        this.table.setStream((Stream) this.geklicktesDatum);
+
         this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     /**
@@ -142,12 +146,9 @@ public class LagerAnsicht extends JFrame implements Observer {
             this.bestandLabel.setText("Bestand: " + this.lager.getBestand());
             this.kapazitätLabel.setText("Kapazität: " + this.lager.getKapazität());
 
-            this.table.setStream((Stream) this.geklicktesDatum);
             this.table.setRows(parseBuchungen((Model) o));
 
             this.pack();
-            if(arg == this.lager)
-                this.setVisible(true);
         }
     }
 }

@@ -31,6 +31,7 @@ public class AlleBuchungen extends JFrame implements Observer {
             }
         });
         this.init();
+        this.update(model, null);
     }
 
     /**
@@ -44,7 +45,10 @@ public class AlleBuchungen extends JFrame implements Observer {
         }
 
         // Ansicht in den Vordergrund holen.
-        sharedInstance.requestFocus();
+        if(sharedInstance.isVisible())
+            sharedInstance.requestFocus();
+        else
+            sharedInstance.setVisible(true);
 
         return sharedInstance;
     }
@@ -75,7 +79,10 @@ public class AlleBuchungen extends JFrame implements Observer {
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(tablePanel, BorderLayout.SOUTH);
 
+        this.table.setStream((Stream) this.geklicktesDatum);
+
         this.setLocationRelativeTo(null);
+        this.setVisible(true);
     }
 
     /**
@@ -115,11 +122,8 @@ public class AlleBuchungen extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o instanceof Model) {
-            this.table.setStream((Stream) this.geklicktesDatum);
             this.table.setRows(parseBuchungen(((Model) o).getLieferungen()));
-
             this.pack();
-            this.setVisible(true);
         }
     }
 }
