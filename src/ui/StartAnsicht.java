@@ -60,13 +60,16 @@ public class StartAnsicht extends JFrame implements Observer {
 		this.model = model;
 		LagerNameZuLager = new HashMap<>();
 		LagerZuklappen= new HashMap<>();
-		//Definition der Panels
-		titel = new JLabel("Lagerstruktur");
-		JPanel statusPanel= new JPanel();
-		JPanel tablePanel = new JPanel();
-		JPanel bodyPanel= new JPanel();
 		
-		//Definition der table
+		//TITEL-PANEL
+		titel = new JLabel("Lagerstruktur");
+		
+		//BODY-PANEL
+		JPanel bodyPanel= new JPanel();
+		bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.Y_AXIS));
+		
+		//TABLE-Subpanel
+		JPanel tablePanel = new JPanel();
 		tablePanel.setLayout(new BoxLayout(tablePanel, BoxLayout.Y_AXIS));
 		Vector<String> columnNames = new Vector<>();
 		columnNames.addElement("");
@@ -79,28 +82,27 @@ public class StartAnsicht extends JFrame implements Observer {
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
 		setTableSize(table);
+		
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
-		menu = new JButton("Menü");
+		
+		//STATUS-Subpanel
+		JPanel statusPanel= new JPanel();
+		statusPanel.setLayout(new FlowLayout());
 		
 		//Belegung der Werte im Statuspanel
 		bestand= new JLabel("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
 		kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
-		statusPanel.setLayout(new FlowLayout());
-		
-		//Hinzfügen der Elemente des Statuspanels
 		statusPanel.add(bestand);
 		statusPanel.add(kapazität);
-		//
-		bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.Y_AXIS));
+		
 		//Hinzufügen der ELemente des Bodypanels
 		bodyPanel.add(statusPanel);
 		bodyPanel.add(tablePanel);
-		//Hinzufügen der Panels
-		this.add(menu, BorderLayout.EAST);
-		this.add(titel, BorderLayout.WEST);
-		this.add(bodyPanel, BorderLayout.SOUTH);
+				
+		//MENU-PANEL
+		menu = new JButton("Menü");
 		//Popup Menu
 		JPopupMenu menuPopup = new JPopupMenu();
 		JMenuItem menuItemZulieferung = new JMenuItem("Zulieferung");
@@ -166,7 +168,8 @@ public class StartAnsicht extends JFrame implements Observer {
 						});
 					}
 				}
-		}});
+		}});		
+				
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -174,14 +177,20 @@ public class StartAnsicht extends JFrame implements Observer {
 				model.deleteObserver(StartAnsicht.this);
 			}
 		});
+		
+		//Hinzufügen der Panels ins Frame
+		this.add(menu, BorderLayout.EAST);
+		this.add(titel, BorderLayout.WEST);
+		this.add(bodyPanel, BorderLayout.SOUTH);
+		
 		setResizable(false);
 		this.pack();
 		this.setVisible(true);
 
 	}
 	/**
-	 * Auf Änderungen am Lager folgt eine Neuinitialisierung der Tabelle.
-	 * Die Methode leert die Tabelle, aktualisiert die Werte und zeichnet sie erneut. Zudem wird der Bestandswert aktualisiert
+	 * Die Methode wird bei Änderungen am Lager oder dem aufzuklappen aufgerufen.
+	 * Sie leert die Tabelle, aktualisiert die Werte und zeichnet mit angepasster Größe neu. Abschließend wird der Bestandswert aktualisiert
 	 */
 	@Override
 	public void update(Observable arg0, Object arg1) {
@@ -190,24 +199,28 @@ public class StartAnsicht extends JFrame implements Observer {
 		this.setResizable(true);
 		Dimension optimalFrameDimension= setTableSize(table);
 		optimalFrameDimension.setSize(optimalFrameDimension.getWidth(), optimalFrameDimension.getHeight()+getPanelHeight());
-		System.out.println("fenster alt"+this.getHeight());
 		this.setSize(optimalFrameDimension);
-		System.out.println("fenster neu"+ this.getHeight());
 		this.setResizable(false);
 		table.repaint();
 		bestand.setText("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
 	}
 
-	/*
-	 * 	Die Methode befüllt die für die Erzeugung der Tabelle notwenigen Vectoren.
+	
+	/**
+	 * Die Methode befüllt die für die Erzeugung der Tabelle notwenigen Vectoren.
+	 * Dafür werden alle Übergebenene Lager rekursiv bis zum letzten durchsucht und es werden die unterschiedlichen Parameter dafür gesetzt.
+	 * @param inputlager Lager die in der Tabelle stehen sollen
+	 * @param tiefe Hirarchiebene
+	 * @return ein int[] mit dem Gesamtbestand und der Gesamtkapazität
 	 */
 	public int[] fülleTabellenDaten(Model.Lager[] inputlager, int tiefe) {
 		int[] gesamtBestandUndKapazität=new int[2];
-		//Alle Übergebenen Lager werden durchgegangen
 		for (Model.Lager lager : inputlager) {
 			Model.Lager[] unterLager = lager.getUnterLager();
 			//Wenn das Lager Unterlager hat ist es ein Oberlager
 			if (unterLager != null) {
+				
+				//Befüllung
 				Vector<Object> tmpVector = new Vector<Object>();
 				tmpVector.addElement("-");
 				tmpVector.addElement(getEinrückung(tiefe)+lager.getName());
@@ -230,7 +243,7 @@ public class StartAnsicht extends JFrame implements Observer {
 				//Eintrag der Werte in die Tabelle
 				tmpVector.set(2,UnterlagerBestandUndKapazität[0]);
 				tmpVector.set(3,UnterlagerBestandUndKapazität[1]);
-				//Wenn das Lager zugeklappt ist und nicht in der Tabelle auftauchen soll, werden alle Vektoren bis zum Vektor des Oberlagers gelöscht
+				//Wenn das Lager zugeklappt ist und nicht in der Tabelle auftauchen soll, werden alle darunterliegenden Lager (Vektoren bis zum Vektor des Oberlagers) gelöscht
 				if(LagerZuklappen.get(lager))
 				{
 					int indexLetztesUnterelement=tableData.indexOf((tableData.lastElement()));
@@ -254,7 +267,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		return gesamtBestandUndKapazität; 
 	}
 
-	/*
+	/**
 	 * Diese Methode befüllt die HashMap mit der Zuordnung von Lagernamen zu Lagern
 	 */
 	public void fülleHashmap(HashMap<String, Model.Lager> map, String key, Model.Lager value) {
@@ -272,6 +285,11 @@ public class StartAnsicht extends JFrame implements Observer {
 			rückgabe+="   ";
 		return rückgabe;
 	}
+	/**
+	 * Die Methode setzt die Größe der Tabelle entsprechend zum Inhalt
+	 * @param tmpTable Tabelle die angepasst werden soll
+	 * @return Die Gesamtgröße der Tabelle als Dimension
+	 */
 	public Dimension setTableSize(JTable tmpTable)
 	{
 		
@@ -310,14 +328,14 @@ public class StartAnsicht extends JFrame implements Observer {
 		        zellenDimension.setSize((Math.max(zellenDimension.getWidth(), tmpZellenDimension.getWidth())),zellenDimension.getHeight()+ tmpZellenDimension.getHeight()+LINIEGRÖßE);
 			}
 			tableColumn.setPreferredWidth((int) (zellenDimension.getWidth()));
-			//es fehlt noch die Tabellenlinie
 			tableDimension.setSize((tableDimension.getWidth()+zellenDimension.getWidth()+LINIEGRÖßE),Math.max(tableDimension.getHeight(),zellenDimension.getHeight())+LINIEGRÖßE);
 		}
 		tmpTable.setSize(tableDimension);
 		return tableDimension;	
 	}
-	/*
-	 * Diese Methode liefert die Höhe der Panel(Ausgenommen die des Tablepanels), da dieses schon mit setTableSize() ermittelt wird
+	/**
+	 * Diese Methode liefert die Höhe der Panels(Ausgenommen die des Tablepanels, da dieses schon mit setTableSize() ermittelt wurde)
+	 *@return die gesamthöhe der Panels
 	 */
 	private double getPanelHeight()
 	{
