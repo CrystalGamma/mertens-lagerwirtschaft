@@ -75,7 +75,7 @@ public class LieferungDatum extends JFrame implements Observer {
         Object[][] data = null;
         int pos = 0;
 
-        // Iteriere über alle Buchungen und suche Buchungen zu dem geüwnschten Tag
+        // Iteriere über alle Buchungen und suche Buchungen zu dem geüwnschten Tag.
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             if (entry.getKey() != datum)
                 continue;
@@ -83,7 +83,7 @@ public class LieferungDatum extends JFrame implements Observer {
             Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
             data = new Object[buchungen.size()][2];
 
-            // Iteriere über alle Buchungen des Tages
+            // Iteriere über alle Buchungen des Tages.
             for (Map.Entry<Model.LagerHalle, Integer> buchung : buchungen.entrySet()) {
                 data[pos][0] = buchung.getKey();
                 data[pos][1] = buchung.getValue();

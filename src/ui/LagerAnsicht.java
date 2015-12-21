@@ -95,20 +95,20 @@ public class LagerAnsicht extends JFrame implements Observer {
         Object[][] data = new Object[lieferungen.size()][2];
         int pos = 0;
 
-        // Iteriere über alle Tage an denen es Buchungen gab
+        // Iteriere über alle Tage an denen es Buchungen gab.
         for (Map.Entry<String, Map<Model.LagerHalle, Integer>> entry : lieferungen.entrySet()) {
             if (this.lager instanceof Model.LagerHalle) {
                 data[pos][0] = entry.getKey();
 
-                // Hole die Buchung zu dem ausgewählten Lager zu dem aktuellen Tag
+                // Hole die Buchung zu dem ausgewählten Lager zu dem aktuellen Tag.
                 Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
                 data[pos][1] = buchungen.get(this.lager);
                 pos++;
             } else if (this.lager instanceof Model.OberLager) {
-                // Iteriere über alle Unterlager und identifiziere deren LagerHallen
+                // Iteriere über alle Unterlager und identifiziere deren LagerHallen.
                 Set<Model.LagerHalle> hallen = Utils.getLagerHallen((Model.OberLager) this.lager);
 
-                // Iteriere über alle Buchungen des Tages um die Summe der Mengeänderung zu erfassen
+                // Iteriere über alle Buchungen des Tages um die Summe der Mengenänderung zu erfassen.
                 Map<Model.LagerHalle, Integer> buchungen = entry.getValue();
                 int menge = 0;
 
@@ -117,6 +117,7 @@ public class LagerAnsicht extends JFrame implements Observer {
                         menge += buchung.getValue();
                     }
                 }
+
                 if (menge != 0) {
                     Object[] row = new Object[2];
                     row[0] = entry.getKey();
@@ -136,7 +137,7 @@ public class LagerAnsicht extends JFrame implements Observer {
      * Aktualisieren der Ansicht bei Änderungen am Model.
      *
      * @param o   Beobachtetes Objekt
-     * @param arg Lagerhalle an der sich etwas geändert hat
+     * @param arg nicht verwendet
      */
     @Override
     public void update(Observable o, Object arg) {
