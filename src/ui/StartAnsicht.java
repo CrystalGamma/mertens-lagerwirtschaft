@@ -4,7 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.HeadlessException;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -92,7 +94,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		
 		//Belegung der Werte im Statuspanel
 		bestand= new JLabel("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
-		kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
+		kapazität= new JLabel("Kapazität: "+String.valueOf(gesamtBestandUndKapazität[1]));
 		statusPanel.add(bestand);
 		statusPanel.add(kapazität);
 		
@@ -126,7 +128,6 @@ public class StartAnsicht extends JFrame implements Observer {
 			public void mouseClicked(MouseEvent arg0) {
 				Vector<Object> vectorAusgewählteZeile;
 				//Wenn ein linksklick erfolgte
-				System.out.println("buttonarg"+arg0.getButton());
 				if (arg0.getButton() == 1) {
 					int selectedColumn = table.getSelectedColumn();
 					vectorAusgewählteZeile = (tableData.get(table.getSelectedRow()));
@@ -147,7 +148,6 @@ public class StartAnsicht extends JFrame implements Observer {
 				}
 				//Wenn ein Rechtsklick erfolgte, wird bei der Auf- und Zuklappspalte nichts unternommen, bei den anderen Spalten wird der Name des Lagers editierbar
 				else if (arg0.getButton() == 3) {
-					System.out.println(table.getSelectedColumn());
 					Point klickedPoint = arg0.getPoint();
 					table.changeSelection(table.rowAtPoint(klickedPoint), table.columnAtPoint(klickedPoint), false, false);
 					if (table.getSelectedColumn() != 0) {
@@ -187,7 +187,16 @@ public class StartAnsicht extends JFrame implements Observer {
 		setResizable(false);
 		this.pack();
 		this.setVisible(true);
-
+		try
+		{
+			Dimension d=Toolkit.getDefaultToolkit().getScreenSize();
+			System.out.println(d);
+			System.out.println(this.getWidth());
+			setLocation((int)(d.getWidth()/2-this.getWidth()/2),0);
+		}catch(HeadlessException He)
+		{
+			setLocation(0, 0);
+		}
 	}
 	/**
 	 * Die Methode wird bei Änderungen am Lager oder dem aufzuklappen aufgerufen.
@@ -332,7 +341,6 @@ public class StartAnsicht extends JFrame implements Observer {
 			tableDimension.setSize((tableDimension.getWidth()+zellenDimension.getWidth()+LINIEGRÖßE),Math.max(tableDimension.getHeight(),zellenDimension.getHeight())+LINIEGRÖßE);
 		}
 		tmpTable.setSize(tableDimension);
-		System.out.println("berechnete Table Height"+tableDimension.getHeight());
 		return tableDimension;	
 	}
 	/**
@@ -344,15 +352,12 @@ public class StartAnsicht extends JFrame implements Observer {
 		double gesamtHöhe=0;
 		gesamtHöhe+=LINIEGRÖßE;
 		gesamtHöhe=Math.max(titel.getPreferredSize().getHeight(), menu.getPreferredSize().getHeight());
-		titel.setSize(titel.getPreferredSize());
 		gesamtHöhe+=LINIEGRÖßE;
 		gesamtHöhe+=LINIEGRÖßE;
 		gesamtHöhe+=LINIEGRÖßE;
 		gesamtHöhe+=Math.max(kapazität.getPreferredSize().getHeight(), bestand.getPreferredSize().getHeight());
 		gesamtHöhe+=LINIEGRÖßE;
 		gesamtHöhe+=LINIEGRÖßE*3;
-		
-		System.out.println("gesamtpanelhöhe"+gesamtHöhe);
 		return gesamtHöhe;
 	}
 }
