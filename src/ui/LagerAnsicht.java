@@ -5,6 +5,7 @@ import utils.Stream;
 import utils.Utils;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -59,6 +60,10 @@ public class LagerAnsicht extends JFrame implements Observer {
         tablePanel.add(this.table.getTableHeader());
         tablePanel.add(this.table);
         buchungsPanel.add(tablePanel);
+
+        this.bestandLabel.setBorder(new EmptyBorder(5, 10, 5, 10));
+        this.kapazitätLabel.setBorder(new EmptyBorder(5, 10, 5, 10));
+        buchungsLabel.setBorder(new EmptyBorder(5, 10, 10, 10));
 
         this.add(titlePanel, BorderLayout.NORTH);
         this.add(bestandLabel, BorderLayout.WEST);
