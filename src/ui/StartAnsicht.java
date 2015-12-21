@@ -39,6 +39,11 @@ public class StartAnsicht extends JFrame implements Observer {
 	JTable table;
 	int[] gesamtBestandUndKapazität;
 	JLabel bestand;
+	JLabel kapazität;
+	JLabel titel;
+	JButton menu;
+	final int LINIEGRÖßE=3;
+
 	final public Observable ÖffneLagerX = new Stream();
 	final public Observable öffneAlleBuchungen = new Stream();
 	final public Observable öffneAuslieferung = new Stream();
@@ -56,7 +61,7 @@ public class StartAnsicht extends JFrame implements Observer {
 		LagerNameZuLager = new HashMap<>();
 		LagerZuklappen= new HashMap<>();
 		//Definition der Panels
-		JLabel titel = new JLabel("Lagerstruktur");
+		titel = new JLabel("Lagerstruktur");
 		JPanel statusPanel= new JPanel();
 		JPanel tablePanel = new JPanel();
 		JPanel bodyPanel= new JPanel();
@@ -73,15 +78,15 @@ public class StartAnsicht extends JFrame implements Observer {
 		StartansichtTableModel defaultModel= new StartansichtTableModel(tableData, columnNames); 
 		table= new JTable(defaultModel);
 		table.getTableHeader().setReorderingAllowed(false);
-		setTableWidth(table);
+		setTableSize(table);
 		//Hinzufügen der Tabelle und Header an das Tabellenpanel
 		tablePanel.add(table.getTableHeader());
 		tablePanel.add(table);
-		JButton menu = new JButton("Menü");
+		menu = new JButton("Menü");
 		
 		//Belegung der Werte im Statuspanel
 		bestand= new JLabel("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
-		JLabel kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
+		kapazität= new JLabel("Kapazität:"+String.valueOf(gesamtBestandUndKapazität[1]));
 		statusPanel.setLayout(new FlowLayout());
 		
 		//Hinzfügen der Elemente des Statuspanels
@@ -183,7 +188,11 @@ public class StartAnsicht extends JFrame implements Observer {
 		tableData.clear();
 		gesamtBestandUndKapazität=fülleTabellenDaten(model.getLager(), 0);
 		this.setResizable(true);
-		this.setSize(new Dimension(setTableWidth(table), this.getPreferredSize().height));
+		Dimension optimalFrameDimension= setTableSize(table);
+		optimalFrameDimension.setSize(optimalFrameDimension.getWidth(), optimalFrameDimension.getHeight()+getPanelHeight());
+		System.out.println("fenster alt"+this.getHeight());
+		this.setSize(optimalFrameDimension);
+		System.out.println("fenster neu"+ this.getHeight());
 		this.setResizable(false);
 		table.repaint();
 		bestand.setText("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
@@ -263,16 +272,18 @@ public class StartAnsicht extends JFrame implements Observer {
 			rückgabe+="   ";
 		return rückgabe;
 	}
-	public int setTableWidth(JTable tmpTable)
+	public Dimension setTableSize(JTable tmpTable)
 	{
-		int wholeTableWidth=0;
+		
+		Dimension tableDimension= new Dimension(0, 0);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		//Spalten der Tabelle
 		for(int spalte=0;spalte< tmpTable.getColumnCount(); spalte++)
 		{
 			TableColumn tableColumn= tmpTable.getColumnModel().getColumn(spalte);
-			int zellenWortBreite=0;
-			tmpTable.setIntercellSpacing(new Dimension(5, 5) );
-			//Bestimmung der Breite des Headers
+			Dimension zellenDimension= new Dimension(0,0);
+			tmpTable.setIntercellSpacing(new Dimension(5, 0) );
+			//Headergröße wird bestimmt
 			Object headerValue = tableColumn.getHeaderValue();
 			TableCellRenderer renderer = tableColumn.getHeaderRenderer();
 
@@ -282,20 +293,42 @@ public class StartAnsicht extends JFrame implements Observer {
 			}
 
 			Component c = renderer.getTableCellRendererComponent(tmpTable, headerValue, false, false, -1, spalte);
-			zellenWortBreite=c.getPreferredSize().width+tmpTable.getIntercellSpacing().width;
-			//Bestimmung der Breite des breitesten Elements
+			double rowHeight = c.getPreferredSize().height+tmpTable.getIntercellSpacing().height;
+			tmpTable.setRowHeight((int) rowHeight);
+			zellenDimension.setSize(c.getPreferredSize().width+tmpTable.getIntercellSpacing().width,rowHeight);
+			//Zeilen der Tabelle- Zellengröße wird bestimmt
 			for(int zeile=0; zeile <tmpTable.getRowCount();zeile++)
 			{
 				TableCellRenderer cellRenderer = tmpTable.getCellRenderer(zeile, spalte);
 		        Component comp = tmpTable.prepareRenderer(cellRenderer, zeile, spalte);
-		        int tmpZellenWortBreite= 0;
-		        tmpZellenWortBreite = comp.getPreferredSize().width + tmpTable.getIntercellSpacing().width;
-		        zellenWortBreite=Math.max(zellenWortBreite, tmpZellenWortBreite);
+		        Dimension tmpZellenDimension= new Dimension(0, 0);
+		        tmpZellenDimension.setSize(comp.getPreferredSize().width + tmpTable.getIntercellSpacing().width,comp.getPreferredSize().height + tmpTable.getIntercellSpacing().height);
+		        if(rowHeight<tmpZellenDimension.getHeight())
+		        {
+		        	tmpTable.setRowHeight((int) tmpZellenDimension.getHeight());
+		        }
+		        zellenDimension.setSize((Math.max(zellenDimension.getWidth(), tmpZellenDimension.getWidth())),zellenDimension.getHeight()+ tmpZellenDimension.getHeight()+LINIEGRÖßE);
 			}
-			tableColumn.setPreferredWidth(zellenWortBreite);
-			wholeTableWidth+=zellenWortBreite;
+			tableColumn.setPreferredWidth((int) (zellenDimension.getWidth()));
+			//es fehlt noch die Tabellenlinie
+			tableDimension.setSize((tableDimension.getWidth()+zellenDimension.getWidth()+LINIEGRÖßE),Math.max(tableDimension.getHeight(),zellenDimension.getHeight())+LINIEGRÖßE);
 		}
-		return wholeTableWidth;	
+		tmpTable.setSize(tableDimension);
+		return tableDimension;	
+	}
+	/*
+	 * Diese Methode liefert die Höhe der Panel(Ausgenommen die des Tablepanels), da dieses schon mit setTableSize() ermittelt wird
+	 */
+	private double getPanelHeight()
+	{
+		double gesamtHöhe=0;
+		gesamtHöhe+=LINIEGRÖßE;
+		gesamtHöhe=Math.max(titel.getSize().getHeight(), menu.getSize().getHeight());
+		gesamtHöhe+=LINIEGRÖßE;
+		gesamtHöhe+=LINIEGRÖßE;
+		gesamtHöhe+=Math.max(kapazität.getSize().getHeight(), bestand.getSize().getHeight());
+		gesamtHöhe+=LINIEGRÖßE;
+		return gesamtHöhe;
 	}
 }
 
