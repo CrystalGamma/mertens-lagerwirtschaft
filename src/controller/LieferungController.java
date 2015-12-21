@@ -24,10 +24,12 @@ public class LieferungController implements Observer {
 	public void update(Observable o, Object arg) {
 		Lieferung.Commitment lieferung = (Lieferung.Commitment) arg;
 		try {
+			model.deleteObserver(view);	// nicht rerendern, sonst Fehler
 			model.übernehmeLieferung(lieferung.buchungen, lieferung.datum);
 			view.dispose();
 		} catch (TransaktionsFehler e) {
 			JOptionPane.showMessageDialog(view, e.getMessage());
+			model.addObserver(view);
 		}
 	}
 

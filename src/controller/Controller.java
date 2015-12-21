@@ -74,7 +74,7 @@ public class Controller {
 		assert sachsen.getName().equals("Sachsen");
 		lief2.put(nienburg, 1000);
 		lief2.put(nrw, 400);
-		lief2.put(hessen, 200);
+		lief2.put(hessen, 400);
 		lief2.put(sachsen, 200);
 		model.übernehmeLieferung(lief2, "2015-12-15");
 		LagerHalle brandenburg = (LagerHalle) ger[5];
