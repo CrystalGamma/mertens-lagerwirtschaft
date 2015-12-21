@@ -20,7 +20,7 @@ public class Model extends Observable {
 
 	/**
 	 *  alle bisherigen Lieferungen
-	 *  für den Grund, warum die Lieferungen als Map&lt;LagerHalle, Integer&gt; dargestellt werden, siehe https://www.youtube.com/watch?v=o9pEzgHorH0 (insbesondere ab 17:30)
+	 *  für den Inspiration, die Lieferungen als Map&lt;LagerHalle, Integer&gt; darzustellen, siehe https://www.youtube.com/watch?v=o9pEzgHorH0 (insbesondere ab 17:30)
 	 */
 	private HashMap<String, Map<LagerHalle, Integer>> lieferungen = new HashMap<>();
 
@@ -62,7 +62,7 @@ public class Model extends Observable {
 		notifyObservers();
 	}
 
-	/** gibt alle Lager auf oberster Ebene zurück */
+	/** @return alle Lager auf oberster Ebene */
 	public Lager[] getLager() {
 		return Utils.arrayMap(Lager.class, lager, x -> x);
 	}
