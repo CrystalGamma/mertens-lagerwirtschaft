@@ -52,7 +52,7 @@ public class StartAnsicht extends JFrame implements Observer {
 
 	String alterName;
 	/**
-	 * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemte der Start-GUI mit Actionlistenern
+	 * Der Konstruktor dieser Klasse erzeugt, befüllt und versieht die Elemente der Start-GUI mit Actionlistenern
 	 * @param model Das Modell was der Controller erzeugt hat
 	 */
 
@@ -63,7 +63,6 @@ public class StartAnsicht extends JFrame implements Observer {
 		
 		//TITEL-PANEL
 		titel = new JLabel("Lagerstruktur");
-		
 		//BODY-PANEL
 		JPanel bodyPanel= new JPanel();
 		bodyPanel.setLayout(new BoxLayout(bodyPanel, BoxLayout.Y_AXIS));
@@ -127,6 +126,7 @@ public class StartAnsicht extends JFrame implements Observer {
 			public void mouseClicked(MouseEvent arg0) {
 				Vector<Object> vectorAusgewählteZeile;
 				//Wenn ein linksklick erfolgte
+				System.out.println("buttonarg"+arg0.getButton());
 				if (arg0.getButton() == 1) {
 					int selectedColumn = table.getSelectedColumn();
 					vectorAusgewählteZeile = (tableData.get(table.getSelectedRow()));
@@ -147,10 +147,11 @@ public class StartAnsicht extends JFrame implements Observer {
 				}
 				//Wenn ein Rechtsklick erfolgte, wird bei der Auf- und Zuklappspalte nichts unternommen, bei den anderen Spalten wird der Name des Lagers editierbar
 				else if (arg0.getButton() == 3) {
+					System.out.println(table.getSelectedColumn());
+					Point klickedPoint = arg0.getPoint();
+					table.changeSelection(table.rowAtPoint(klickedPoint), table.columnAtPoint(klickedPoint), false, false);
 					if (table.getSelectedColumn() != 0) {
-						//Markierung aus aktuelle Spalte setzen und Zelle markierbar machen
-						Point klickedPoint = arg0.getPoint();
-						table.changeSelection(table.rowAtPoint(klickedPoint), table.columnAtPoint(klickedPoint), false, false);
+						//Markierung auf aktuelle Spalte setzen und Zelle markierbar machen
 						int selectedTableRow = table.getSelectedRow();
 						table.requestFocus();
 						table.editCellAt(selectedTableRow, 1);
@@ -200,6 +201,8 @@ public class StartAnsicht extends JFrame implements Observer {
 		Dimension optimalFrameDimension= setTableSize(table);
 		optimalFrameDimension.setSize(optimalFrameDimension.getWidth(), optimalFrameDimension.getHeight()+getPanelHeight());
 		this.setSize(optimalFrameDimension);
+		System.out.println("realPanel"+titel.getSize().getHeight()+kapazität.getSize().getHeight()+18);
+		System.out.println(table.getSize().getHeight());
 		this.setResizable(false);
 		table.repaint();
 		bestand.setText("Bestand: "+String.valueOf(gesamtBestandUndKapazität[0]));
@@ -313,7 +316,7 @@ public class StartAnsicht extends JFrame implements Observer {
 			Component c = renderer.getTableCellRendererComponent(tmpTable, headerValue, false, false, -1, spalte);
 			double rowHeight = c.getPreferredSize().height+tmpTable.getIntercellSpacing().height;
 			tmpTable.setRowHeight((int) rowHeight);
-			zellenDimension.setSize(c.getPreferredSize().width+tmpTable.getIntercellSpacing().width,rowHeight);
+			zellenDimension.setSize(c.getPreferredSize().width+tmpTable.getIntercellSpacing().width,LINIEGRÖßE+rowHeight+LINIEGRÖßE);
 			//Zeilen der Tabelle- Zellengröße wird bestimmt
 			for(int zeile=0; zeile <tmpTable.getRowCount();zeile++)
 			{
@@ -331,6 +334,7 @@ public class StartAnsicht extends JFrame implements Observer {
 			tableDimension.setSize((tableDimension.getWidth()+zellenDimension.getWidth()+LINIEGRÖßE),Math.max(tableDimension.getHeight(),zellenDimension.getHeight())+LINIEGRÖßE);
 		}
 		tmpTable.setSize(tableDimension);
+		System.out.println("berechnete Table Height"+tableDimension.getHeight());
 		return tableDimension;	
 	}
 	/**
@@ -341,11 +345,16 @@ public class StartAnsicht extends JFrame implements Observer {
 	{
 		double gesamtHöhe=0;
 		gesamtHöhe+=LINIEGRÖßE;
-		gesamtHöhe=Math.max(titel.getSize().getHeight(), menu.getSize().getHeight());
+		gesamtHöhe=Math.max(titel.getPreferredSize().getHeight(), menu.getPreferredSize().getHeight());
+		titel.setSize(titel.getPreferredSize());
 		gesamtHöhe+=LINIEGRÖßE;
 		gesamtHöhe+=LINIEGRÖßE;
-		gesamtHöhe+=Math.max(kapazität.getSize().getHeight(), bestand.getSize().getHeight());
 		gesamtHöhe+=LINIEGRÖßE;
+		gesamtHöhe+=Math.max(kapazität.getPreferredSize().getHeight(), bestand.getPreferredSize().getHeight());
+		gesamtHöhe+=LINIEGRÖßE;
+		gesamtHöhe+=LINIEGRÖßE*3;
+		
+		System.out.println("gesamtpanelhöhe"+gesamtHöhe);
 		return gesamtHöhe;
 	}
 }
