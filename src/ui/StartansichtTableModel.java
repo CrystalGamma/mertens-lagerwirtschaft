@@ -19,6 +19,7 @@ public class StartansichtTableModel extends DefaultTableModel {
 	/**
 	 * Die Methode gibt zurück ob eine Zelle Editierbar ist.
 	 * Von dem Namen(Namensspalte) abgesehen sind keine Zellen veränderbar.
+	 * @return gibt zurück ob die Zelle editierbar ist oder nicht
 	 */
 	public boolean isCellEditable(int row,int column) {
 		return column == 1 && isEditable;
