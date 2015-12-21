@@ -91,7 +91,7 @@ public class Lieferung extends JFrame implements Observer {
 			add(menge);
 			tree.geklickteLager.addObserver((stream, halle_) -> {
 				if (halle_ instanceof LagerHalle)
-					addHalle(m, (LagerHalle)halle_);
+					tryAddHalle(m, (LagerHalle)halle_);
 			});
 		}
 	}
